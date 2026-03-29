@@ -1,0 +1,82 @@
+.navBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.logoSection {
+  flex: 1;
+  visibility: hidden;
+}
+
+.menuSection {
+  display: flex;
+  flex: 2;
+  justify-content: center;
+}
+
+.menuList {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+.authSection {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.authList {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.navLink {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.navItemWrapper,
+.authItemWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  color: #004452;
+  font-weight: 500;
+  transition: font-weight 0.2s ease, color 0.2s ease;
+}
+
+.navItemWrapper:hover,
+.authItemWrapper:hover,
+.activeText {
+  font-weight: 700;
+  color: #000085;
+}
+
+.underline {
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #000085;
+  border-radius: 2px;
+  transform-origin: center;
+}
+
+/* Phản hồi cho màn hình nhỏ (tương đương md:invisible) */
+@media (max-width: 768px) {
+  .logoSection {
+    visibility: hidden;
+  }
+}
