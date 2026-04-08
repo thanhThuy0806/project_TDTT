@@ -1,134 +1,126 @@
-
-
-@layer utilities {
-    /* hide for Chrome, Safari and Opera*/
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
-}
-
 /* Container chính bao phủ toàn màn hình */
 .screenContainer {
   display: flex;
   height: 100vh;
-  width: 100vw;
-  background-color: #ffffff;
+  width: 100%;
+  max-width: 100%;
+  background-color: white;
   justify-content: center;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
-
-
-/* ... các phần trên giữ nguyên */
 
 .mainWrapper {
   display: flex;
   flex-direction: column;
   height: fit-content;
   width: 95%;
-  margin: 0.5rem;
-  background: linear-gradient(145deg, #fef3c7, #fdf1b8); /* Gradient nhẹ tạo khối */
+  box-sizing: border-box;
+  background-color: white;
   border-radius: 1.25rem;
-  padding: 1.5rem;
-  /* Đổ bóng tầng nền */
-  box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.05), 
-              -10px -10px 30px rgba(255, 255, 255, 0.5);
+  padding: 1rem;
+}
+
+/* Ô nhập liệu cho Search - màu cũ: #93c5fd*/
+.searchSection {
+  display: grid;
+  grid-template-columns: 10fr 1fr;
+  gap: 1.5rem;
+  align-items: center;
+  margin-top: 1.25rem;
+}
+
+.inputGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
 }
 
 .inputBoxContainer {
   position: relative;
-  background-color: #ffffff; /* Cho nền trắng để nổi bật trên nền amber */
-  border: 1px solid #93c5fd;
+  background-color: #ffffff;
+  border: 1px solid #000085;
   border-radius: 0.75rem;
-  padding: 0.6rem;
+  padding: 1rem;
   transition: border-color 0.3s ease;
-  /* Tạo độ nổi nhẹ cho ô input khi ở trạng thái nghỉ */
   box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.02);
 }
 
 .inputLabel {
   display: flex;
-  background-color: #fef3c7; 
   width: fit-content;
   position: absolute;
-  top: -1.2rem; /* Chỉnh lại một chút cho cân đối */
+  top: -1.2rem;
   left: 1rem;
-  font-weight: 700;
-  padding: 0.2rem 0.5rem;
-  color: #1e40af; /* Màu xanh đậm cho chữ Label */
-  font-size: 0.8rem;
   border-radius: 4px;
+  background-color: #ffffff;
+  padding: 0.1rem;
+  color: #000085;
+  font-size: 16px;
+  font-weight: 700;
 }
 
-/* Phần Search Bar (Grid 8fr/2fr) */
-.searchSection {
-  display: grid;
-  grid-template-columns: 8fr 2fr;
-  height: fit-content;
-  min-height: 3rem;
-  gap: 2rem;
-}
-
+/* Nút Search*/
 .searchBtn {
   display: flex;
-  background-color: rgb(155, 155, 155);
+  min-height: 3.25rem;
+  border: 1px solid #000085;
   border-radius: 0.75rem;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  color: white;
+  text-decoration: none;
+  color: #000085;
   font-weight: 600;
-  /* Đổ bóng khối cho nút */
-  box-shadow: 0 4px 14px rgba(255, 251, 140, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
 }
 
-/* HomePage.module.css modification */
-/* Part 1: Grid Container (centered, depth container) */
+.searchBtn:hover {
+  background-color: #000085;
+  color: white !important;
+  box-shadow: 0 4px 10px rgba(30, 64, 175, 0.15);
+}
+
+.activeSearch {
+  background-color: #000085;
+  color: white !important;
+}
+
+/* Nhóm ô tính năng */
 .servicesGridContainer {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin: 1rem 0; /* Add margin for spacing on page */
-  padding: 0.5rem; /* Add padding for inner elements to "breathe" */
-  /* Add subtle background overlay on amber for depth */
-  background-color: rgba(255, 255, 255, 0.15);
+  margin: 1rem;
+  padding: 0.5rem;
+  background-color: white;
   border-radius: 1.5rem;
-  /* subtle shadow for container itself */
-  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-/* Part 2: Actual 4-column grid */
 .servicesGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 0.75rem;
-  width: 95%; /* Fit grid width to its content (cards) */
+  gap: 1rem;
+  width: 75%;
 }
 
-/* Part 3: Individual Rectangular Card (serviceItem) */
 .serviceItem {
   display: flex;
   flex-direction: column;
-  background: rgb(255, 252, 227);
+  background: #efe9e3;
   aspect-ratio: 1/1;
   cursor: pointer;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-
-  /* Shape and Style: Rectangular with large rounded corners */
-  width: 100%; /* Will occupy 1fr from grid */
-  border-radius: 1rem; /* Rounded corners */
-  border-color: rgb(51, 51, 108);
-  border-width: 1px;
-  border-style: solid;
-  color: rgb(94, 94, 187); /* text and icon white to match image */
-
-  /* Anti-flat effect: subtle, spread-out shadow to create depth. */
-  box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
-
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid #efe9e3;
+  color: #000085;
   padding: 1rem;
 }
+
 .serviceIconWrapper {
   display: flex;
   aspect-ratio: 1/1;
@@ -136,32 +128,31 @@
   align-items: center;
   border-radius: 1rem;
   width: 4rem;
-  background-color: rgb(89, 89, 241);
-  color: white;
+  background-color: #efe9e3;
+  color: #000085;
 }
-/* Part 4: Internal button content wrapper */
+
 .serviceButton {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem; /* Space between icon and name */
+  gap: 0.5rem;
   width: 100%;
   height: 100%;
 }
 
-/* Part 5: Specific elements inside button */
 .serviceIcon {
-  width: 1.75rem; /* Sizing the icon */
-  height: 1.75rem;
+  width: 3rem;
+  height: 3rem;
 }
 
 .serviceName {
-  font-size: 0.8rem; /* Font size of text */
-  font-weight: 500;
-  text-align: center; /* Center the text */
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
   display: -webkit-box;
-  -webkit-line-clamp: 1; /* Limit text to 1 line */
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -185,39 +176,14 @@
   color: inherit;
 }
 
-/* Các thành phần Map và News cũng cần độ nổi */
-.contentGrid > div {
-    border-radius: 1.25rem;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-}
-
-
-.inputGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5rem;
-}
-
-
-
-/* Layout Bản đồ và Tin tức */
+/* Bản đồ và Tin tức */
 .contentGrid {
   display: grid;
-  grid-template-columns: 57.5% 40%;
+  grid-template-columns: 1.7fr 1fr;
   gap: 1rem;
-}
-
-.newsCollection {
-  overflow-y: scroll;
-  background-color: #bbf7d0; /* green-200 */
-  aspect-ratio: 15 / 16;
-  border-radius: 0.75rem;
-  padding: 0.5rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 1.25rem;
 }
 
 /* Nút AI cố định */
@@ -225,17 +191,17 @@
   z-index: 10;
   display: flex;
   position: fixed;
-  background-color: #064e3b; /* emerald-900 */
+  background-color: #f9f8f6;
+  border: 1px solid #efe9e3;
   border-radius: 50%;
-  min-height: 5rem;
   height: 5rem;
   aspect-ratio: 1 / 1;
   cursor: pointer;
   justify-content: center;
   align-items: center;
-  bottom: 0;
-  right: 0;
-  color: white;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  color: #000085;
 }
 
 .inputField {
@@ -248,13 +214,4 @@
 
 .inputField:focus {
   outline: none;
-}
-
-/* Tiện ích ẩn thanh cuộn */
-.noScrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-.noScrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
 }
