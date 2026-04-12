@@ -10,26 +10,17 @@ export function ResponseDisplay({ content, isStreaming }) {
     <motion.div
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.98 }}
       className={`${styles.bottomResponseWrapper} ${styles.noScrollbar}`}
     >
-      {/* Header của khung phản hồi */}
       <div className={styles.responseHeader}>
-        <span className={styles.headerTitle}>
-          AI Travel Guide
-        </span>
+        <span className={styles.headerTitle}>AI Travel Guide</span>
         <div className={styles.headerActions}>
-          <Copy
-            size={14}
-            className={styles.actionIcon}
-          />
-          <RefreshCcw
-            size={14}
-            className={styles.actionIcon}
-          />
+          <Copy size={14} className={styles.actionIcon} />
+          <RefreshCcw size={14} className={styles.actionIcon} />
         </div>
       </div>
 
-      {/* Nội dung Markdown */}
       <div
         className={`${styles.proseText} ${
           isStreaming ? styles.typingCursor : ""

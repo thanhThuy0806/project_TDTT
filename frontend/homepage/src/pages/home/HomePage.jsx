@@ -15,7 +15,7 @@ import {
 import styles from "./HomePage.module.css";
 const services = [
   { name: "SOS", path: "/sos", icon: Siren },
-  { name: "Voice", path: "#", icon: Mic, isAction: true }, // Đánh dấu đây là một hành động, không phải link
+  { name: "Voice", path: "#", icon: Mic, isAction: true },
   { name: "Picture", path: "/picture", icon: Image },
   { name: "Setting", path: "/setting", icon: Settings },
 ];
@@ -71,7 +71,14 @@ Chào mừng bạn đến với nóc nhà Nam Bộ! Dưới đây là lịch tr�
 `;
 
 function HomePage() {
-  const [isVoiceOpen, setIsVoiceOpen] = useState(false); // Trạng thái điều khiển Voice Input
+  const [isVoiceOpen, setIsVoiceOpen] = useState(false);
+  const [showResponse, setShowResponse] = useState(false);
+  const [responseContent, setResponseContent] = useState("");
+
+  const handleAIClick = () => {
+    setShowResponse(true);
+    setResponseContent(mockResponse);
+  };
 
   return (
     <div className={styles.screenContainer}>
@@ -94,7 +101,7 @@ function HomePage() {
               className={styles.inputBoxContainer}
             />
           </div>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
             <NavLink
               to="/search-results"
               className={({ isActive }) =>
@@ -123,7 +130,10 @@ function HomePage() {
                 <NavLink className={styles.navLink} to={service.path}>
                   <div className={styles.serviceButton}>
                     <div className={styles.serviceIconWrapper}>
-                      <service.icon className={styles.serviceIcon} />
+                      <service.icon
+                        className={styles.serviceIcon}
+                        strokeWidth={1.5}
+                      />
                     </div>
                     <span className={styles.serviceName}>{service.name}</span>
                   </div>
@@ -142,18 +152,27 @@ function HomePage() {
 
         <br />
 
-        {/* Chỉ Render phần Input nổi ở cấp độ cao nhất của trang */}
         <AnimatePresence>
           {isVoiceOpen && (
             <AssitantFloatInput onClose={() => setIsVoiceOpen(false)} />
           )}
         </AnimatePresence>
 
-        <motion.div className={styles.aiFloatingBtn}>
+        <motion.div
+          className={styles.aiFloatingBtn}
+          onClick={handleAIClick}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+        >
           <p>AI</p>
         </motion.div>
-        
-        <ResponseDisplay content={mockResponse} />
+
+        {showResponse && (
+          <ResponseDisplay
+            content={responseContent}
+            onClose={() => setShowResponse(false)}
+          />
+        )}
       </div>
     </div>
   );
@@ -178,8 +197,8 @@ function InputBox({ label, placeholder, type, className, ...props }) {
             value
               .toLowerCase()
               .normalize("NFD")
-              .replace(/[\u0300-\u036f]/g, ""),
-          ),
+              .replace(/[\u0300-\u036f]/g, "")
+          )
       );
       setSuggestions(filtered);
     } else {
@@ -255,12 +274,12 @@ function InputBox({ label, placeholder, type, className, ...props }) {
 const inputFocusAnimation = {
   focus: {
     scale: 0.98,
-    boxShadow: "0px 10px 20px rgba(147, 197, 253, 0.5)", // Đổ bóng xanh nhẹ khi nhấn
-    borderColor: "#3b82f6", // Làm đậm viền một chút
+    boxShadow: "0px 4px 10px rgb(0, 0, 133, 0.2)",
+    borderColor: "#000085",
   },
   exit: {
     scale: 1,
-    boxShadow: "4px 4px 10px rgba(0, 0, 0, 0.05)", // Đổ bóng mặc định tạo độ sâu
+    boxShadow: "4px 4px 10px rgb(147, 197, 253, 0.05)",
     borderColor: "#93c5fd",
   },
 };

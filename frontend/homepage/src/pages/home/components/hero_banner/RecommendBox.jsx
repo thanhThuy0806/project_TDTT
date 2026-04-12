@@ -41,7 +41,7 @@ export function RecommendBox({ data, isLoading }) {
         exit={{ opacity: 0, scale: 0 }}
       >
         {detail.map((item, index) => {
-          const IconComponent = item.icon; // Render component icon được truyền từ mảng
+          const IconComponent = item.icon;
           return (
             <div key={index} className={styles.statItem}>
               {IconComponent && <IconComponent size={16} />}
