@@ -1,3 +1,54 @@
+/* --- Khối Kính mờ Bên ngoài --- */
+.outerBox {
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    
+    /* Vẫn giữ % để hộp co giãn theo màn hình */
+    width: 60%; 
+    
+    /* Sử dụng clamp cho khoảng cách (margin) để không bị dính sát lề khi ở Mobile */
+    margin: clamp(0.5rem, 2vw, 1.5rem);
+    
+    border-radius: 1.25rem;
+    aspect-ratio: 6/5;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    
+    background: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    
+    /* Padding cũng co giãn */
+    padding: clamp(0.25rem, 1vw, 0.5rem); 
+}
+@media screen and (min-width: 48rem) {
+    .outerBox {
+        /* Giới hạn kích thước tối đa để không bị khổng lồ trên màn hình TV */
+        width: clamp(300px, 30%, 400px); 
+        aspect-ratio: 6/4;
+    }
+}
+
+.innerBox {
+    display: flex;
+    flex-direction: column;
+    height: 80%;
+    width: 100%;
+    border-radius: 1rem;
+    
+    /* Padding bên trong tự động thu nhỏ trên điện thoại, phình to trên PC */
+    padding: clamp(0.5rem, 3vw, 1.25rem); 
+    
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: background-color 0.4s ease;
+}
 
 .recommendBox {
     z-index: 10;
@@ -68,48 +119,6 @@
 
 
 
-/* --- Khối Kính mờ Bên ngoài --- */
-.outerBox {
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end; /* Đẩy nội dung (innerBox) xuống đáy */
-    width: 50%;
-    margin: 0.75rem;
-    border-radius: 1.25rem;
-    aspect-ratio: 6/5;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    
-    /* Background kính mờ */
-    background: rgba(255, 255, 255, 0.15); 
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    /* Lớp padding trong suốt để tạo khoảng cách giữa viền ngoài và viền trong */
-    padding: 0.5rem; 
-}
-@media screen and (width > 48rem) {
-    .outerBox {
-        width: 35%;
-    }
-}
-/* --- Khối Nội dung --- */
-.innerBox {
-    display: flex;
-    flex-direction: column;
-    height: 80%; /* YÊU CẦU: Chiều cao chuẩn 60% so với khối ngoài */
-    width: 100%;
-    border-radius: 1rem;
-    padding: 1.25rem;
-    color: white;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    transition: background-color 0.4s ease;
-}
-
 /* --- Typography & Layout --- */
 .recommendHeader {
     display: flex;
@@ -122,8 +131,10 @@
     color: rgba(255, 255, 255, 0.9);
 }
 
+/* --- Typography (Linh hồn của việc co giãn) --- */
 .mainTitle {
-    font-size: 1.25rem;
+    /* Font chữ: Nhỏ nhất 1rem, To nhất 1.25rem, chạy mượt ở giữa theo vw */
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
     font-weight: 800;
     line-height: 1.2;
     margin: 0;
@@ -144,12 +155,14 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.8rem;
+    /* Font nhỏ lại trên mobile để không bị xuống dòng vô duyên */
+    font-size: clamp(0.7rem, 1.5vw, 0.8rem);
     opacity: 0.85;
 }
 
 .locationDetail {
-    font-size: 0.95rem;
+    /* Địa chỉ chi tiết */
+    font-size: clamp(0.85rem, 2vw, 0.95rem);
     font-weight: 700;
     margin: 0 0 0.25rem 0;
 }
@@ -174,9 +187,13 @@
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    font-size: 0.8rem;
-    background: rgba(255, 255, 255, 0.25); /* Nền mờ cho từng item nhỏ */
-    padding: 0.2rem 0.4rem;
+    
+    /* Chữ của thông số co giãn */
+    font-size: clamp(0.65rem, 1.2vw, 0.8rem);
+    background: rgba(255, 255, 255, 0.25); 
+    
+    /* Box chứa thông số cũng co giãn */
+    padding: clamp(0.1rem, 1vw, 0.2rem) clamp(0.2rem, 1.5vw, 0.4rem);
     border-radius: 0.5rem;
     white-space: nowrap;
 }

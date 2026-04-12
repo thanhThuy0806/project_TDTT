@@ -4,9 +4,6 @@ import { motion } from "framer-motion";
 import { Copy, RefreshCcw } from "lucide-react";
 import styles from "./ResponeDisplay.module.css";
 
-// Trong HomePage():
-// <ResponseDisplay content={mockResponse} isStreaming={false} />
-
 // Hiển thị phản hồi từ AI với hiệu ứng động và hỗ trợ Markdown
 export function ResponseDisplay({ content, isStreaming }) {
   return (
@@ -15,22 +12,24 @@ export function ResponseDisplay({ content, isStreaming }) {
       animate={{ opacity: 1, scale: 1 }}
       className={`${styles.bottomResponseWrapper} ${styles.noScrollbar}`}
     >
-      <div className="flex justify-between items-center mb-4 border-b border-[#0b00a1]/20 pb-2">
-        <span className="text-xs font-bold text-[#0b00a1] uppercase tracking-widest">
+      {/* Header của khung phản hồi */}
+      <div className={styles.responseHeader}>
+        <span className={styles.headerTitle}>
           AI Travel Guide
         </span>
-        <div className="flex gap-2">
+        <div className={styles.headerActions}>
           <Copy
             size={14}
-            className="cursor-pointer text-[#0b00a1]/60 hover:text-[#0b00a1]"
+            className={styles.actionIcon}
           />
           <RefreshCcw
             size={14}
-            className="cursor-pointer text-[#0b00a1]/60 hover:text-[#0b00a1]"
+            className={styles.actionIcon}
           />
         </div>
       </div>
 
+      {/* Nội dung Markdown */}
       <div
         className={`${styles.proseText} ${
           isStreaming ? styles.typingCursor : ""

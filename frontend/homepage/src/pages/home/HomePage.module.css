@@ -215,3 +215,96 @@
 .inputField:focus {
   outline: none;
 }
+
+
+
+/* ---------------------- Dropdown from InputBox -------------------------*/
+.inputWrapper {
+    position: relative;
+    width: 100%;
+}
+
+.relativeZ20 {
+    position: relative;
+    z-index: 20;
+}
+
+.inputField {
+    height: 100%;
+    width: 100%; /* Thay cho w-full */
+    border: none;
+    background: transparent;
+    font-size: 0.875rem;
+}
+
+/* Pop-up gợi ý địa điểm */
+.suggestionsPopup {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-top: 0.25rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    z-index: 50;
+    overflow: hidden;
+    border: 1px solid #dbeafe;
+    background-color: #ffffff; /* Khớp với màu input */
+}
+
+.suggestionsScroll {
+    max-height: 15rem; /* Thay cho max-h-60 (60 * 4px = 240px) */
+    overflow-y: auto;
+}
+
+.suggestionItem {
+    padding: 0.75rem;
+    border-bottom: 1px solid #f9fafb;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.suggestionItem:last-child {
+    border-bottom: none;
+}
+
+.suggestionItem:hover {
+    background-color: #eff6ff; /* Thay cho hover:bg-blue-50 */
+}
+
+.suggestionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.locationName {
+    font-weight: 700;
+    color: #1e3a8a; /* Blue-900 */
+    font-size: 0.875rem;
+}
+
+.statusBadge {
+    font-size: 10px;
+    background-color: #dcfce7; /* Green-100 */
+    color: #15803d; /* Green-700 */
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-weight: 500;
+}
+
+.addressText {
+    font-size: 0.75rem;
+    color: #9ca3af; /* Gray-400 */
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Đảm bảo no-scrollbar hoạt động cho cả suggestions */
+.noScrollbar::-webkit-scrollbar {
+    display: none;
+}
+.noScrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
