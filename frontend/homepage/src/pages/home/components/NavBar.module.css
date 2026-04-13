@@ -1,0 +1,105 @@
+.navBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Phần Logo */
+.logoSection {
+  flex: 1;
+  visibility: hidden;
+}
+
+/* Phần Menu chính ở giữa */
+.menuSection {
+  display: flex;
+  flex: 2;
+  justify-content: center;
+}
+
+.menuList {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.menuLink {
+  text-decoration: none;
+  color: #64748b;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.menuLink:hover {
+  color: #000085;
+  font-weight: 700;
+}
+
+.activeLink {
+  color: #000085 !important;
+  font-weight: 700;
+  border-bottom: 2px solid #000085;
+}
+
+.menuItemWrapper {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+/* Phần Auth (Login/Signin) bên phải */
+.authSection {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.authList {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.authBtn {
+  text-decoration: none;
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+
+  color: #000085;
+  border: 1px solid #000085;
+  background-color: transparent;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.authBtn:hover {
+  background-color: #000085;
+  color: white !important;
+  box-shadow: 0 4px 10px rgba(30, 64, 175, 0.15);
+}
+
+.activeAuth {
+  background-color: #000085;
+  color: white !important;
+}
+
+/* Style chung cho các Link */
+.navLink {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+/* Phản hồi cho màn hình nhỏ (tương đương md:invisible) */
+@media (max-width: 768px) {
+  .logoSection {
+    visibility: hidden;
+  }
+}

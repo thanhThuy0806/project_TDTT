@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+
+
+hr {
+    content: '';
+    display: inline-flex;
+    position: relative;
+    overflow: visible;
+    justify-content: center;
+    align-items: center;
+}
+ hr::after {
+    background: white;
+    width: fit-content;
+    position: absolute;
+    content: attr(dataContent);
+    padding: 0 0.5em;
+}
