@@ -1,4 +1,3 @@
-import { progressPercentage } from "framer-motion"
 import "./Avatar.css"
 
 export function Avatar({src, alt, ...props}) {

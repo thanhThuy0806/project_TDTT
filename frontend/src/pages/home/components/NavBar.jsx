@@ -25,71 +25,55 @@ const resMethods = [
 export function NavBar(props) {
   return (
     <div className={styles.navBar} {...props}>
+      {/* Logo Section */}
       <div className={styles.logoSection}>Logo</div>
 
+      {/* Main Navigation */}
       <div className={styles.menuSection}>
         <div className={styles.menuList}>
           {navItems.map((item) => (
-            <NavLink key={item.name} to={item.route} className={styles.navLink}>
-              {({ isActive }) => (
-                <motion.div
-                  className={`${styles.navItemWrapper} ${
-                    isActive ? styles.activeText : ""
-                  }`}
-                  initial="rest"
-                  whileHover="hover"
-                  animate={isActive ? "active" : "rest"}
-                >
-                  {item.name}
-
-                  {/* Thanh trượt */}
-                  <motion.div
-                    className={styles.underline}
-                    variants={{
-                      rest: { scaleX: 0, opacity: 0 },
-                      hover: { scaleX: 0, opacity: 0 },
-                      active: { scaleX: 1, opacity: 1 },
-                    }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                  />
-                </motion.div>
-              )}
-            </NavLink>
+            <motion.div
+              className={styles.menuItemWrapper}
+              key={item.name}
+              whileHover={{ scale: 1.1, color: "#000085" }}
+            >
+              <NavLink
+                className={({ isActive }) =>
+                  isActive
+                    ? `${styles.menuLink} ${styles.activeLink}`
+                    : styles.menuLink
+                }
+                to={item.route}
+              >
+                {item.name}
+              </NavLink>
+            </motion.div>
           ))}
         </div>
       </div>
 
+      {/* Auth Section */}
       <div className={styles.authSection}>
         <div className={styles.authList}>
           {resMethods.map((method) => (
-            <NavLink
+            <motion.div
+              className={styles.authItemWrapper}
               key={method.name}
-              to={method.route}
-              onClick={method.effect}
-              className={styles.navLink}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              {({ isActive }) => (
-                <motion.div
-                  className={`${styles.authItemWrapper} ${
-                    isActive ? styles.activeText : ""
-                  }`}
-                  initial="rest"
-                  whileHover="hover"
-                  animate={isActive ? "active" : "rest"}
-                >
-                  {method.name}
-
-                  <motion.div
-                    className={styles.underline}
-                    variants={{
-                      rest: { scaleX: 0, opacity: 0 },
-                      hover: { scaleX: 0, opacity: 0 },
-                      active: { scaleX: 1, opacity: 1 },
-                    }}
-                  />
-                </motion.div>
-              )}
-            </NavLink>
+              <NavLink
+                className={({ isActive }) =>
+                  isActive
+                    ? `${styles.authBtn} ${styles.activeAuth}`
+                    : styles.authBtn
+                }
+                onClick={method.effect}
+                to={method.route}
+              >
+                {method.name}
+              </NavLink>
+            </motion.div>
           ))}
         </div>
       </div>
