@@ -1,0 +1,200 @@
+.mainWrapper {
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(to right, #3b82f6, #60a5fa);
+  justify-content: center;
+}
+
+.authCard {
+  display: grid;
+  position: absolute;
+  grid-template-columns: repeat(2, 1fr);
+  background-color: white;
+  border-radius: 0.75rem;
+  width: 90%;
+  min-height: fit-content;
+  height: 66.666667%;
+  justify-self: center;
+  align-self: center;
+  overflow: hidden;
+}
+
+.imageSection {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-color: #f472b6;
+}
+
+.formSection {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  padding-top: 0.75rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  width: 100%;
+  justify-items: center;
+  align-items: center;
+}
+
+.title {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.subtitle {
+  color: #a1a1aa;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.inputContainer {
+  justify-items: center;
+}
+
+.forgotPassword {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  justify-content: flex-end;
+  align-items: flex-end;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.forgotPassword a {
+  cursor: pointer;
+}
+
+.forgotPassword a:hover {
+  text-decoration: underline;
+}
+
+.authButton {
+  display: flex;
+  background-color: #60a5fa;
+  justify-self: center;
+  height: fit-content;
+  padding-top: 0.25rem;
+  width: 50%;
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  margin-top: 0.25rem;
+  border-radius: 0.125rem;
+  font-family: serif;
+  color: white;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  cursor: pointer;
+}
+
+.authButton:hover {
+  background-color: #3b82f6;
+}
+
+.hrWithText {
+  content: "";
+  display: inline-flex;
+  position: relative;
+  overflow: visible;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border: none;
+  border-top: 1px solid #e4e4e7;
+  margin: 0.5rem 0;
+}
+
+.hrWithText::after {
+  background: white;
+  width: fit-content;
+  position: absolute;
+  content: attr(data-content);
+  padding: 0 0.5em;
+  color: #a1a1aa;
+  font-size: 0.75rem;
+}
+
+.socialButtonsContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-self: center;
+  position: relative;
+  height: fit-content;
+  width: 75%;
+  min-height: 4rem;
+  gap: 0.5rem;
+}
+
+.socialButtonWrapper {
+  display: inline-flex;
+  width: 100%;
+  height: 100%;
+}
+
+.socialButton {
+  display: inline-flex;
+  width: 90%;
+  height: 75%;
+  background-color: #dbeafe;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.socialButton:hover {
+  background-color: #bfdbfe;
+}
+
+.switchText {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  height: fit-content;
+  width: 100%;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  margin-top: 0.5rem;
+}
+
+.switchText a {
+  cursor: pointer;
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+.switchText a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .authCard {
+    width: 95%;
+    height: 80%;
+  }
+
+  .socialButtonsContainer {
+    width: 90%;
+  }
+
+  .socialButton {
+    font-size: 0.7rem;
+  }
+}

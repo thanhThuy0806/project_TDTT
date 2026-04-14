@@ -1,20 +1,21 @@
-// routes
 import { Route, Routes, useLocation } from "react-router-dom";
-// components
+import { AnimatePresence } from "framer-motion";
+
+import { AuthenticateProvider } from "./context/userAuthenticateContext";
 import HomePage from "./pages/home/HomePage";
 import AboutPage from "./pages/about_us/AboutPage";
 import ErrorPage from "./pages/error/ErrorPage";
-import LoginPage from "./pages/login_signup/Login";
-import SignUpPage from "./pages/login_signup/Signup";
+import LoginPage from "./pages/auth/Login";
+import SignUpPage from "./pages/auth/Signup";
 import UserInfoPage from "./pages/user_info/UserInfoPage";
-// styles and effect(motion, v.v...)
-import { AnimatePresence} from "framer-motion";
+
+import "./App.css";
 
 function App() {
   const location = useLocation();
 
   return (
-    
+    <AuthenticateProvider>
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<HomePage />} />
@@ -25,6 +26,7 @@ function App() {
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </AnimatePresence>
+    </AuthenticateProvider>
   );
 }
 
