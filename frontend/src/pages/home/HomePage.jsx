@@ -7,10 +7,7 @@ import { NewsCollection } from "./components/NewsCollection";
 import { Image, Mic, Settings, Siren } from "lucide-react";
 import { useState } from "react";
 import { ResponseDisplay } from "./components/ResponeDisplay";
-import {
-  AssistantButton,
-  AssitantFloatInput,
-} from "./components/voice_assist/VoiceAssistant";
+import { AssitantFloatInput } from "./components/voice_assist/VoiceAssistant";
 
 import styles from "./HomePage.module.css";
 const services = [
@@ -81,7 +78,14 @@ function HomePage() {
   };
 
   return (
-    <div className={styles.screenContainer}>
+    <motion.div
+      className={styles.screenContainer}
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={{ duration: 0.3 }}
+    >
       <div className={styles.mainWrapper}>
         <NavBar />
         <HeroBanner />
@@ -174,7 +178,7 @@ function HomePage() {
           />
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -197,8 +201,8 @@ function InputBox({ label, placeholder, type, className, ...props }) {
             value
               .toLowerCase()
               .normalize("NFD")
-              .replace(/[\u0300-\u036f]/g, "")
-          )
+              .replace(/[\u0300-\u036f]/g, ""),
+          ),
       );
       setSuggestions(filtered);
     } else {
@@ -285,3 +289,10 @@ const inputFocusAnimation = {
 };
 
 export default HomePage;
+
+// Hiệu ứng khi vào hoặc ra khỏi trang Homepage
+const pageVariants = {
+  initial: { opacity: 0, x: -20 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: 20 },
+};
