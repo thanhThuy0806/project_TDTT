@@ -1,56 +1,99 @@
+import { useState, useEffect } from "react";
+import styles from "./NewsCollection.module.css";
 
+// Mock data nâng cấp
+const popularNews = [
+  {
+    queryId: "1",
+    title:
+      "TP.HCM: Đề xuất xây dựng thêm 2 cầu vượt tại cửa ngõ sân bay Tân Sơn Nhất",
+    source: "VnExpress",
+    time: "2 giờ trước",
+    img: "https://picsum.photos/seed/hcm/200/200",
+  },
+  {
+    queryId: "2",
+    title:
+      "Đà Lạt: Cảnh báo sạt lở tại các khu vực đồi dốc sau mưa lớn kéo dài",
+    source: "Tuổi Trẻ",
+    time: "5 giờ trước",
+    img: "https://picsum.photos/seed/dalat/200/200",
+  },
+  {
+    queryId: "3",
+    title:
+      "Khám phá đỉnh núi Bà Đen: Điểm đến tâm linh không thể bỏ qua tại Tây Ninh",
+    source: "Travel.vn",
+    time: "1 ngày trước",
+    img: "https://picsum.photos/seed/tayninh/200/200",
+  },
+];
 
+export function NewsCollection({ className }) {
+  const [loading, setLoading] = useState(true);
 
-// mock data
-const news = [
-    {
-        name: 'Thành Phố Hồ Chí Minh',
-        queryId: '581250825430'
-    },
-    {
-        name: 'Thành Phố Hồ Chí Minh',
-        queryId: '581250833430'
-    },
-    {
-        name: 'Thành Phố Hồ Chí Minh',
-        queryId: '581250811430'
-    },
-    {
-        name: 'Sạt lở ở Đà Lạt',
-        queryId: '209532545432'
-    },
-    {
-        name: 'Sạt lở ở Đà Lạt',
-        queryId: '2095323325432'
-    },
-    {
-        name: 'Sạt lở ở Đà Lạt',
-        queryId: '209532345932'
-    },
-    {
-        name: 'Sạt lở ở Đà Lạt',
-        queryId: '209532345732'
-    }
-]
-export function NewsCollection({ ...props }) {
-    // nên định nghĩa hàm để lấy thông tin về bài báo
-    // bài báo được chọn nên lưu trữ trong một Context khi người dùng chọn một bài báo nào đó thì context sẽ thay đổi theo bài báo đó và người dùng có thể xem bài báo đó ở trang khác
-    return (
-        <div {...props}>
-            <div >
-                <p>News</p>
-            </div>
-            <div className={`flex flex-col overflow-y-scroll no-scrollbar gap-2 h-[95%]`}>
-                {
-                    news.map(item => (
-                        <div className="bg-pink-400 min-h-20 rounded-xl cursor-pointer pt-1 pl-2"
-                            key={item.queryId}
-                        >
-                            {item.name}
-                        </div>
-                    ))
-                }
-            </div>
+  // Giả lập fetch data từ API
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className={`${className} ${styles.newsWrapper}`}>
+      <div className={`${className} ${styles.container}`}>
+        <p className={styles.title}>🔥 Phổ biến</p>
+
+        <div className={`${styles.list} ${styles.noScrollbar}`}>
+          {loading
+            ? [...Array(5)].map((_, index) => <NewsSkeleton key={index} />)
+            : popularNews.map((item) => (
+                <div className={styles.newsItem} key={item.queryId}>
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    className={styles.thumbnail}
+                  />
+                  <div className={styles.content}>
+                    <h3 className={styles.newsTitle}>{item.title}</h3>
+                    <div className={styles.meta}>
+                      <span>{item.source}</span>
+                      <span>{item.time}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
         </div>
-    )
+      </div>
+    </div>
+  );
+}
+
+// Component Skeleton nội bộ
+function NewsSkeleton() {
+  return (
+    <div className={styles.newsItem}>
+      <div className={`${styles.thumbnail} ${styles.skeleton}`}></div>
+      <div className={styles.content}>
+        <div
+          className={`${styles.skeleton}`}
+          style={{
+            height: "14px",
+            width: "90%",
+            borderRadius: "4px",
+            marginBottom: "8px",
+          }}
+        ></div>
+        <div
+          className={`${styles.skeleton}`}
+          style={{ height: "14px", width: "60%", borderRadius: "4px" }}
+        ></div>
+        <div className={styles.meta} style={{ marginTop: "auto" }}>
+          <div
+            className={`${styles.skeleton}`}
+            style={{ height: "10px", width: "30%", borderRadius: "4px" }}
+          ></div>
+        </div>
+      </div>
+    </div>
+  );
 }

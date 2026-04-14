@@ -7,11 +7,13 @@
   margin-bottom: 1rem;
 }
 
+/* Phần Logo */
 .logoSection {
   flex: 1;
   visibility: hidden;
 }
 
+/* Phần Menu chính ở giữa */
 .menuSection {
   display: flex;
   flex: 2;
@@ -20,10 +22,35 @@
 
 .menuList {
   display: flex;
-  flex-direction: row;
   gap: 2rem;
+  list-style: none;
 }
 
+.menuLink {
+  text-decoration: none;
+  color: #64748b;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.menuLink:hover {
+  color: #000085;
+  font-weight: 700;
+}
+
+.activeLink {
+  color: #000085 !important;
+  font-weight: 700;
+  border-bottom: 2px solid #000085;
+}
+
+.menuItemWrapper {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+/* Phần Auth (Login/Signin) bên phải */
 .authSection {
   display: flex;
   flex: 1;
@@ -32,46 +59,42 @@
 
 .authList {
   display: flex;
-  flex-direction: row;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
+.authBtn {
+  text-decoration: none;
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+
+  color: #000085;
+  border: 1px solid #000085;
+  background-color: transparent;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.authBtn:hover {
+  background-color: #000085;
+  color: white !important;
+  box-shadow: 0 4px 10px rgba(30, 64, 175, 0.15);
+}
+
+.activeAuth {
+  background-color: #000085;
+  color: white !important;
+}
+
+/* Style chung cho các Link */
 .navLink {
   text-decoration: none;
   color: inherit;
   display: flex;
   flex-direction: row;
   align-items: center;
-}
-
-.navItemWrapper,
-.authItemWrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  cursor: pointer;
-  color: #004452;
-  font-weight: 500;
-  transition: font-weight 0.2s ease, color 0.2s ease;
-}
-
-.navItemWrapper:hover,
-.authItemWrapper:hover,
-.activeText {
-  font-weight: 700;
-  color: #000085;
-}
-
-.underline {
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: #000085;
-  border-radius: 2px;
-  transform-origin: center;
 }
 
 /* Phản hồi cho màn hình nhỏ (tương đương md:invisible) */

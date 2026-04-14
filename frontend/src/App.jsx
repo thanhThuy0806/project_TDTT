@@ -1,25 +1,33 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import './App.css'
-import Login from './pages/login/Login';
-import ErrorPage from './pages/error/ErrorPage';
-import HomePage from './pages/home/HomePage';
-import { AuthenticateProvider } from './context/userAuthenticateContext';
+import { Route, Routes, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 
+import { AuthenticateProvider } from "./context/userAuthenticateContext";
+import HomePage from "./pages/home/HomePage";
+import AboutPage from "./pages/about_us/AboutPage";
+import ErrorPage from "./pages/error/ErrorPage";
+import LoginPage from "./pages/auth/Login";
+import SignUpPage from "./pages/auth/Signup";
+import UserInfoPage from "./pages/user_info/UserInfoPage";
+
+import "./App.css";
 
 function App() {
+  const location = useLocation();
 
   return (
     <AuthenticateProvider>
-      <BrowserRouter>        
-        <Routes>
-          <Route path="/login" element={<Login />} />
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
           <Route path="/" element={<HomePage />} />
-          <Route path='/*' element={<ErrorPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/profile" element={<UserInfoPage />} />
+          <Route path="*" element={<ErrorPage />} />
         </Routes>
-      </BrowserRouter >
+      </AnimatePresence>
     </AuthenticateProvider>
   );
 }
 
-
-export default App
+export default App;

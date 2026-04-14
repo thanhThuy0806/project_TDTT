@@ -1,55 +1,52 @@
-// import * as React from 'react' 
+// import * as React from 'react'
 // import Map, {Marker, NavigationControl, FullscreenControl} from 'react-map-gl'
-import {
-    MapContainer,
-    TileLayer,
-    Marker,
-    Popup
-} from 'react-leaflet'
-import 'leaflet/dist/leaflet.css'
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 // Fix lỗi không hiển thị marker mặc định
-import L from 'leaflet'
-import icon from 'leaflet/dist/images/marker-icon.png'
-import iconShadow from 'leaflet/dist/images/marker-shadow.png'
-import styles from './MapBox.module.css'
+import L from "leaflet";
+import icon from "leaflet/dist/images/marker-icon.png";
+import iconShadow from "leaflet/dist/images/marker-shadow.png";
+import styles from "./MapBox.module.css";
 
 // Phiên bản hiện tại đang sử dụng Open Street Map mô phỏng thay vì
 // MapBox( vì nó miễn phí:))
 let DefaultIcon = L.icon({
-    iconUrl: icon,
-    shadowUrl: iconShadow
-})
-L.Marker.prototype.options.icon = DefaultIcon
-
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+});
+L.Marker.prototype.options.icon = DefaultIcon;
 
 // Thông tin token, khi hoàn thành tích hợp api thì chuyển nó thành
 // token thật
-const MAPBOX_TOKEN = 'MAPBOX_ACCESS_TOKEN'
-
-
-
+const MAPBOX_TOKEN = "MAPBOX_ACCESS_TOKEN";
 
 // phiên bản sử dụng Open Street map
 export function TravelMap() {
-    const position = [21.0285, 105.8542];
-    
-    return (
-        <div style={{height: '100%', width: '100%', borderRadius: '1.25em', overflow: 'hidden'
-        }}>
-            <MapContainer
-                center={position} zoom={13}
-                style={{height: '100%', width: '100%'}}
-                attributionControl={false}
-            >
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url='https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png'
-                    className={'leaflet-attribution-flag leaflet-control-attribution'}
-                
-                />
-            </MapContainer>
-        </div>
-    )
+  const position = [21.0285, 105.8542];
+
+  return (
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        borderRadius: "1.25em",
+        overflow: "hidden",
+      }}
+    >
+      <MapContainer
+        center={position}
+        zoom={13}
+        style={{ height: "100%", width: "100%" }}
+        attributionControl={false}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
+          className={"leaflet-attribution-flag leaflet-control-attribution"}
+        />
+      </MapContainer>
+    </div>
+  );
 }
 // phần bản đồ hiển thị
 // export function TravelMap(props) {

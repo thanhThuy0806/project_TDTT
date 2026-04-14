@@ -1,0 +1,66 @@
+.mainWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f9f8f6;
+  padding: 1rem 3rem;
+  gap: 2rem;
+}
+
+.heroSection {
+  background-color: #efe9e3;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.projectTitle {
+  color: #000085;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.description {
+  color: #004452;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.memberSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionTitle {
+  color: #000085;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.memberGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.memberCard {
+  background-color: #efe9e3;
+  border: 1px solid #004452;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+  color: #004452;
+}
+
+.contactSection {
+  background-color: #efe9e3;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  color: #004452;
+  line-height: 1.8;
+}
