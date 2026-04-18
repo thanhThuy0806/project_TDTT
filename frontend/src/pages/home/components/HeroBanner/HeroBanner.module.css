@@ -1,0 +1,64 @@
+.heroBanner {
+  display: block;
+  position: relative;
+  width: 100%;
+  min-height: 30rem;
+  aspect-ratio: 9/4;
+  background-color: transparent;
+  padding: 4rem;
+  border-radius: 1.25rem;
+  overflow: hidden;
+}
+
+/* responsive gốc được giữ nguyên */
+@media screen and (min-width: 48rem) {
+  .heroBanner {
+    aspect-ratio: 17/5;
+  }
+  .recommendBox {
+    aspect-ratio: 6/3;
+  }
+}
+
+/* Background Slide Container */
+.backgroundSlideContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.heroBackgroundImage {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Nút bấm điều hướng */
+.navButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.navButtonLeft {
+  left: 1.25rem;
+}
+
+.navButtonRight {
+  right: 1.25rem;
+}
