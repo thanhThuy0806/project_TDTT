@@ -1,0 +1,175 @@
+/* Footer.module.css */
+.footer {
+  background-color: #000;
+  color: #fff;
+  padding: 80px 8% 40px; /* Tăng padding để tạo khoảng thở */
+  margin-top: 100px;
+  font-family: 'Inter', sans-serif;
+}
+
+.topSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #222; /* Đường kẻ mờ hơn */
+  padding-bottom: 40px;
+  margin-bottom: 50px;
+}
+
+.brand {
+  font-weight: 900;
+  font-size: 2rem;
+  letter-spacing: -1.5px;
+  color: #fff;
+}
+
+.newsletterTitle {
+  font-weight: 800;
+  font-size: 0.75rem;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.inputGroup {
+  display: flex;
+  background: #111;
+  padding: 4px;
+  border-radius: 4px;
+  border: 1px solid #333;
+}
+
+.input {
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 10px 15px;
+  outline: none;
+  width: 280px;
+  font-size: 0.85rem;
+}
+
+.subscribeBtn {
+  background-color: #ff4500; /* Màu cam đặc trưng */
+  color: #fff;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.subscribeBtn:hover {
+  opacity: 0.9;
+}
+
+/* Links Grid Layout */
+.linksGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 40px;
+  margin-bottom: 60px;
+}
+
+.columnTitle {
+  font-size: 0.85rem;
+  font-weight: 800;
+  margin-bottom: 25px;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+
+.list {
+  list-style: none; /* Xóa bỏ dấu chấm tròn */
+  padding: 0;
+  margin: 0;
+}
+
+.listItem {
+  margin-bottom: 14px;
+}
+
+.listItem a {
+  color: #888; /* Màu xám để không quá nổi bật */
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.listItem a:hover {
+  color: #ff4500; /* Hover sang màu cam */
+  padding-left: 5px; /* Hiệu ứng dịch chuyển nhẹ */
+}
+
+/* Bottom Bar */
+.bottomBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 30px;
+  border-top: 1px solid #222;
+  color: #555;
+  font-size: 0.75rem;
+}
+
+.socials {
+  display: flex;
+  gap: 20px;
+  cursor: pointer;
+}
+
+.socials svg {
+  transition: color 0.2s;
+}
+
+.socials svg:hover {
+  color: #fff;
+}
+
+/* Mobile Responsive */
+@media (max-width: 992px) {
+  .linksGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .topSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 30px;
+  }
+  .input {
+    width: 100%;
+  }
+  .linksGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+
+.socials {
+  display: flex;
+  gap: 15px;
+}
+
+.socialLink {
+  color: #555; /* Màu mặc định trùng với copyright */
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.socialLink:hover {
+  color: #ff4500; /* Chuyển sang màu cam thương hiệu khi hover */
+  transform: translateY(-3px); /* Hiệu ứng nổi lên nhẹ */
+}
+
+/* Đảm bảo SVG thừa hưởng màu sắc từ thẻ a */
+.socialLink svg {
+  stroke: currentColor;
+}

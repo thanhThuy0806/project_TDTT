@@ -1,15 +1,15 @@
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { NavLink } from "react-router-dom";
-import { NavBar } from "./components/NavBar";
-import { HeroBanner } from "./components/hero_banner/HeroBanner";
-import { TravelMap } from "./components/MapBox";
-import { NewsCollection } from "./components/NewsCollection";
+import { NavBar } from "./components/NavBar/NavBar";
+import { HeroBanner } from "./components/HeroBanner/HeroBanner";
+import { TravelMap } from "./components/MapBox/MapBox";
+import { NewsCollection } from "./components/NewsCollection/NewsCollection";
+import { ResponseDisplay } from "./components/ResponseDisplay/ResponseDisplay";
+import { AssitantFloatInput } from "./components/VoiceAssist/VoiceAssistant";
 import { Image, Mic, Settings, Siren } from "lucide-react";
-import { useState } from "react";
-import { ResponseDisplay } from "./components/ResponeDisplay";
-import { AssitantFloatInput } from "./components/voice_assist/VoiceAssistant";
-
 import styles from "./HomePage.module.css";
+
 const services = [
   { name: "SOS", path: "/sos", icon: Siren },
   { name: "Voice", path: "#", icon: Mic, isAction: true },
