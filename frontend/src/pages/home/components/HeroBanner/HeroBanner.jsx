@@ -69,7 +69,31 @@ const mockHeroData = [
       },
       { name: "BV Đa khoa", type: "Y tế", phone: "115", distance: "1.2 km" },
     ],
+    daily: [
+      {
+        day: "Thứ 6, 21/04",
+        desc: "Nắng gắt",
+        low: "26°",
+        high: "34°",
+        icon: Sun,
+      },
+      {
+        day: "Thứ 7, 22/04",
+        desc: "Nhiều mây",
+        low: "25°",
+        high: "32°",
+        icon: Cloud,
+      },
+      {
+        day: "Chủ nhật, 23/04",
+        desc: "Mưa rào",
+        low: "24°",
+        high: "30°",
+        icon: CloudRain,
+      },
+    ],
   },
+  // Các card khác (Traffic, Social...) sẽ được thêm vào đây sau
 ];
 
 export function HeroBanner() {
