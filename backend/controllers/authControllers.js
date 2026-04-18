@@ -19,6 +19,7 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const firebaseAuth = getAuth(firebaseApp); 
 
+
 exports.signUp = async (req, res) => {
     try {
         const {email, password, passwordValidation} = req.body; 
@@ -67,7 +68,7 @@ exports.signUp = async (req, res) => {
 
         case 'auth/operation-not-allowed':
             return res.status(500).json({message: 'Chức năng chưa được bật'});
-            
+
         default:
             return res.status(500).json({message: 'Lỗi máy chủ'});
     }
@@ -157,5 +158,52 @@ exports.forgotPassword = async (req, res) =>{
         default:
             return res.status(500).json({message: 'Lỗi máy chủ'});
     }
+    }
+};
+
+exports.googleSignIn = async (req, res) =>{
+    try{
+        const { idToken } = req.body;
+
+        if(!idToken){
+            return res.status(400).json({message:'Thiếu ID token'});
+        }
+
+        //Xác minh token từ Firebase Admin SDK
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+
+        if(decodedToken.firebase?.sign_in_provider !== 'google.com'){
+            return res.status(401).json({message:'Token không phải từ Google'});
+        }
+
+        const { uid, email } = decodedToken;
+
+        const name = decodedToken.name || null;
+        const picture = decodedToken.picture || null;
+
+        return res.json({
+        message:'Đăng nhập Google thành công',
+        user:{uid,email,name,picture}
+        });
+    }
+    
+    catch (error){
+        console.error('Google Sign-In error:');
+        //Xử lí trường hợp token lỗi hoặc hết hạn 
+        switch(error.code){
+
+        case 'auth/id-token-expired':
+        return res.status(401).json({message:'Token hết hạn'});
+
+        case 'auth/invalid-id-token':
+        case 'auth/argument-error':
+        return res.status(401).json({message:'Token không hợp lệ'});
+
+        case 'auth/id-token-revoked':
+        return res.status(401).json({message:'Token đã bị thu hồi'});
+
+        default:
+        return res.status(500).json({message:'Lỗi máy chủ'});
+        }
     }
 };
