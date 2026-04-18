@@ -17,7 +17,7 @@ export function VoiceAssistant({ className }) {
       />
       <AnimatePresence>
         {showAssistant && (
-          <AssistantFloatInput onClose={() => setShowAssistant(false)} />
+          <AssitantFloatInput onClose={() => setShowAssistant(false)} />
         )}
       </AnimatePresence>
     </>

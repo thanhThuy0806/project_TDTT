@@ -55,7 +55,7 @@ function Signup() {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         formData.email,
-        formData.password,
+        formData.password
       );
 
       navigate("/profile", {

@@ -61,6 +61,7 @@
   display: flex;
   gap: 0.75rem;
 }
+<<<<<<< HEAD
 .authItemWrapper {
   display: flex;
   height: fit-content;
@@ -68,12 +69,19 @@
   justify-content: center;
   align-items: center;
 }
+=======
+
+>>>>>>> bb5a0c8 ([ADD] news page and link the news collection to navigate to it)
 .authBtn {
   text-decoration: none;
   padding: 0.4rem 1rem;
   border-radius: 9999px;
   font-weight: 600;
+<<<<<<< HEAD
   font-size: 1rem;
+=======
+  font-size: 0.85rem;
+>>>>>>> bb5a0c8 ([ADD] news page and link the news collection to navigate to it)
   transition: all 0.3s ease;
 
   color: #000085;
@@ -109,6 +117,7 @@
     visibility: hidden;
   }
 }
+<<<<<<< HEAD
 
 .userSection {
   display: flex;
@@ -156,3 +165,5 @@
   color: #dc2626;
   text-decoration: underline;
 }
+=======
+>>>>>>> bb5a0c8 ([ADD] news page and link the news collection to navigate to it)
