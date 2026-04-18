@@ -88,10 +88,41 @@ function HomePage() {
     >
       <div className={styles.mainWrapper}>
         <NavBar />
-        <HeroBanner />
+        
+        {/* ---- PHẦN BỐ CỤC MỚI (2/3 VÀ 1/3) ---- */}
+        <div className={styles.topSection}>
+          {/* Cột trái 2/3 chứa HeroBanner */}
+          <div className={styles.heroWrapper}>
+            <HeroBanner />
+          </div>
+
+          {/* Cột phải 1/3 chứa Services Sidebar */}
+          <div className={styles.servicesSidebar}>
+            {services.map((service) => (
+              <motion.div
+                key={service.name}
+                className={styles.serviceItemVertical}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => service.isAction && setIsVoiceOpen(true)}
+              >
+                <NavLink className={styles.navLinkVertical} to={service.path}>
+                  <div className={styles.serviceIconWrapperVertical}>
+                    <service.icon
+                      className={styles.serviceIconLarge}
+                      strokeWidth={2} /* Làm viền icon dày hơn chút cho dễ nhìn */
+                    />
+                  </div>
+                  <span className={styles.serviceNameLarge}>{service.name}</span>
+                </NavLink>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+        {/* -------------------------------------- */}
 
         <br />
 
+        {/* Khối SearchBox giữ nguyên */}
         <div className={styles.searchSection}>
           <div className={styles.inputGrid}>
             <InputBox
@@ -121,41 +152,15 @@ function HomePage() {
 
         <br />
 
-        <div className={styles.servicesGridContainer}>
-          <div className={styles.servicesGrid}>
-            {services.map((service) => (
-              <motion.div
-                key={service.name}
-                className={styles.serviceItem}
-                whileTap={{ scale: 0.95 }}
-                // Nếu là Voice, khi click sẽ mở Assistant, ngược lại không làm gì (để NavLink lo)
-                onClick={() => service.isAction && setIsVoiceOpen(true)}
-              >
-                <NavLink className={styles.navLink} to={service.path}>
-                  <div className={styles.serviceButton}>
-                    <div className={styles.serviceIconWrapper}>
-                      <service.icon
-                        className={styles.serviceIcon}
-                        strokeWidth={1.5}
-                      />
-                    </div>
-                    <span className={styles.serviceName}>{service.name}</span>
-                  </div>
-                </NavLink>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        <br />
-
-        <div className={`${styles.contentGrid} ${styles.noScrollbar}}`}>
+        {/* Khối Bản đồ & Tin tức giữ nguyên */}
+        <div className={`${styles.contentGrid} ${styles.noScrollbar}`}>
           <TravelMap />
           <NewsCollection className={`${styles.noScrollbar}`} />
         </div>
 
         <br />
 
+        {/* Các Pop-up AI và Floating Button giữ nguyên */}
         <AnimatePresence>
           {isVoiceOpen && (
             <AssitantFloatInput onClose={() => setIsVoiceOpen(false)} />

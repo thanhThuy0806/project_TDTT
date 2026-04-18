@@ -3,201 +3,151 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
   ChevronRight,
-  CrownIcon,
-  DropletIcon,
-  ThermometerIcon,
-  TreePalm,
-  TreePalmIcon,
-  WindIcon,
-} from "lucide-react"; // Import icon nút
-import { RecommendBox } from "./RecommendBox";
+  Droplets,
+  Wind,
+  CloudRain,
+  Sun,
+  Cloud,
+  MapPin,
+  Calendar,
+} from "lucide-react";
 import styles from "./HeroBanner.module.css";
 
-// ... Dữ liệu Mock `mockHeroData` đặt tại đây hoặc import từ file khác
-// Dữ liệu ví dụ để test tính năng chuyển đổi (chạy trong file JSX)
 const mockHeroData = [
   {
-    topic: "weather",
-    themeColor: "#ea580c", // Cam - Thời tiết
-    backgroundImg:
-      "https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg",
-    place: { provice: "Tây Ninh", country: "Việt Nam", detail: "Núi Bà Đen" },
-    date: "2026-03-28",
-    short_describe: "A sunny day",
-    detail: [
-      {
-        name: "tempature",
-        data: 30,
-        icon: ThermometerIcon,
-      },
-      {
-        name: "uv",
-        data: 0.5,
-        icon: ThermometerIcon,
-      },
-      {
-        name: "humid",
-        data: 0.65,
-        icon: DropletIcon,
-      },
-      {
-        name: "windSpeed",
-        data: 5,
-        icon: WindIcon,
-      },
+    type: "weather",
+    topic: "Thời tiết",
+    backgroundImg: "https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg",
+    location: "Núi Bà Đen, Tây Ninh",
+    currentTemp: 30,
+    condition: "Trời nắng đẹp",
+    wind: "Đông Nam, 12 km/h",
+    humidity: "65%",
+    date: "21 Tháng 4, 2026",
+    time: "11:00",
+    hourly: [
+      { time: "09:00", temp: "28°", icon: Sun },
+      { time: "10:00", temp: "29°", icon: Sun },
+      { time: "11:00", temp: "30°", icon: Sun, active: true },
+      { time: "12:00", temp: "31°", icon: Cloud },
+      { time: "13:00", temp: "32°", icon: Cloud },
+      { time: "14:00", temp: "32°", icon: CloudRain },
     ],
+    daily: [
+      { day: "Thứ 6, 21/04", desc: "Nắng gắt", low: "26°", high: "34°", icon: Sun },
+      { day: "Thứ 7, 22/04", desc: "Nhiều mây", low: "25°", high: "32°", icon: Cloud },
+      { day: "Chủ nhật, 23/04", desc: "Mưa rào", low: "24°", high: "30°", icon: CloudRain },
+    ]
   },
-  {
-    topic: "social",
-    themeColor: "#059669", // Xanh lá - Hoạt động xã hội
-    backgroundImg:
-      "https://images.pexels.com/photos/3184424/pexels-photo-3184424.jpeg",
-    place: {
-      provice: "TP.HCM",
-      country: "Việt Nam",
-      detail: "Công viên Gia Định",
-    },
-    date: "2026-03-29",
-    short_describe: "Ngày hội Trồng cây 2026",
-    detail: [
-      {
-        name: "Team",
-        data: "10",
-        icon: TreePalmIcon,
-      },
-    ],
-  },
-  {
-    topic: "politics",
-    themeColor: "#4f46e5", // Xanh dương - Vấn đề chính trị
-    backgroundImg:
-      "https://images.pexels.com/photos/159751/desk-office-pen-ruler-159751.jpeg",
-    place: {
-      provice: "Hà Nội",
-      country: "Việt Nam",
-      detail: "Trung tâm hội nghị Quốc gia",
-    },
-    date: "2026-03-30",
-    short_describe: "Hội nghị Du lịch Quốc tế",
-
-    detail: [
-      {
-        name: "Groverment",
-        data: 1,
-        icon: CrownIcon,
-      },
-    ],
-  },
+  // Các card khác (Traffic, Social...) sẽ được thêm vào đây sau
 ];
 
 export function HeroBanner() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(0); // -1: Trái, 1: Phải
-  const [isLoading, setIsLoading] = useState(true);
+  const data = mockHeroData[currentIndex];
 
-  // Giả lập load API khi chuyển chủ đề
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [currentIndex]);
-
-  const handleNext = () => {
-    setDirection(1);
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % mockHeroData.length);
-  };
-
-  const handlePrev = () => {
-    setDirection(-1);
-    setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + mockHeroData.length) % mockHeroData.length
-    );
-  };
-
-  const currentData = mockHeroData[currentIndex];
-
-  // Định nghĩa Variants cho hiệu ứng trượt background
-  const slideVariants = {
-    enter: (direction) => ({
-      x: direction > 0 ? "100%" : "-100%",
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction) => ({
-      x: direction > 0 ? "-100%" : "100%",
-      opacity: 0,
-    }),
-  };
-
-  // Định nghĩa variant cho nút bấm
-  const buttonVariants = {
-    btnHidden: {
-      opacity: 0,
-      scale: 0.8,
-      pointerEvents: "none",
-      transition: { duration: 0.2, ease: "easeInOut" },
-    },
-    btnVisible: {
-      opacity: 1,
-      scale: 1,
-      pointerEvents: "auto",
-      transition: { duration: 0.3, ease: "easeOut" },
-    },
-  };
+  const handleNext = () => setCurrentIndex((prev) => (prev + 1) % mockHeroData.length);
+  const handlePrev = () => setCurrentIndex((prev) => (prev - 1 + mockHeroData.length) % mockHeroData.length);
 
   return (
-    <motion.div
-      className={styles.heroBanner}
-      initial="btnHidden"
-      whileHover="btnVisible"
-      animate="btnHidden"
-    >
-      <div className={styles.backgroundSlideContainer}>
-        <AnimatePresence initial={false} custom={direction}>
-          <motion.img
-            key={currentIndex}
-            src={currentData.backgroundImg}
-            alt={currentData.topic}
-            custom={direction}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
-            className={styles.heroBackgroundImage}
-          />
-        </AnimatePresence>
+    <div className={styles.heroContainer}>
+      {/* Background Layer */}
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={data.backgroundImg}
+          src={data.backgroundImg}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8 }}
+          className={styles.backgroundImage}
+        />
+      </AnimatePresence>
+
+      <div className={styles.overlay}>
+        {/* Top Header: Time & Location */}
+        <div className={styles.topInfo}>
+            <div className={styles.dateTime}>
+                <span>{data.date}</span>
+                <span className={styles.timeDivider}>|</span>
+                <span>{data.time}</span>
+            </div>
+        </div>
+
+        {/* Middle: Main Status Text */}
+        <div className={styles.mainContent}>
+          <motion.h1 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className={styles.weatherStatus}
+          >
+            {data.condition}
+          </motion.h1>
+        </div>
+
+        {/* Right Sidebar: Glass Card */}
+        <aside className={styles.rightSidebar}>
+          <div className={styles.currentWeatherCard}>
+            <div className={styles.locationHeader}>
+              <MapPin size={18} />
+              <span>{data.location}</span>
+            </div>
+            
+            <div className={styles.mainTempDisplay}>
+              <span className={styles.tempNumber}>{data.currentTemp}°C</span>
+            </div>
+
+            <div className={styles.subWeatherStats}>
+              <div className={styles.statItem}>
+                <Wind size={16} /> <span>{data.wind}</span>
+              </div>
+              <div className={styles.statItem}>
+                <Droplets size={16} /> <span>Độ ẩm: {data.humidity}</span>
+              </div>
+            </div>
+
+            <div className={styles.forecastSection}>
+              <h3 className={styles.sectionTitle}>Dự báo những ngày tới</h3>
+              <div className={styles.dailyList}>
+                {data.daily.map((item, idx) => (
+                  <div key={idx} className={styles.dailyItem}>
+                    <div className={styles.dayInfo}>
+                        <item.icon size={20} />
+                        <div className={styles.dayText}>
+                            <p>{item.day}</p>
+                            <span>{item.desc}</span>
+                        </div>
+                    </div>
+                    <div className={styles.dayTemps}>
+                      <span className={styles.lowTemp}>{item.low}</span>
+                      <span className={styles.highTemp}>{item.high}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Bottom Bar: Hourly Forecast */}
+        <div className={styles.bottomForecastBar}>
+          {data.hourly.map((item, idx) => (
+            <div key={idx} className={`${styles.hourItem} ${item.active ? styles.activeHour : ''}`}>
+              <span className={styles.hourTime}>{item.time}</span>
+              <item.icon size={24} className={styles.hourIcon} />
+              <span className={styles.hourTemp}>{item.temp}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Navigation Buttons */}
+        <button onClick={handlePrev} className={`${styles.navBtn} ${styles.prev}`}>
+          <ChevronLeft color="white" />
+        </button>
+        <button onClick={handleNext} className={`${styles.navBtn} ${styles.next}`}>
+          <ChevronRight color="white" />
+        </button>
       </div>
-
-      {/* Nút bấm điều hướng */}
-      <motion.button
-        variants={buttonVariants}
-        whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.3)" }}
-        whileTap={{ scale: 0.9 }}
-        transition={{ duration: 0.3 }}
-        onClick={handlePrev}
-        className={`${styles.navButton} ${styles.navButtonLeft}`}
-      >
-        <ChevronLeft size={24} color="white" />
-      </motion.button>
-
-      <motion.button
-        variants={buttonVariants}
-        whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.3)" }}
-        whileTap={{ scale: 0.9 }}
-        transition={{ duration: 0.3 }}
-        onClick={handleNext}
-        className={`${styles.navButton} ${styles.navButtonRight}`}
-      >
-        <ChevronRight size={24} color="white" />
-      </motion.button>
-
-      <RecommendBox data={currentData} isLoading={isLoading} />
-    </motion.div>
+    </div>
   );
 }
