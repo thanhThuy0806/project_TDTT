@@ -16,8 +16,8 @@ const resMethods = [
     effect: () => logOut(),
   },
   {
-    name: "Sign in",
-    route: "/signin",
+    name: "Sign up",
+    route: "/signup",
     effect: () => {},
   },
 ];

@@ -308,3 +308,253 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+/* ===== SETTINGS POPUP ===== */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modalBox {
+  width: 300px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.applyBtn {
+  background: #000085;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+/* ===== SETTINGS OVERLAY ===== */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* ===== SETTINGS CARD (GIỐNG LOGIN) ===== */
+.settingsCard {
+  width: 380px;
+  background-color: #efe9e3;
+  border-radius: 0.75rem;
+  padding: 2rem;
+}
+
+/* TITLE */
+.settingsTitle {
+  color: #000085;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* SECTION */
+.settingsSection {
+  margin-bottom: 1.2rem;
+  color: #000085;
+  font-weight: 600;
+}
+
+/* BUTTON ROW */
+.btnRow {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.btnRow button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #000085;
+  background: white;
+  cursor: pointer;
+  font-weight: 600;
+  color: #000085;
+}
+
+.btnRow button:hover {
+  background: #000085;
+  color: white;
+}
+
+/* APPLY BUTTON (GIỐNG LOGIN NEXT) */
+.applyBtn {
+  margin-top: 15px;
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #004452;
+  color: white;
+}
+
+/* ===== TOGGLE SWITCH (iOS STYLE) ===== */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+/* Ẩn checkbox gốc */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* nền switch */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 34px;
+}
+
+/* nút tròn */
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+/* ON state */
+.switch input:checked + .slider {
+  background-color: #000085;
+}
+
+/* đẩy nút qua phải khi ON */
+.switch input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+/* ===== BIG SOS CARD ===== */
+.sosCardBig {
+  width: 520px; /* tăng từ 460px → đủ để title 1 dòng */
+  background-color: #efe9e3;
+  border-radius: 0.75rem;
+  padding: 2.5rem;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+  border: 2px solid #b91c1c;
+}
+
+/* TITLE LỚN */
+.sosTitleBig {
+  color: #b91c1c;
+  font-size: 2.2rem;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 1.2rem;
+  letter-spacing: 1px;
+}
+
+/* WARNING */
+.sosWarning {
+  color: #000085;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+/* SECTION */
+.sosSection {
+  margin-bottom: 1rem;
+  color: #000085;
+  font-weight: 700;
+}
+
+/* LABEL */
+.sosLabel {
+  margin-bottom: 0.5rem;
+}
+
+/* SELECT */
+.sosSelect {
+  width: 100%;
+  padding: 10px;
+  border-radius: 0.75rem;
+  border: 1px solid #000085;
+  font-weight: 600;
+  outline: none;
+}
+
+/* LOCATION BOX */
+.sosBox {
+  background: white;
+  border: 1px solid #b91c1c;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  text-align: center;
+  margin: 1rem 0;
+  font-weight: 700;
+  color: #b91c1c;
+}
+
+/* COUNTDOWN LỚN */
+.sosCountdownBig {
+  text-align: center;
+  font-weight: 900;
+  color: #b91c1c;
+  font-size: 1.2rem;
+  margin-bottom: 1.2rem;
+}
+
+/* BUTTON ROW */
+.sosBtnRow {
+  display: flex;
+  gap: 10px;
+}
+
+/* CANCEL */
+.sosCancel {
+  flex: 1;
+  padding: 12px;
+  border-radius: 0.75rem;
+  border: 1px solid #000085;
+  background: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* SEND */
+.sosSend {
+  flex: 1;
+  padding: 12px;
+  border-radius: 0.75rem;
+  border: none;
+  background: #b91c1c;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+}
