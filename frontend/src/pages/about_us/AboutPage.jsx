@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { NavBar } from "../home/components/NavBar";
+import { NavBar } from "../home/components/NavBar/NavBar";
 import styles from "./AboutPage.module.css";
 import { useLocation } from "react-router-dom";
 

@@ -1,0 +1,72 @@
+.inputBoxContainer {
+  width: 100%;
+  position: relative;
+  border: 1px solid #93c5fd;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  background-color: #f9f8f6;
+  transition: all 0.3 ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inputIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #004452;
+  font-size: 1.2rem;
+}
+
+.inputWrapper {
+  flex: 1;
+  position: relative;
+}
+
+.inputLabel {
+  position: absolute;
+  top: -0.8rem;
+  left: 0.5rem;
+  background-color: #efe9e3;
+  padding: 0 0.5rem;
+  color: #000085;
+  font-weight: bold;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.inputField {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  padding-top: 0.5rem;
+  outline: none;
+}
+
+.inputField::-ms-reveal,
+.inputField::-ms-clear {
+  display: none;
+}
+
+.eyeButton {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  z-index: 2;
+}
+
+.eyeButton:hover {
+  color: #000085;
+}

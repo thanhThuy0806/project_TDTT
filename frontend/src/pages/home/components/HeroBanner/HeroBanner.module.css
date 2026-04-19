@@ -1,0 +1,170 @@
+.heroContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 35rem;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  color: white;
+  background-color: #1a1a1a;
+}
+
+.backgroundImage {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+/* HeroBanner.module.css */
+
+.overlay {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.6) 100%);
+  /* Xóa display: flex và padding ở đây để chuyển cho wrapper */
+}
+
+.moduleWrapper {
+  position: absolute;
+  inset: 0; /* Chiếm toàn bộ không gian của overlay */
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}
+
+/* ... Giữ nguyên toàn bộ CSS còn lại của bạn ... */
+/* Nội dung chính giữa */
+.mainContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 2rem;
+}
+
+.weatherStatus {
+  font-size: 5rem;
+  font-weight: 800;
+  opacity: 0.9;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* Sidebar bên phải */
+.rightSidebar {
+  position: absolute;
+  top: 0; right: 0;
+  width: 30%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2.5rem;
+}
+
+.currentWeatherCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.locationHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.tempNumber {
+  font-size: 4.5rem;
+  font-weight: 800;
+}
+
+.forecastSection {
+  margin-top: 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+}
+
+.dailyItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dayInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dayText p { margin: 0; font-weight: 600; font-size: 0.9rem; }
+.dayText span { font-size: 0.8rem; opacity: 0.6; }
+
+/* Thanh dự báo dưới đáy */
+.bottomForecastBar {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  width: fit-content;
+}
+
+.hourItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem;
+  min-width: 4.5rem;
+  gap: 0.5rem;
+}
+
+.activeHour {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.hourTime { font-size: 0.8rem; opacity: 0.7; }
+.hourTemp { font-weight: 700; }
+
+/* Navigation */
+.navBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 3rem; height: 3rem;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+}
+.prev { left: 1rem; }
+.next { right: 31%; } /* Tránh đè lên sidebar */
+
+@media (max-width: 1024px) {
+    .rightSidebar { width: 40%; }
+    .next { right: 41%; }
+    .weatherStatus { font-size: 3rem; }
+}
