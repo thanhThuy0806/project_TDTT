@@ -1,0 +1,127 @@
+/* Custom Dropdown Styles */
+.customSelectWrapper {
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+}
+/* --- Custom Date Picker Styles --- */
+.calendarPopup {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  width: 350px;
+  background: #f9f8f6;
+  border: 2px solid #000085;
+  border-radius: 1.25rem;
+  z-index: 110;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  height: auto;
+}
+
+.calendarHeader {
+  background-color: #f3e8ff;
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 133, 82, 0.1);
+}
+
+.headerDateDisplay {
+  color: #000085;
+  font-size: 1.1rem; /* Thu nhỏ font size (cũ là 1.25rem) */
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.calendarBody {
+  padding: 1rem;
+}
+
+.calendarNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  color: #000085;
+  font-weight: 700;
+}
+
+/* Container để giới hạn vùng lướt của các ngày */
+.daysWrapper {
+  position: relative;
+  overflow: hidden;
+  min-height: 180px; 
+  transition: height 0.3s ease; /* Thêm transition dự phòng cho trình duyệt */
+}
+
+.navBtn {
+  background: none;
+  border: none; 
+  cursor: pointer; 
+  color: #004452; 
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.navBtn:hover {
+  background: #efe9e3;
+}
+
+.daysGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  text-align: center;
+  width: 100%;
+}
+
+.weekdayLabel {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #9ca3af;
+  margin-bottom: 5px;
+}
+
+.weekdayRow {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+    border-bottom: 1px solid #efe9e3;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+.dayCell {
+  padding: 0.75rem 0;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: #004452;
+  transition: all 0.2s;
+}
+
+.dayCell:hover {
+  background-color: #f3e8ff;
+  color: #000085;
+}
+
+.selectedDay {
+  background-color: #000085 !important;
+  color: white !important;
+}
+
+.emptyCell {
+  padding: 0.75rem 0;
+  border-radius: 0.75rem;
+  cursor: default;
+}
+
+.chevronIcon {
+  display: flex;
+  height: fit-content;
+  width: fit-content;
+}

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { AnimatePresence, motion } from "framer-motion";
 import { NavLink } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
@@ -10,6 +11,21 @@ import { ResponseDisplay } from "./components/ResponeDisplay";
 import { AssitantFloatInput } from "./components/voice_assist/VoiceAssistant";
 
 import styles from "./HomePage.module.css";
+=======
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { NavLink } from "react-router-dom";
+import { NavBar } from "./components/NavBar/NavBar";
+import { HeroBanner } from "./components/HeroBanner/HeroBanner";
+import { TravelMap } from "./components/MapBox/MapBox";
+import { NewsCollection } from "./components/NewsCollection/NewsCollection";
+import { ResponseDisplay } from "./components/ResponseDisplay/ResponseDisplay";
+import { AssitantFloatInput } from "./components/VoiceAssist/VoiceAssistant";
+import { Image, Mic, Settings, Siren } from "lucide-react";
+import styles from "./HomePage.module.css";
+
+
+>>>>>>> bb5a0c8 ([ADD] news page and link the news collection to navigate to it)
 const services = [
   { name: "SOS", path: "/sos", icon: Siren },
   { name: "Voice", path: "#", icon: Mic, isAction: true },
