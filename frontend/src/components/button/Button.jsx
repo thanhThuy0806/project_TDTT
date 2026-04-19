@@ -1,8 +1,3 @@
-
-
-
-export function Button({onClick, ...rest}) {
-    return (
-        <div onClick={onClick} {...rest} />
-    )
+export function Button({ onClick, ...rest }) {
+  return <div onClick={onClick} {...rest} />;
 }
