@@ -1,50 +1,70 @@
 .mainWrapper {
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 100%;
   min-height: 100vh;
   background-color: #f9f8f6;
-  padding: 5rem 3rem;
+  padding: 4rem 1rem;
 }
 
 .profileCard {
   background-color: #efe9e3;
-  border-radius: 0.75rem;
-  padding: 2rem;
+  border-radius: 1.5rem;
+  padding: clamp(1.5rem, 5vw, 3rem);
   margin-top: 2rem;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 68, 82, 0.1);
 }
 
 .title {
   color: #000085;
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 2rem;
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  font-weight: 900;
+  margin-bottom: 2.5rem;
   text-align: center;
+  line-height: 1.4;
 }
 
 .formGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
 }
 
+/* Base Input Container */
 .inputBoxContainer {
   position: relative;
-  border: 1px solid #004452;
-  border-radius: 0.75rem;
-  padding: 0.75rem;
+  border: 2px solid rgba(0, 68, 82, 0.3);
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
   background-color: #f9f8f6;
+  transition: all 0.3s ease;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  cursor: text;
+}
+
+.inputBoxContainer:focus-within {
+  border-color: #000085;
+  box-shadow: 0 0 0 4px rgba(0, 0, 133, 0.05);
 }
 
 .inputLabel {
   position: absolute;
-  top: -0.8rem;
+  top: -0.7rem;
   left: 1rem;
   background-color: #efe9e3;
-  padding: 0 0.5rem;
+  padding: 0 0.6rem;
   color: #000085;
-  font-weight: bold;
-  font-size: 0.9rem;
+  font-weight: 800;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: text;
 }
 
 .inputField {
@@ -52,28 +72,119 @@
   border: none;
   background: transparent;
   font-size: 1rem;
-  padding-top: 0.5rem;
+  font-weight: 500;
   outline: none;
+  color: #004452;
+  cursor: text;
+}
+
+/* Tùy chỉnh riêng cho Date Picker */
+.inputField[type="date"] {
+  font-family: inherit;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Custom Dropdown Styles */
+.customSelectWrapper {
+  position: relative;
+  width: 100%;
   cursor: pointer;
+}
+
+.selectTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  color: #004452;
+}
+
+.dropdownList {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  background: #f9f8f6;
+  border: 2px solid #000085;
+  border-radius: 1rem;
+  z-index: 100;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.optionItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  transition: all 0.2s ease;
+  color: #004452;
+  font-weight: 600;
+}
+
+.optionItem:hover {
+  background-color: #efe9e3;
+  color: #000085;
 }
 
 .saveBtn {
-  margin-top: 2rem;
+  margin-top: 3rem;
   width: 100%;
-  padding: 1rem;
+  padding: 1.25rem;
   border: none;
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   background-color: #004452;
   color: white;
-  font-size: 1rem;
-  font-weight: bold;
+  font-size: 1.1rem;
+  font-weight: 800;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
 
-.welcomeText {
-  text-align: center;
-  color: #004452;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  font-weight: 500;
+.saveBtn:hover {
+  background-color: #000085;
+}
+
+.profileCard {
+  position: relative; /* Quan trọng: làm gốc tọa độ cho nút Back */
+  background-color: #efe9e3;
+  border-radius: 1.5rem;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 68, 82, 0.1);
+}
+
+/* Định vị nút quay lại */
+.backLink {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  text-decoration: none;
+  color: #000085; /* Màu xanh đậm đồng bộ với Title */
+  z-index: 10;
+}
+
+.backBtnContent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 800;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.backLink:hover {
+  color: #004452; /* Đổi màu nhẹ khi hover */
+}
+
+/* Điều chỉnh tiêu đề để tránh bị đè nếu trên màn hình rất nhỏ */
+@media screen and (max-width: 480px) {
+  .title {
+    margin-top: 2rem;
+  }
 }
