@@ -93,7 +93,6 @@ const mockHeroData = [
       },
     ],
   },
-  // Các card khác (Traffic, Social...) sẽ được thêm vào đây sau
 ];
 
 export function HeroBanner() {
