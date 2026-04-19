@@ -1,23 +1,20 @@
-import { useState, useEffect } from "react";
+// components/HeroBanner/HeroBanner.jsx
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Droplets,
-  Wind,
-  CloudRain,
-  Sun,
-  Cloud,
-  MapPin,
-  Calendar,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Sun, Cloud, CloudRain } from "lucide-react";
+import { SecurityModule} from "./modules/SecurityModule"
 import styles from "./HeroBanner.module.css";
+// Import các modules
+import { WeatherModule } from "./modules/WeatherModule";
+import { TrafficModule } from "./modules/TrafficModule";
 
 const mockHeroData = [
   {
+    id: "weather_01",
     type: "weather",
-    topic: "Thời tiết",
-    backgroundImg: "https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg",
+    backgroundImg:
+      "https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg",
+    // ... (Giữ nguyên các data thời tiết của bạn)
     location: "Núi Bà Đen, Tây Ninh",
     currentTemp: 30,
     condition: "Trời nắng đẹp",
@@ -29,29 +26,75 @@ const mockHeroData = [
       { time: "09:00", temp: "28°", icon: Sun },
       { time: "10:00", temp: "29°", icon: Sun },
       { time: "11:00", temp: "30°", icon: Sun, active: true },
-      { time: "12:00", temp: "31°", icon: Cloud },
-      { time: "13:00", temp: "32°", icon: Cloud },
-      { time: "14:00", temp: "32°", icon: CloudRain },
     ],
     daily: [
-      { day: "Thứ 6, 21/04", desc: "Nắng gắt", low: "26°", high: "34°", icon: Sun },
-      { day: "Thứ 7, 22/04", desc: "Nhiều mây", low: "25°", high: "32°", icon: Cloud },
-      { day: "Chủ nhật, 23/04", desc: "Mưa rào", low: "24°", high: "30°", icon: CloudRain },
-    ]
+      {
+        day: "Thứ 6, 21/04",
+        desc: "Nắng gắt",
+        low: "26°",
+        high: "34°",
+        icon: Sun,
+      },
+    ],
   },
-  // Các card khác (Traffic, Social...) sẽ được thêm vào đây sau
+  {
+    id: "traffic_01",
+    type: "traffic",
+    backgroundImg:
+      "https://nld.mediacdn.vn/291774122806476800/2025/2/3/img17385495066481738549519497-1738549566769692420503.jpg",
+    location: "Trung tâm Thành phố",
+    condition: "Giao thông ổn định",
+    trafficLevel: "Bình thường",
+    date: "21 Tháng 4, 2026",
+    time: "11:00",
+  },
+  {
+    id: "security_01",
+    type: "security",
+    backgroundImg:
+      "https://images.pexels.com/photos/92866/pexels-photo-92866.jpeg", // Ảnh xe cảnh sát hoặc khu phố an toàn
+    location: "Khu vực Bến Thành",
+    condition: "An Toàn",
+    safetyLevel: "Cao",
+    securityIndex: 85,
+    warnings: "Không có",
+    date: "21 Tháng 4, 2026",
+    time: "11:00",
+    emergencyContacts: [
+      {
+        name: "Công an Phường",
+        type: "Cảnh sát",
+        phone: "113",
+        distance: "0.5 km",
+      },
+      { name: "BV Đa khoa", type: "Y tế", phone: "115", distance: "1.2 km" },
+    ],
+  },
 ];
 
 export function HeroBanner() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const data = mockHeroData[currentIndex];
 
-  const handleNext = () => setCurrentIndex((prev) => (prev + 1) % mockHeroData.length);
-  const handlePrev = () => setCurrentIndex((prev) => (prev - 1 + mockHeroData.length) % mockHeroData.length);
+  const handleNext = () =>
+    setCurrentIndex((prev) => (prev + 1) % mockHeroData.length);
+  const handlePrev = () =>
+    setCurrentIndex(
+      (prev) => (prev - 1 + mockHeroData.length) % mockHeroData.length,
+    );
+
+  // Hàm render Module động dựa vào trường 'type'
+  const renderActiveModule = () => {
+    switch (data.type) {
+      case "weather": return <WeatherModule key={data.id} data={data} />;
+      case "traffic": return <TrafficModule key={data.id} data={data} />;
+      case "security": return <SecurityModule key={data.id} data={data} />;
+      default: return <WeatherModule key={data.id} data={data} />;
+    }
+  };
 
   return (
     <div className={styles.heroContainer}>
-      {/* Background Layer */}
       <AnimatePresence mode="wait">
         <motion.img
           key={data.backgroundImg}
@@ -65,86 +108,20 @@ export function HeroBanner() {
       </AnimatePresence>
 
       <div className={styles.overlay}>
-        {/* Top Header: Time & Location */}
-        <div className={styles.topInfo}>
-            <div className={styles.dateTime}>
-                <span>{data.date}</span>
-                <span className={styles.timeDivider}>|</span>
-                <span>{data.time}</span>
-            </div>
-        </div>
+        {/* NƠI RENDER CÁC MODULE */}
+        <AnimatePresence mode="wait">{renderActiveModule()}</AnimatePresence>
 
-        {/* Middle: Main Status Text */}
-        <div className={styles.mainContent}>
-          <motion.h1 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className={styles.weatherStatus}
-          >
-            {data.condition}
-          </motion.h1>
-        </div>
-
-        {/* Right Sidebar: Glass Card */}
-        <aside className={styles.rightSidebar}>
-          <div className={styles.currentWeatherCard}>
-            <div className={styles.locationHeader}>
-              <MapPin size={18} />
-              <span>{data.location}</span>
-            </div>
-            
-            <div className={styles.mainTempDisplay}>
-              <span className={styles.tempNumber}>{data.currentTemp}°C</span>
-            </div>
-
-            <div className={styles.subWeatherStats}>
-              <div className={styles.statItem}>
-                <Wind size={16} /> <span>{data.wind}</span>
-              </div>
-              <div className={styles.statItem}>
-                <Droplets size={16} /> <span>Độ ẩm: {data.humidity}</span>
-              </div>
-            </div>
-
-            <div className={styles.forecastSection}>
-              <h3 className={styles.sectionTitle}>Dự báo những ngày tới</h3>
-              <div className={styles.dailyList}>
-                {data.daily.map((item, idx) => (
-                  <div key={idx} className={styles.dailyItem}>
-                    <div className={styles.dayInfo}>
-                        <item.icon size={20} />
-                        <div className={styles.dayText}>
-                            <p>{item.day}</p>
-                            <span>{item.desc}</span>
-                        </div>
-                    </div>
-                    <div className={styles.dayTemps}>
-                      <span className={styles.lowTemp}>{item.low}</span>
-                      <span className={styles.highTemp}>{item.high}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </aside>
-
-        {/* Bottom Bar: Hourly Forecast */}
-        <div className={styles.bottomForecastBar}>
-          {data.hourly.map((item, idx) => (
-            <div key={idx} className={`${styles.hourItem} ${item.active ? styles.activeHour : ''}`}>
-              <span className={styles.hourTime}>{item.time}</span>
-              <item.icon size={24} className={styles.hourIcon} />
-              <span className={styles.hourTemp}>{item.temp}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Navigation Buttons */}
-        <button onClick={handlePrev} className={`${styles.navBtn} ${styles.prev}`}>
+        {/* Các nút bấm giữ nguyên ở ngoài để không bị render lại */}
+        <button
+          onClick={handlePrev}
+          className={`${styles.navBtn} ${styles.prev}`}
+        >
           <ChevronLeft color="white" />
         </button>
-        <button onClick={handleNext} className={`${styles.navBtn} ${styles.next}`}>
+        <button
+          onClick={handleNext}
+          className={`${styles.navBtn} ${styles.next}`}
+        >
           <ChevronRight color="white" />
         </button>
       </div>
