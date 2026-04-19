@@ -17,18 +17,29 @@
   z-index: 1;
 }
 
+/* HeroBanner.module.css */
+
 .overlay {
   position: relative;
   z-index: 2;
   width: 100%;
   height: 100%;
   background: linear-gradient(to right, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.6) 100%);
+  /* Xóa display: flex và padding ở đây để chuyển cho wrapper */
+}
+
+.moduleWrapper {
+  position: absolute;
+  inset: 0; /* Chiếm toàn bộ không gian của overlay */
   display: flex;
   flex-direction: column;
   padding: 2rem;
   box-sizing: border-box;
+  width: 100%;
+  height: 100%;
 }
 
+/* ... Giữ nguyên toàn bộ CSS còn lại của bạn ... */
 /* Nội dung chính giữa */
 .mainContent {
   flex: 1;
