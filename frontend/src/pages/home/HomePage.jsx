@@ -267,59 +267,14 @@ function InputBox({ label, placeholder, type, className, ...props }) {
   };
 
   return (
-    <div className={styles.inputWrapper}>
-      <motion.div
-        className={`${className} ${styles.inputBoxContainer} ${styles.relativeZ20}`}
-        variants={inputFocusAnimation}
-        initial="exit"
-        animate={isFocus ? "focus" : "exit"}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      >
-        <label className={styles.inputLabel}>{label}</label>
-        <input
-          placeholder={placeholder}
-          type={type}
-          value={inputValue}
-          className={`${styles.inputField} ${styles.noScrollbar}`}
-          onChange={handleInputChange}
-          onFocus={() => setIsFocus(true)}
-          onBlur={() => {
-            setTimeout(() => setIsFocus(false), 200);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") e.target.blur();
-          }}
-        />
-      </motion.div>
-
-      <AnimatePresence>
-        {isFocus && suggestions.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className={styles.suggestionsPopup}
-          >
-            <div
-              className={`${styles.suggestionsScroll} ${styles.noScrollbar}`}
-            >
-              {suggestions.map((loc, index) => (
-                <div
-                  key={index}
-                  className={styles.suggestionItem}
-                  onClick={() => handleSelect(loc.name)}
-                >
-                  <div className={styles.suggestionHeader}>
-                    <span className={styles.locationName}>{loc.name}</span>
-                    <span className={styles.statusBadge}>{loc.status}</span>
-                  </div>
-                  <div className={styles.addressText}>📍 {loc.address}</div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className={styles.inputBoxContainer}>
+      <label className={styles.inputLabel}>{label}</label>
+      <input
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        className={styles.inputField}
+        placeholder="Type..."
+      />
     </div>
   );
 }

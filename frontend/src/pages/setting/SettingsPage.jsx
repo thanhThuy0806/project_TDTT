@@ -1,82 +1,46 @@
-import { motion } from "framer-motion";
-import { NavBar } from "../home/components/NavBar";
-import styles from "./SettingsPage.module.css";
+import React from 'react';
+import { motion } from 'framer-motion';
+import styles from './SettingsModal.module.css';
 
-function SettingsPage() {
+export function SettingsModal({ onClose }) {
   return (
-    <div className={styles.mainWrapper}>
-      <NavBar />
+    <div className={styles.overlay} onClick={onClose}>
+      <motion.div 
+        className={styles.modal} 
+        onClick={(e) => e.stopPropagation()} // Ngăn đóng khi click vào bên trong
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+      >
+        <h2 className={styles.title}>Settings</h2>
 
-      <div className={styles.settingCard}>
-        <h1 className={styles.title}>Settings</h1>
-
-        <div className={styles.formGrid}>
-          <SelectBox
-            label="Font Size"
-            options={["Small", "Medium", "Large"]}
-          />
-
-          <SelectBox
-            label="Font Style"
-            options={["Arial", "Roboto", "Times New Roman"]}
-          />
-
-          <SelectBox
-            label="Theme Mode"
-            options={["Light", "Dark"]}
-          />
-
-          <SelectBox
-            label="Color Theme"
-            options={[
-              "Blue",
-              "Green",
-              "Beige",
-              "High Contrast",
-            ]}
-          />
-
-          <SelectBox
-            label="Language"
-            options={["English", "Vietnamese"]}
-          />
-
-          <SelectBox
-            label="Accessibility Support"
-            options={[
-              "Normal",
-              "Large Text",
-              "Screen Reader Friendly",
-              "High Contrast",
-            ]}
-          />
+        <div className={styles.section}>
+          <label className={styles.label}>Font Size</label>
+          <div className={styles.buttonGroup}>
+            <button className={styles.fontBtn}>a</button>
+            <button className={`${styles.fontBtn} ${styles.active}`}>A</button>
+            <button className={styles.fontBtn}></button>
+          </div>
         </div>
 
-        <motion.button
-          className={styles.saveBtn}
-          whileTap={{ scale: 0.95 }}
-        >
-          Save Settings
-        </motion.button>
-      </div>
+        <div className={styles.section}>
+          <label className={styles.label}>Theme Mode</label>
+          <div className={styles.toggleContainer}>
+            <input type="checkbox" id="theme-toggle" className={styles.toggleInput} />
+            <label htmlFor="theme-toggle" className={styles.toggleSlider}></label>
+          </div>
+        </div>
+
+        <div className={styles.section}>
+          <label className={styles.label}>Language</label>
+          <select className={styles.select}>
+            <option>English</option>
+            <option>Tiếng Việt</option>
+          </select>
+        </div>
+
+        <button className={styles.applyBtn} onClick={onClose}>Apply</button>
+      </motion.div>
     </div>
   );
 }
-
-function SelectBox({ label, options }) {
-  return (
-    <div className={styles.inputBoxContainer}>
-      <label className={styles.inputLabel}>
-        {label}
-      </label>
-
-      <select className={styles.inputField}>
-        {options.map((option, index) => (
-          <option key={index}>{option}</option>
-        ))}
-      </select>
-    </div>
-  );
-}
-
-export default SettingsPage;
