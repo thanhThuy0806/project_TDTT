@@ -7,12 +7,10 @@ import { NewsCollection } from "./components/NewsCollection";
 import { Image, Mic, Settings, Siren } from "lucide-react";
 import { useState } from "react";
 import { ResponseDisplay } from "./components/ResponeDisplay";
-import {
-  AssistantButton,
-  AssitantFloatInput,
-} from "./components/voice_assist/VoiceAssistant";
+import { AssitantFloatInput } from "./components/voice_assist/VoiceAssistant";
 
 import styles from "./HomePage.module.css";
+import { SecurityAlertHub } from "./components/SecurityAlertHub/SecurityAlertHub";
 const services = [
   { name: "SOS", path: "/sos", icon: Siren },
   { name: "Voice", path: "#", icon: Mic, isAction: true },
@@ -81,7 +79,14 @@ function HomePage() {
   };
 
   return (
-    <div className={styles.screenContainer}>
+    <motion.div
+      className={styles.screenContainer}
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={{ duration: 0.3 }}
+    >
       <div className={styles.mainWrapper}>
         <NavBar />
         <HeroBanner />
@@ -152,20 +157,7 @@ function HomePage() {
 
         <br />
 
-        <AnimatePresence>
-          {isVoiceOpen && (
-            <AssitantFloatInput onClose={() => setIsVoiceOpen(false)} />
-          )}
-        </AnimatePresence>
-
-        <motion.div
-          className={styles.aiFloatingBtn}
-          onClick={handleAIClick}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <p>AI</p>
-        </motion.div>
+        <SecurityAlertHub />
 
         {showResponse && (
           <ResponseDisplay
@@ -174,7 +166,7 @@ function HomePage() {
           />
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -197,8 +189,8 @@ function InputBox({ label, placeholder, type, className, ...props }) {
             value
               .toLowerCase()
               .normalize("NFD")
-              .replace(/[\u0300-\u036f]/g, "")
-          )
+              .replace(/[\u0300-\u036f]/g, ""),
+          ),
       );
       setSuggestions(filtered);
     } else {
@@ -285,3 +277,10 @@ const inputFocusAnimation = {
 };
 
 export default HomePage;
+
+// Hiệu ứng khi vào hoặc ra khỏi trang Homepage
+const pageVariants = {
+  initial: { opacity: 0, x: -20 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: 20 },
+};
