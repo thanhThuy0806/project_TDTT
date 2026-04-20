@@ -25,3 +25,6 @@ app.listen(PORT, () => {
 
 const profileRoutes = require('./routes/profile');
 app.use('/api/user/profile', profileRoutes);
+
+const firestoreRoutes = require('./routes/firestore');
+app.use('/api/firestore', firestoreRoutes);

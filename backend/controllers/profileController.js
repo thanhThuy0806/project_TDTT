@@ -1,5 +1,4 @@
-const admin = require('../config/firebase');
-const db = admin.firestore();
+const { admin, db } = require('../config/firebase'); 
 
 // Lưu hoặc cập nhật hồ sơ người dùng
 exports.saveProfile = async (req, res) => {
