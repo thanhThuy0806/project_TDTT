@@ -1,203 +1,134 @@
-import { useState, useEffect } from "react";
+// components/HeroBanner/HeroBanner.jsx
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ChevronLeft,
-  ChevronRight,
-  CrownIcon,
-  DropletIcon,
-  ThermometerIcon,
-  TreePalm,
-  TreePalmIcon,
-  WindIcon,
-} from "lucide-react"; // Import icon nút
-import { RecommendBox } from "./RecommendBox";
+import { ChevronLeft, ChevronRight, Sun, Cloud, CloudRain } from "lucide-react";
+import { SecurityModule } from "./modules/SecurityModule";
 import styles from "./HeroBanner.module.css";
+// Import các modules
+import { WeatherModule } from "./modules/WeatherModule";
+import { TrafficModule } from "./modules/TrafficModule";
 
-// ... Dữ liệu Mock `mockHeroData` đặt tại đây hoặc import từ file khác
-// Dữ liệu ví dụ để test tính năng chuyển đổi (chạy trong file JSX)
 const mockHeroData = [
   {
-    topic: "weather",
-    themeColor: "#ea580c", // Cam - Thời tiết
+    id: "weather_01",
+    type: "weather",
     backgroundImg:
       "https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg",
-    place: { provice: "Tây Ninh", country: "Việt Nam", detail: "Núi Bà Đen" },
-    date: "2026-03-28",
-    short_describe: "A sunny day",
-    detail: [
+    // ... (Giữ nguyên các data thời tiết của bạn)
+    location: "Núi Bà Đen, Tây Ninh",
+    currentTemp: 30,
+    condition: "Trời nắng đẹp",
+    wind: "Đông Nam, 12 km/h",
+    humidity: "65%",
+    date: "21 Tháng 4, 2026",
+    time: "11:00",
+    hourly: [
+      { time: "09:00", temp: "28°", icon: Sun },
+      { time: "10:00", temp: "29°", icon: Sun },
+      { time: "11:00", temp: "30°", icon: Sun, active: true },
+    ],
+    daily: [
       {
-        name: "tempature",
-        data: 30,
-        icon: ThermometerIcon,
-      },
-      {
-        name: "uv",
-        data: 0.5,
-        icon: ThermometerIcon,
-      },
-      {
-        name: "humid",
-        data: 0.65,
-        icon: DropletIcon,
-      },
-      {
-        name: "windSpeed",
-        data: 5,
-        icon: WindIcon,
+        day: "Thứ 6, 21/04",
+        desc: "Nắng gắt",
+        low: "26°",
+        high: "34°",
+        icon: Sun,
       },
     ],
   },
   {
-    topic: "social",
-    themeColor: "#059669", // Xanh lá - Hoạt động xã hội
+    id: "traffic_01",
+    type: "traffic",
     backgroundImg:
-      "https://images.pexels.com/photos/3184424/pexels-photo-3184424.jpeg",
-    place: {
-      provice: "TP.HCM",
-      country: "Việt Nam",
-      detail: "Công viên Gia Định",
-    },
-    date: "2026-03-29",
-    short_describe: "Ngày hội Trồng cây 2026",
-    detail: [
-      {
-        name: "Team",
-        data: "10",
-        icon: TreePalmIcon,
-      },
-    ],
+      "https://nld.mediacdn.vn/291774122806476800/2025/2/3/img17385495066481738549519497-1738549566769692420503.jpg",
+    location: "Trung tâm Thành phố",
+    condition: "Giao thông ổn định",
+    trafficLevel: "Bình thường",
+    date: "21 Tháng 4, 2026",
+    time: "11:00",
   },
   {
-    topic: "politics",
-    themeColor: "#4f46e5", // Xanh dương - Vấn đề chính trị
+    id: "security_01",
+    type: "security",
     backgroundImg:
-      "https://images.pexels.com/photos/159751/desk-office-pen-ruler-159751.jpeg",
-    place: {
-      provice: "Hà Nội",
-      country: "Việt Nam",
-      detail: "Trung tâm hội nghị Quốc gia",
-    },
-    date: "2026-03-30",
-    short_describe: "Hội nghị Du lịch Quốc tế",
-
-    detail: [
+      "https://images.pexels.com/photos/92866/pexels-photo-92866.jpeg", // Ảnh xe cảnh sát hoặc khu phố an toàn
+    location: "Khu vực Bến Thành",
+    condition: "An Toàn",
+    safetyLevel: "Cao",
+    securityIndex: 85,
+    warnings: "Không có",
+    date: "21 Tháng 4, 2026",
+    time: "11:00",
+    emergencyContacts: [
       {
-        name: "Groverment",
-        data: 1,
-        icon: CrownIcon,
+        name: "Công an Phường",
+        type: "Cảnh sát",
+        phone: "113",
+        distance: "0.5 km",
       },
+      { name: "BV Đa khoa", type: "Y tế", phone: "115", distance: "1.2 km" },
     ],
   },
 ];
 
 export function HeroBanner() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(0); // -1: Trái, 1: Phải
-  const [isLoading, setIsLoading] = useState(true);
+  const data = mockHeroData[currentIndex];
 
-  // Giả lập load API khi chuyển chủ đề
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [currentIndex]);
-
-  const handleNext = () => {
-    setDirection(1);
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % mockHeroData.length);
-  };
-
-  const handlePrev = () => {
-    setDirection(-1);
+  const handleNext = () =>
+    setCurrentIndex((prev) => (prev + 1) % mockHeroData.length);
+  const handlePrev = () =>
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + mockHeroData.length) % mockHeroData.length
+      (prev) => (prev - 1 + mockHeroData.length) % mockHeroData.length
     );
-  };
 
-  const currentData = mockHeroData[currentIndex];
-
-  // Định nghĩa Variants cho hiệu ứng trượt background
-  const slideVariants = {
-    enter: (direction) => ({
-      x: direction > 0 ? "100%" : "-100%",
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction) => ({
-      x: direction > 0 ? "-100%" : "100%",
-      opacity: 0,
-    }),
-  };
-
-  // Định nghĩa variant cho nút bấm
-  const buttonVariants = {
-    btnHidden: {
-      opacity: 0,
-      scale: 0.8,
-      pointerEvents: "none",
-      transition: { duration: 0.2, ease: "easeInOut" },
-    },
-    btnVisible: {
-      opacity: 1,
-      scale: 1,
-      pointerEvents: "auto",
-      transition: { duration: 0.3, ease: "easeOut" },
-    },
+  // Hàm render Module động dựa vào trường 'type'
+  const renderActiveModule = () => {
+    switch (data.type) {
+      case "weather":
+        return <WeatherModule key={data.id} data={data} />;
+      case "traffic":
+        return <TrafficModule key={data.id} data={data} />;
+      case "security":
+        return <SecurityModule key={data.id} data={data} />;
+      default:
+        return <WeatherModule key={data.id} data={data} />;
+    }
   };
 
   return (
-    <motion.div
-      className={styles.heroBanner}
-      initial="btnHidden"
-      whileHover="btnVisible"
-      animate="btnHidden"
-    >
-      <div className={styles.backgroundSlideContainer}>
-        <AnimatePresence initial={false} custom={direction}>
-          <motion.img
-            key={currentIndex}
-            src={currentData.backgroundImg}
-            alt={currentData.topic}
-            custom={direction}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
-            className={styles.heroBackgroundImage}
-          />
-        </AnimatePresence>
+    <div className={styles.heroContainer}>
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={data.backgroundImg}
+          src={data.backgroundImg}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8 }}
+          className={styles.backgroundImage}
+        />
+      </AnimatePresence>
+
+      <div className={styles.overlay}>
+        {/* NƠI RENDER CÁC MODULE */}
+        <AnimatePresence mode="wait">{renderActiveModule()}</AnimatePresence>
+
+        {/* Các nút bấm giữ nguyên ở ngoài để không bị render lại */}
+        <button
+          onClick={handlePrev}
+          className={`${styles.navBtn} ${styles.prev}`}
+        >
+          <ChevronLeft color="white" />
+        </button>
+        <button
+          onClick={handleNext}
+          className={`${styles.navBtn} ${styles.next}`}
+        >
+          <ChevronRight color="white" />
+        </button>
       </div>
-
-      {/* Nút bấm điều hướng */}
-      <motion.button
-        variants={buttonVariants}
-        whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.3)" }}
-        whileTap={{ scale: 0.9 }}
-        transition={{ duration: 0.3 }}
-        onClick={handlePrev}
-        className={`${styles.navButton} ${styles.navButtonLeft}`}
-      >
-        <ChevronLeft size={24} color="white" />
-      </motion.button>
-
-      <motion.button
-        variants={buttonVariants}
-        whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.3)" }}
-        whileTap={{ scale: 0.9 }}
-        transition={{ duration: 0.3 }}
-        onClick={handleNext}
-        className={`${styles.navButton} ${styles.navButtonRight}`}
-      >
-        <ChevronRight size={24} color="white" />
-      </motion.button>
-
-      <RecommendBox data={currentData} isLoading={isLoading} />
-    </motion.div>
+    </div>
   );
 }

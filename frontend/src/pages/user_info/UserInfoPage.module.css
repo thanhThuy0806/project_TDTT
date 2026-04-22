@@ -1,20 +1,24 @@
 .mainWrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
   min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: #f9f8f6;
-  padding: 4rem 1rem;
+  padding: 1rem;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .profileCard {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  max-height: 95vh;
+  overflow-y: auto;
   background-color: #efe9e3;
   border-radius: 1.5rem;
   padding: clamp(1.5rem, 5vw, 3rem);
-  margin-top: 2rem;
-  width: 100%;
-  max-width: 900px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0, 68, 82, 0.1);
 }
@@ -23,40 +27,49 @@
   color: #000085;
   font-size: clamp(1.2rem, 3vw, 1.8rem);
   font-weight: 900;
-  margin-bottom: 2.5rem;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
   text-align: center;
-  line-height: 1.4;
 }
 
 .formGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 30px;
+  margin-top: 30px;
+  gap: 2.5rem;
 }
 
-/* Base Input Container */
+.fullWidth {
+  grid-column: span 2;
+}
+
 .inputBoxContainer {
   position: relative;
-  border: 2px solid rgba(0, 68, 82, 0.3);
+  border: 1px solid #93c5fd;
   border-radius: 1rem;
   padding: 0.5rem 1rem;
   background-color: #f9f8f6;
-  transition: all 0.3s ease;
-  min-height: 60px;
+  min-height: 50px;
   display: flex;
   align-items: center;
-  cursor: text;
+  transform: scale(1);
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
 }
 
 .inputBoxContainer:focus-within {
   border-color: #000085;
-  box-shadow: 0 0 0 4px rgba(0, 0, 133, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 133, 0.18);
+  transform: scale(0.97);
 }
 
 .inputLabel {
   position: absolute;
-  top: -0.7rem;
-  left: 1rem;
+  top: -1.25rem;
+  left: 0rem;
   background-color: #efe9e3;
   padding: 0 0.6rem;
   color: #000085;
@@ -70,22 +83,28 @@
 .inputField {
   width: 100%;
   border: none;
+  align-items: center;
+  outline: none !important;
+  box-shadow: none !important;
   background: transparent;
   font-size: 1rem;
   font-weight: 500;
-  outline: none;
   color: #004452;
-  cursor: text;
 }
 
-/* Tùy chỉnh riêng cho Date Picker */
+.inputField:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .inputField[type="date"] {
   font-family: inherit;
   font-weight: 600;
   text-transform: uppercase;
+  align-items: center;
+  z-index: 100;
 }
 
-/* Custom Dropdown Styles */
 .customSelectWrapper {
   position: relative;
   width: 100%;
@@ -109,32 +128,50 @@
   border: 2px solid #000085;
   border-radius: 1rem;
   z-index: 100;
-  overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  max-height: 165px;
+  overflow-y: auto;
+}
+
+.dropdownList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dropdownList::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 10px 0;
+}
+
+.dropdownList::-webkit-scrollbar-thumb {
+  background-color: #004452;
+  border-radius: 10px;
 }
 
 .optionItem {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
+  padding: 0.75rem;
   transition: all 0.2s ease;
   color: #004452;
   font-weight: 600;
 }
 
 .optionItem:hover {
-  background-color: #efe9e3;
+  background-color: #93c5fd;
   color: #000085;
 }
 
 .saveBtn {
-  margin-top: 3rem;
-  width: 100%;
-  padding: 1.25rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2rem;
+  width: 45%;
+  padding: 1rem;
   border: none;
   border-radius: 1rem;
-  background-color: #004452;
+  background: linear-gradient(135deg, #004452, #000085);
   color: white;
   font-size: 1.1rem;
   font-weight: 800;
@@ -143,19 +180,7 @@
 }
 
 .saveBtn:hover {
-  background-color: #000085;
-}
-
-.profileCard {
-  position: relative; /* Quan trọng: làm gốc tọa độ cho nút Back */
-  background-color: #efe9e3;
-  border-radius: 1.5rem;
-  padding: clamp(1.5rem, 5vw, 3rem);
-  margin-top: 2rem;
-  width: 100%;
-  max-width: 900px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 68, 82, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 133, 0.3);
 }
 
 /* Định vị nút quay lại */
@@ -164,7 +189,7 @@
   top: 1.5rem;
   left: 1.5rem;
   text-decoration: none;
-  color: #000085; /* Màu xanh đậm đồng bộ với Title */
+  color: #000085;
   z-index: 10;
 }
 
