@@ -6,16 +6,17 @@ import { HeroBanner } from "./components/HeroBanner/HeroBanner";
 import { TravelMap } from "./components/MapBox/MapBox";
 import { NewsCollection } from "./components/NewsCollection/NewsCollection";
 import { ResponseDisplay } from "./components/ResponseDisplay/ResponseDisplay";
-import { AssitantFloatInput } from "./components/VoiceAssist/VoiceAssistant";
-import { Image, Mic, Settings, Siren } from "lucide-react";
+import { AssistantFloatInput } from "./components/VoiceAssist/VoiceAssistant";
+import { Image, Mic, Settings, Siren, User } from "lucide-react";
 import styles from "./HomePage.module.css";
-
+import { SecurityModule } from "./components/HeroBanner/modules/SecurityModule";
+import { SecurityAlertHub } from "./components/SecurityAlertHub/SecurityAlertHub";
 
 const services = [
   { name: "SOS", path: "/sos", icon: Siren },
   { name: "Voice", path: "#", icon: Mic, isAction: true },
   { name: "Picture", path: "/picture", icon: Image },
-  { name: "Setting", path: "/setting", icon: Settings },
+  { name: "Infor", path: "/infor", icon: User },
 ];
 
 const MOCK_LOCATIONS = [
@@ -56,17 +57,24 @@ const MOCK_LOCATIONS = [
   },
 ];
 
-const mockResponse = `
-# Khám phá Tây Ninh: Đỉnh Núi Bà Đen
+// Dữ liệu thành viên từ AboutPage cũ
+const members = [
+  "Member 01",
+  "Member 02",
+  "Member 03",
+  "Member 04",
+  "Member 05",
+  "Member 06",
+  "Member 07",
+  "Member 08",
+];
 
-Chào mừng bạn đến với nóc nhà Nam Bộ! Dưới đây là lịch trình gợi ý:
-
+const mockResponse = `# Khám phá Tây Ninh: Đỉnh Núi Bà Đen
+Chào mừng bạn đến với nóc nhà Nam Bộ! Dưới đây là lịch trình gợi ý: 
 * **Sáng sớm:** Di chuyển bằng cáp treo lên đỉnh núi để săn mây.
 * **Trưa:** Thưởng thức đặc sản *Bánh tráng phơi sương* Trảng Bàng.
 * **Lưu ý:** Nhiệt độ trên đỉnh thường thấp hơn 3-5 độ so với chân núi.
-
-> Chúc bạn có một chuyến đi an toàn và đầy trải nghiệm!
-`;
+> Chúc bạn có một chuyến đi an toàn và đầy trải nghiệm!`;
 
 function HomePage() {
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
@@ -89,15 +97,13 @@ function HomePage() {
     >
       <div className={styles.mainWrapper}>
         <NavBar />
-        
+
         {/* ---- PHẦN BỐ CỤC MỚI (2/3 VÀ 1/3) ---- */}
         <div className={styles.topSection}>
-          {/* Cột trái 2/3 chứa HeroBanner */}
           <div className={styles.heroWrapper}>
             <HeroBanner />
           </div>
 
-          {/* Cột phải 1/3 chứa Services Sidebar */}
           <div className={styles.servicesSidebar}>
             {services.map((service) => (
               <motion.div
@@ -110,50 +116,20 @@ function HomePage() {
                   <div className={styles.serviceIconWrapperVertical}>
                     <service.icon
                       className={styles.serviceIconLarge}
-                      strokeWidth={2} /* Làm viền icon dày hơn chút cho dễ nhìn */
+                      strokeWidth={2}
                     />
                   </div>
-                  <span className={styles.serviceNameLarge}>{service.name}</span>
+                  <span className={styles.serviceNameLarge}>
+                    {service.name}
+                  </span>
                 </NavLink>
               </motion.div>
             ))}
           </div>
         </div>
-        {/* -------------------------------------- */}
 
         <br />
-
-        {/* Khối SearchBox giữ nguyên */}
-        <div className={styles.searchSection}>
-          <div className={styles.inputGrid}>
-            <InputBox
-              label={"From"}
-              placeholder={"Ho Chi Minh City"}
-              className={styles.inputBoxContainer}
-            />
-            <InputBox
-              label={"To"}
-              placeholder={"Ho Chi Minh City"}
-              className={styles.inputBoxContainer}
-            />
-          </div>
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <NavLink
-              to="/search-results"
-              className={({ isActive }) =>
-                isActive
-                  ? `${styles.searchBtn} ${styles.activeSearch}`
-                  : styles.searchBtn
-              }
-            >
-              Search
-            </NavLink>
-          </motion.div>
-        </div>
-
-        <br />
-
-        {/* Khối Bản đồ & Tin tức giữ nguyên */}
+        {/* Khối Bản đồ & Tin tức */}
         <div className={`${styles.contentGrid} ${styles.noScrollbar}`}>
           <TravelMap />
           <NewsCollection className={`${styles.noScrollbar}`} />
@@ -161,21 +137,14 @@ function HomePage() {
 
         <br />
 
-        {/* Các Pop-up AI và Floating Button giữ nguyên */}
+        {/* CÁC POPUP NẰM NGOÀI LUỒNG GIAO DIỆN */}
         <AnimatePresence>
           {isVoiceOpen && (
-            <AssitantFloatInput onClose={() => setIsVoiceOpen(false)} />
+            <AssistantFloatInput onClose={() => setIsVoiceOpen(false)} />
           )}
         </AnimatePresence>
 
-        <motion.div
-          className={styles.aiFloatingBtn}
-          onClick={handleAIClick}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <p>AI</p>
-        </motion.div>
+        <SecurityAlertHub />
 
         {showResponse && (
           <ResponseDisplay
@@ -184,6 +153,48 @@ function HomePage() {
           />
         )}
       </div>
+
+      {/* =========================================================
+            PHẦN FOOTER
+        ========================================================= */}
+      <footer className={styles.footerSection}>
+        <div className={styles.footerContainer}>
+          {/* CỘT TRÁI: Thành viên nhóm */}
+          <h2 className={styles.footerTitle}>Team Members</h2>
+          <div className={styles.memberGrid}>
+            {members.map((member, index) => (
+              <motion.div
+                key={index}
+                className={styles.memberCard}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {member}
+              </motion.div>
+            ))}
+          </div>
+
+          <br />
+          {/* Thông tin dự án và liên hệ */}
+
+          <h2 className={styles.footerTitle}>ACCESSIBILITY & SAFETY</h2>
+          <p className={styles.footerDesc}>
+            This project is designed to support accessible and safe travel
+            experiences for everyone, especially elderly people, people with
+            disabilities, and users who need emergency support during their
+            trips.
+          </p>
+          
+          <br />
+          
+          <div className={styles.contactCard}>
+            <h3 className={styles.contactTitle}>Contact Us</h3>
+            <p>📧 Email: team.accessibilitysafety@gmail.com</p>
+            <p>💻 GitHub: project_TDTT</p>
+            <p>📞 Phone: 0123 456 789</p>
+          </div>
+        </div>
+      </footer>
     </motion.div>
   );
 }
