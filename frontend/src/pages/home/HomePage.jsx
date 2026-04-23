@@ -301,14 +301,6 @@ function HomePage() {
         </AnimatePresence>
 
         <SecurityAlertHub />
-          <motion.div
-            className={styles.aiFloatingBtn}
-            onClick={handleAIClick}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <p>AI</p>
-          </motion.div>
 
           {showResponse && (
             <ResponseDisplay
