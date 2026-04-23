@@ -45,7 +45,7 @@
   min-height: 60px;
   display: flex;
   align-items: center;
-  cursor: text;
+  cursor: text
 }
 
 .inputBoxContainer:focus-within {
@@ -146,6 +146,7 @@
   background-color: #000085;
 }
 
+
 .profileCard {
   position: relative; /* Quan trọng: làm gốc tọa độ cho nút Back */
   background-color: #efe9e3;
@@ -184,7 +185,7 @@
 
 /* Điều chỉnh tiêu đề để tránh bị đè nếu trên màn hình rất nhỏ */
 @media screen and (max-width: 480px) {
-  .title {
-    margin-top: 2rem;
-  }
+    .title {
+        margin-top: 2rem;
+    }
 }
