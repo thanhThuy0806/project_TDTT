@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+# voice recognition model
+faster-whisper
+# handle file uploads in FastAPI     
+python-multipart
