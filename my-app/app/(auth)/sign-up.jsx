@@ -1,7 +1,17 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, KeyboardAvoidingView, View } from "react-native";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  View,
+  Platform,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import { authStyles } from "../../assets/styles/auth.styles";
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { COLORS } from "../../constants/colors";
 import { auth } from "../../firebase/firebaseConfig";
@@ -24,25 +34,24 @@ const SignUpScreen = () => {
     setLoading(true);
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
 
       Alert.alert("User created successfully");
-      router.replace("/(auth)/sign-in");
+      router.replace({
+        pathname: "/(auth)/user-info",
+        params: { userId: user.uid },
+      });
     } catch (error) {
-      Alert.alert(
-        "Error: ",
-        error.error?.[0]?.message || "Something went wrong",
-      );
-      console.error(JSON.stringify(error, null, 2));
+      Alert.alert(error.message);
     } finally {
       setLoading(false);
     }
   };
-
-  if (pendingVerification)
-    return (
-      <VerifyEmail email={email} onBack={() => setPendingVerification(false)} />
-    );
 
   return (
     <View style={authStyles.container}>
@@ -121,7 +130,7 @@ const SignUpScreen = () => {
             {/* Sign In Link */}
             <TouchableOpacity
               style={authStyles.linkContainer}
-              onPress={() => router.back()}
+              onPress={() => router.push("/(auth)/sign-in")}
             >
               <Text style={authStyles.linkText}>
                 Already have an account?{" "}

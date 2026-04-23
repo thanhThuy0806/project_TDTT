@@ -7,6 +7,7 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { authStyles } from "../../assets/styles/auth.styles";
 import { Ionicons } from "@expo/vector-icons";
@@ -27,8 +28,6 @@ const SignInScreen = () => {
       Alert.alert("Please enter email and password");
       return;
     }
-
-    if (!isLoaded) return;
 
     setLoading(true);
 
