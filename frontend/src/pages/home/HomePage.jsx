@@ -175,10 +175,9 @@ function HomePage() {
         {/* Khối Bản đồ & Tin tức giữ nguyên */}
         <div className={`${styles.contentGrid} ${styles.noScrollbar}`}>
           {/* Khối Bản đồ & Tin tức giữ nguyên */}
-          <div className={`${styles.contentGrid} ${styles.noScrollbar}`}>
-            <TravelMap />
-            <NewsCollection className={`${styles.noScrollbar}`} />
-          </div>
+
+          <TravelMap />
+          <NewsCollection className={`${styles.noScrollbar}`} />
 
           <br />
 
