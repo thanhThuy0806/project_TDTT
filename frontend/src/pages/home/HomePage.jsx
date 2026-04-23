@@ -142,9 +142,6 @@ function HomePage() {
                   <span className={styles.serviceNameLarge}>
                     {service.name}
                   </span>
-                  <span className={styles.serviceNameLarge}>
-                    {service.name}
-                  </span>
                 </NavLink>
               </motion.div>
             ))}
