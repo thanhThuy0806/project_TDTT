@@ -12,10 +12,10 @@ import { auth } from "../../../firebase/firebase";
 import styles from "./HomePage.module.css";
 
 const services = [
-  { name: "SOS", path: "/sos", icon: Siren },
+  { name: "SOS", icon: Siren, isModal: "sos" },
   { name: "Voice", path: "#", icon: Mic, isAction: true },
   { name: "UserInfo", path: "/profile", icon: UserPen },
-  { name: "Setting", path: "/setting", icon: Settings },
+  { name: "Setting", icon: Settings, isModal: "setting"},
 ];
 
 const MOCK_LOCATIONS = [
@@ -80,13 +80,34 @@ function HomePage() {
       setIsVoiceOpen(true);
       return;
     }
-    if (service.path === "/profile" && !uid) {
-      navigate("/login");
+    if (service.isModal === "sos") {
+      setShowSOS(true);
       return;
     }
-
-    navigate(service.path);
+    if (service.isModal === "setting") {
+      setShowSetting(true);
+      return;
+    }
+    if (service.path === "/profile") {
+      if (!uid) navigate("/login");
+      else navigate("/profile");
+      return;
+    }
+    if (service.path) {
+      navigate(service.path);
+    }
   };
+
+   // SETTINGS
+    const [showSetting, setShowSetting] = useState(false);
+    const [fontSize, setFontSize] = useState("medium");
+    const [darkMode, setDarkMode] = useState(false);
+    const [language, setLanguage] = useState("English");
+  
+    // SOS
+    const [showSOS, setShowSOS] = useState(false);
+    const [sosCountdown, setSosCountdown] = useState(10);
+    const [sosType, setSosType] = useState("accident");
 
   const handleAIClick = () => {
     setShowResponse(true);
@@ -179,6 +200,133 @@ function HomePage() {
         </div>
 
         <br />
+
+        {/* ================= SETTINGS ================= */}
+        <AnimatePresence>
+          {showSetting && (
+            <motion.div
+              className={styles.modalOverlay}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                className={styles.settingsCard}
+                initial={{ scale: 0.85 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.85 }}
+              >
+                <h3 className={styles.settingsTitle}>Settings</h3>
+
+                <div className={styles.settingsSection}>
+                  <p>🔤 Font Size</p>
+                  <div className={styles.btnRow}>
+                    <button onClick={() => setFontSize("small")}>a</button>
+                    <button onClick={() => setFontSize("medium")}>A</button>
+                    <button onClick={() => setFontSize("large")}>A</button>
+                  </div>
+                </div>
+
+                <div className={styles.settingsSection}>
+                  <p>🌗 Theme</p>
+                  <label className={styles.switch}>
+                    <input
+                      type="checkbox"
+                      checked={darkMode}
+                      onChange={() => setDarkMode(!darkMode)}
+                    />
+                    <span className={styles.slider}></span>
+                  </label>
+                </div>
+
+                <div className={styles.settingsSection}>
+                  <p>🌐 Language</p>
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                  >
+                    <option>English</option>
+                    <option>Vietnamese</option>
+                  </select>
+                </div>
+
+                <button
+                  className={styles.applyBtn}
+                  onClick={() => setShowSetting(false)}
+                >
+                  Apply
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ================= SOS ================= */}
+        <AnimatePresence>
+          {showSOS && (
+            <motion.div
+              className={styles.modalOverlay}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                className={styles.sosCardBig}
+                initial={{ scale: 0.85 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.85 }}
+              >
+                <h2 className={styles.sosTitleBig}>🚨 EMERGENCY SOS</h2>
+
+                <p className={styles.sosWarning}>
+                  Bạn sắp gửi tín hiệu khẩn cấp
+                </p>
+
+                <div className={styles.sosSection}>
+                  <p className={styles.sosLabel}>Tình trạng</p>
+
+                  <select
+                    className={styles.sosSelect}
+                    value={sosType}
+                    onChange={(e) => setSosType(e.target.value)}
+                  >
+                    <option value="accident">Tai nạn</option>
+                    <option value="illness">Bệnh / Sức khỏe</option>
+                    <option value="danger">Nguy hiểm</option>
+                    <option value="other">Khác</option>
+                  </select>
+                </div>
+
+                <div className={styles.sosBox}>
+                  📍 Đang lấy vị trí...
+                </div>
+
+                <p className={styles.sosCountdownBig}>
+                  Tự động gửi sau: {sosCountdown}s
+                </p>
+
+                <div className={styles.sosBtnRow}>
+                  <button
+                    className={styles.sosCancel}
+                    onClick={() => setShowSOS(false)}
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    className={styles.sosSend}
+                    onClick={() => {
+                      setShowSOS(false);
+                      alert(`SOS SENT 🚨 Type: ${sosType}`);
+                    }}
+                  >
+                    SEND SOS
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Các Pop-up AI và Floating Button giữ nguyên */}
         <AnimatePresence>
