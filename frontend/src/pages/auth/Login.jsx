@@ -2,38 +2,24 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/userAuthenticateContext";
-import styles from "./auth.module.css";
 import { Mail, Lock, ArrowLeft } from "lucide-react";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
 import { InputBox } from "./components/InputBox";
+import { auth, googleProvider } from "../../../firebase/firebase";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import styles from "./auth.module.css";
 
 function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-
-  // Mock users for testing
-  const mockUsers = {
-    "user@example.com": {
-      email: "user@example.com",
-      password: "123456",
-      name: "Test User",
-      role: "user",
-    },
-    "admin@example.com": {
-      email: "admin@example.com",
-      password: "admin123",
-      name: "Admin User",
-      role: "admin",
-    },
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -44,7 +30,7 @@ function Login() {
     setError("");
   };
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
@@ -56,30 +42,24 @@ function Login() {
     }
 
     try {
-      const user = mockUsers[formData.email];
-      if (!user || user.password !== formData.password) {
-        throw new Error("Email hoặc mật khẩu không đúng");
-      }
-
-      login({
-        ...user,
-        loggedInAt: new Date().toISOString(),
-      });
-
-      if (rememberMe) {
-        localStorage.setItem("rememberedEmail", formData.email);
-      }
+      await signInWithEmailAndPassword(auth, formData.email, formData.password);
       navigate("/");
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || "Email hoặc mật khẩu không đúng");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSocialLogin = (provider) => {
-    console.log(`Login with ${provider}`);
-    alert(`Đăng nhập với ${provider} (chức năng đang phát triển)`);
+  const handleSocialLogin = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      navigate("/");
+    } catch (err) {
+      setError("Lỗi đăng nhập Google: " + err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -95,7 +75,7 @@ function Login() {
         <h1 className={styles.title}>Welcome Back</h1>
         <p className={styles.subtitle}>Sign in to continue</p>
 
-        <form onSubmit={handleSubmit} noValidate>
+        <form onSubmit={handleLogin} noValidate>
           <div className={styles.formGrid}>
             {/* Email Input */}
             <InputBox
@@ -166,16 +146,16 @@ function Login() {
           <div className={styles.socialButtons}>
             <button
               className={`${styles.socialBtn} ${styles.google}`}
-              onClick={() => handleSocialLogin("Google")}
+              onClick={handleSocialLogin}
             >
               <FaGoogle /> Google
             </button>
-            <button
+            {/* <button
               className={`${styles.socialBtn} ${styles.facebook}`}
               onClick={() => handleSocialLogin("Facebook")}
             >
               <FaFacebook /> Facebook
-            </button>
+            </button> */}
           </div>
         </div>
 

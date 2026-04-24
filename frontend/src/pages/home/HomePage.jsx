@@ -1,20 +1,21 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { NavBar } from "./components/NavBar/NavBar";
 import { HeroBanner } from "./components/HeroBanner/HeroBanner";
 import { TravelMap } from "./components/MapBox/MapBox";
 import { NewsCollection } from "./components/NewsCollection/NewsCollection";
 import { ResponseDisplay } from "./components/ResponseDisplay/ResponseDisplay";
 import { AssitantFloatInput } from "./components/VoiceAssist/VoiceAssistant";
-import { Image, Mic, Settings, Siren } from "lucide-react";
+import { UserPen, Mic, Settings, Siren } from "lucide-react";
+import { auth } from "../../../firebase/firebase";
 import styles from "./HomePage.module.css";
 
 const services = [
   { name: "SOS", icon: Siren, isModal: "sos" },
   { name: "Voice", path: "#", icon: Mic, isAction: true },
-  { name: "Picture", path: "/picture", icon: Image },
-  { name: "Setting", icon: Settings, isModal: "setting" },
+  { name: "UserInfo", path: "/profile", icon: UserPen },
+  { name: "Setting", icon: Settings, isModal: "setting"},
 ];
 
 const MOCK_LOCATIONS = [
@@ -71,6 +72,31 @@ function HomePage() {
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [showResponse, setShowResponse] = useState(false);
   const [responseContent, setResponseContent] = useState("");
+  const uid = auth.currentUser?.uid;
+  const navigate = useNavigate();
+
+  const handleServiceClick = (service) => {
+    if (service.isAction) {
+      setIsVoiceOpen(true);
+      return;
+    }
+    if (service.isModal === "sos") {
+      setShowSOS(true);
+      return;
+    }
+    if (service.isModal === "setting") {
+      setShowSetting(true);
+      return;
+    }
+    if (service.path === "/profile") {
+      if (!uid) navigate("/login");
+      else navigate("/profile");
+      return;
+    }
+    if (service.path) {
+      navigate(service.path);
+    }
+  };
 
    // SETTINGS
     const [showSetting, setShowSetting] = useState(false);
@@ -99,7 +125,7 @@ function HomePage() {
     >
       <div className={styles.mainWrapper}>
         <NavBar />
-        
+
         {/* ---- PHẦN BỐ CỤC MỚI (2/3 VÀ 1/3) ---- */}
         <div className={styles.topSection}>
           {/* Cột trái 2/3 chứa HeroBanner */}
@@ -114,21 +140,21 @@ function HomePage() {
                 key={service.name}
                 className={styles.serviceItemVertical}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  if (service.isAction) setIsVoiceOpen(true);
-                  if (service.isModal === "sos") setShowSOS(true);
-                  if (service.isModal === "setting") setShowSetting(true);
-                }}
+                onClick={() => handleServiceClick(service)}
+                style={{ cursor: "pointer" }}
               >
-                <NavLink className={styles.navLinkVertical} to={service.path}>
+                <div className={styles.navLinkVertical}>
                   <div className={styles.serviceIconWrapperVertical}>
                     <service.icon
                       className={styles.serviceIconLarge}
-                      strokeWidth={2} /* Làm viền icon dày hơn chút cho dễ nhìn */
+                      strokeWidth={2}
                     />
                   </div>
-                  <span className={styles.serviceNameLarge}>{service.name}</span>
-                </NavLink>
+
+                  <span className={styles.serviceNameLarge}>
+                    {service.name}
+                  </span>
+                </div>
               </motion.div>
             ))}
           </div>

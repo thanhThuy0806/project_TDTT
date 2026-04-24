@@ -1,5 +1,7 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuth } from "../../../../context/userAuthenticateContext";
+import { User } from "lucide-react";
 import styles from "./NavBar.module.css";
 
 const navItems = [
@@ -22,6 +24,14 @@ const resMethods = [
 ];
 
 export function NavBar(props) {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
+  };
+
   return (
     <div className={styles.navBar} {...props}>
       {/* Logo Section */}
@@ -53,28 +63,44 @@ export function NavBar(props) {
 
       {/* Auth Section */}
       <div className={styles.authSection}>
-        <div className={styles.authList}>
-          {resMethods.map((method) => (
+        {!user ? (
+          <div className={styles.authList}>
             <motion.div
               className={styles.authItemWrapper}
-              key={method.name}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <NavLink
-                className={({ isActive }) =>
-                  isActive
-                    ? `${styles.authBtn} ${styles.activeAuth}`
-                    : styles.authBtn
-                }
-                onClick={method.effect}
-                to={method.route}
-              >
-                {method.name}
+              <NavLink to="/login" className={styles.authBtn}>
+                Log in
               </NavLink>
             </motion.div>
-          ))}
-        </div>
+            <motion.div
+              className={styles.authItemWrapper}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <NavLink to="/signup" className={styles.authBtn}>
+                Sign up
+              </NavLink>
+            </motion.div>
+          </div>
+        ) : (
+          <div className={styles.userSection}>
+            <motion.div
+              className={styles.avatarWrapper}
+              whileHover={{ scale: 1.05 }}
+              onClick={() => navigate("/profile")}
+            ></motion.div>
+            <div className={styles.userInfo}>
+              <span className={styles.userName}>
+                {user.displayName || user.email}
+              </span>
+              <button onClick={handleLogout} className={styles.logoutBtn}>
+                Logout
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
