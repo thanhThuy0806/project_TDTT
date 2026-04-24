@@ -1,7 +1,8 @@
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
-import { logOut } from "../../../../api/authentication";
-import styles from "./NavBar.module.css"; // Import CSS Module
+// import { logOut } from "../../../../api/authentication";
+// import { useAuth } from "../../context/userAuthenticateContext";
+import styles from "./NavBar.module.css";
 
 const navItems = [
   { name: "Home", route: "/" },
@@ -13,7 +14,7 @@ const resMethods = [
   {
     name: "Log in",
     route: "/login",
-    effect: () => logOut(),
+    effect: () => {},
   },
   {
     name: "Sign up",

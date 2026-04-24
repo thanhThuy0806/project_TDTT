@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { NavLink } from "react-router-dom";
-
 import { NavBar } from "./components/NavBar/NavBar";
 import { HeroBanner } from "./components/HeroBanner/HeroBanner";
 import { TravelMap } from "./components/MapBox/MapBox";

@@ -15,7 +15,7 @@ const members = [
 ];
 
 function AboutPage() {
-  return (   
+  return (
     <div className={styles.mainWrapper}>
       <NavBar />
 
