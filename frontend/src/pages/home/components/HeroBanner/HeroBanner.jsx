@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Sun, Cloud, CloudRain } from "lucide-react";
-import { SecurityModule} from "./modules/SecurityModule"
+import { SecurityModule } from "./modules/SecurityModule";
 import styles from "./HeroBanner.module.css";
 // Import các modules
 import { WeatherModule } from "./modules/WeatherModule";
@@ -69,6 +69,29 @@ const mockHeroData = [
       },
       { name: "BV Đa khoa", type: "Y tế", phone: "115", distance: "1.2 km" },
     ],
+    daily: [
+      {
+        day: "Thứ 6, 21/04",
+        desc: "Nắng gắt",
+        low: "26°",
+        high: "34°",
+        icon: Sun,
+      },
+      {
+        day: "Thứ 7, 22/04",
+        desc: "Nhiều mây",
+        low: "25°",
+        high: "32°",
+        icon: Cloud,
+      },
+      {
+        day: "Chủ nhật, 23/04",
+        desc: "Mưa rào",
+        low: "24°",
+        high: "30°",
+        icon: CloudRain,
+      },
+    ],
   },
 ];
 
@@ -80,16 +103,20 @@ export function HeroBanner() {
     setCurrentIndex((prev) => (prev + 1) % mockHeroData.length);
   const handlePrev = () =>
     setCurrentIndex(
-      (prev) => (prev - 1 + mockHeroData.length) % mockHeroData.length,
+      (prev) => (prev - 1 + mockHeroData.length) % mockHeroData.length
     );
 
   // Hàm render Module động dựa vào trường 'type'
   const renderActiveModule = () => {
     switch (data.type) {
-      case "weather": return <WeatherModule key={data.id} data={data} />;
-      case "traffic": return <TrafficModule key={data.id} data={data} />;
-      case "security": return <SecurityModule key={data.id} data={data} />;
-      default: return <WeatherModule key={data.id} data={data} />;
+      case "weather":
+        return <WeatherModule key={data.id} data={data} />;
+      case "traffic":
+        return <TrafficModule key={data.id} data={data} />;
+      case "security":
+        return <SecurityModule key={data.id} data={data} />;
+      default:
+        return <WeatherModule key={data.id} data={data} />;
     }
   };
 

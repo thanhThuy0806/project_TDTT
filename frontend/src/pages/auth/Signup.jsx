@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { NavLink, useNavigate } from "react-router-dom";
-import styles from "./auth.module.css";
 import { Mail, Lock, ArrowLeft } from "lucide-react";
-import { FaFacebook, FaGoogle } from "react-icons/fa";
+import { FaGoogle } from "react-icons/fa";
 import { InputBox } from "./components/InputBox";
+import { auth, googleProvider } from "../../../firebase/firebase";
+import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import styles from "./auth.module.css";
 
 function Signup() {
   const navigate = useNavigate();
@@ -17,21 +19,6 @@ function Signup() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const mockUsers = {
-    "user@example.com": {
-      email: "user@example.com",
-      password: "123456",
-      name: "Test User",
-      role: "user",
-    },
-    "admin@example.com": {
-      email: "admin@example.com",
-      password: "admin123",
-      name: "Admin User",
-      role: "admin",
-    },
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -41,7 +28,7 @@ function Signup() {
     setError("");
   };
 
-  const handleSubmit = async (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
@@ -65,25 +52,40 @@ function Signup() {
     }
 
     try {
-      if (mockUsers[formData.email]) {
-        throw new Error("Email đã tồn tại");
-      }
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
 
-      console.log("Đăng ký thành công:", {
-        email: formData.email,
-        password: formData.password,
+      navigate("/profile", {
+        state: {
+          uid: userCredential.user.uid,
+          email: formData.email,
+          isNewUser: true,
+        },
       });
-      navigate("/profile");
     } catch (err) {
-      setError(err.message);
+      setError("Đăng ký thất bại: " + err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSocialSignup = (provider) => {
-    console.log(`Signup with ${provider}`);
-    alert(`Đăng ký với ${provider} (chức năng đang phát triển)`);
+  const handleSocialSignup = async () => {
+    try {
+      const res = await signInWithPopup(auth, googleProvider);
+      navigate("/profile", {
+        state: {
+          ui: res.user.id,
+          isNewUser: true,
+        },
+      });
+    } catch (err) {
+      setError("Lỗi đăng kí Google: " + err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -99,7 +101,7 @@ function Signup() {
         <h1 className={styles.title}>Create Account</h1>
         <p className={styles.subtitle}>Sign up to get started</p>
 
-        <form onSubmit={handleSubmit} noValidate>
+        <form onSubmit={handleSignUp} noValidate>
           <div className={styles.formGrid}>
             {/* Email Input */}
             <InputBox
@@ -165,16 +167,16 @@ function Signup() {
           <div className={styles.socialButtons}>
             <button
               className={`${styles.socialBtn} ${styles.google}`}
-              onClick={() => handleSocialSignup("Google")}
+              onClick={handleSocialSignup}
             >
               <FaGoogle /> Google
             </button>
-            <button
+            {/* <button
               className={`${styles.socialBtn} ${styles.facebook}`}
               onClick={() => handleSocialSignup("Facebook")}
             >
               <FaFacebook /> Facebook
-            </button>
+            </button> */}
           </div>
         </div>
 

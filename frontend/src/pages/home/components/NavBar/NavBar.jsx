@@ -1,3 +1,11 @@
+<<<<<<< HEAD
+import { NavLink, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useAuth } from "../../../../context/userAuthenticateContext";
+import { User } from "lucide-react";
+import styles from "./NavBar.module.css";
+
+=======
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import styles from "./NavBar.module.css";
@@ -8,6 +16,7 @@ const navItems = [
   { name: "About", route: "/about" },
 ];
 
+>>>>>>> bb5a0c8 ([ADD] news page and link the news collection to navigate to it)
 const resMethods = [
   {
     name: "Log in",
@@ -22,11 +31,66 @@ const resMethods = [
 ];
 
 export function NavBar(props) {
+<<<<<<< HEAD
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
+  };
+
+=======
+>>>>>>> bb5a0c8 ([ADD] news page and link the news collection to navigate to it)
   return (
     <div className={styles.navBar} {...props}>
       {/* Logo Section */}
       <div className={styles.logoSection}>Logo</div>
 
+<<<<<<< HEAD
+      
+
+      {/* Auth Section */}
+      <div className={styles.authSection}>
+        {!user ? (
+          <div className={styles.authList}>
+            <motion.div
+              className={styles.authItemWrapper}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <NavLink to="/login" className={styles.authBtn}>
+                Log in
+              </NavLink>
+            </motion.div>
+            <motion.div
+              className={styles.authItemWrapper}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <NavLink to="/signup" className={styles.authBtn}>
+                Sign up
+              </NavLink>
+            </motion.div>
+          </div>
+        ) : (
+          <div className={styles.userSection}>
+            <motion.div
+              className={styles.avatarWrapper}
+              whileHover={{ scale: 1.05 }}
+              onClick={() => navigate("/profile")}
+            ></motion.div>
+            <div className={styles.userInfo}>
+              <span className={styles.userName}>
+                {user.displayName || user.email}
+              </span>
+              <button onClick={handleLogout} className={styles.logoutBtn}>
+                Logout
+              </button>
+            </div>
+          </div>
+        )}
+=======
       {/* Main Navigation */}
       <div className={styles.menuSection}>
         <div className={styles.menuList}>
@@ -75,6 +139,7 @@ export function NavBar(props) {
             </motion.div>
           ))}
         </div>
+>>>>>>> bb5a0c8 ([ADD] news page and link the news collection to navigate to it)
       </div>
     </div>
   );

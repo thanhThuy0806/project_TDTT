@@ -11,8 +11,10 @@
 
 .backgroundImage {
   position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   z-index: 1;
 }
@@ -24,7 +26,12 @@
   z-index: 2;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to right, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.6) 100%);
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.1) 50%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
   /* Xóa display: flex và padding ở đây để chuyển cho wrapper */
 }
 
@@ -53,13 +60,14 @@
   font-size: 5rem;
   font-weight: 800;
   opacity: 0.9;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 /* Sidebar bên phải */
 .rightSidebar {
   position: absolute;
-  top: 0; right: 0;
+  top: 0;
+  right: 0;
   width: 30%;
   height: 100%;
   background: rgba(255, 255, 255, 0.1);
@@ -114,8 +122,15 @@
   gap: 1rem;
 }
 
-.dayText p { margin: 0; font-weight: 600; font-size: 0.9rem; }
-.dayText span { font-size: 0.8rem; opacity: 0.6; }
+.dayText p {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.dayText span {
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
 
 /* Thanh dự báo dưới đáy */
 .bottomForecastBar {
@@ -144,8 +159,13 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.hourTime { font-size: 0.8rem; opacity: 0.7; }
-.hourTemp { font-weight: 700; }
+.hourTime {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+.hourTemp {
+  font-weight: 700;
+}
 
 /* Navigation */
 .navBtn {
@@ -155,16 +175,29 @@
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
-  width: 3rem; height: 3rem;
-  display: flex; align-items: center; justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   z-index: 10;
 }
-.prev { left: 1rem; }
-.next { right: 31%; } /* Tránh đè lên sidebar */
+.prev {
+  left: 1rem;
+}
+.next {
+  right: 31%;
+} /* Tránh đè lên sidebar */
 
 @media (max-width: 1024px) {
-    .rightSidebar { width: 40%; }
-    .next { right: 41%; }
-    .weatherStatus { font-size: 3rem; }
+  .rightSidebar {
+    width: 40%;
+  }
+  .next {
+    right: 41%;
+  }
+  .weatherStatus {
+    font-size: 3rem;
+  }
 }
