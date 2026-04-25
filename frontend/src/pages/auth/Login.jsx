@@ -102,7 +102,7 @@ function Login() {
           </div>
 
           {/* Remember Me & Forgot Password */}
-          <div className={styles.optionsRow}>
+          {/* <div className={styles.optionsRow}>
             <label className={styles.checkboxLabel}>
               <input
                 type="checkbox"
@@ -114,7 +114,7 @@ function Login() {
             <NavLink to="/forgot-password" className={styles.forgotLink}>
               Forgot password?
             </NavLink>
-          </div>
+          </div> */}
 
           {error && (
             <motion.div

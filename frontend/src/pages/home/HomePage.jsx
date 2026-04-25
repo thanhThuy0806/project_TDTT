@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { NavBar } from "./components/NavBar/NavBar";
 import { HeroBanner } from "./components/HeroBanner/HeroBanner";
 import { TravelMap } from "./components/MapBox/MapBox";
@@ -10,12 +10,15 @@ import { AssitantFloatInput } from "./components/VoiceAssist/VoiceAssistant";
 import { UserPen, Mic, Settings, Siren } from "lucide-react";
 import { auth } from "../../../firebase/firebase";
 import styles from "./HomePage.module.css";
+import { SettingsModal } from "./components/setting/SettingsPage";
+import { SOSModal } from "./components/sos/SosButton";
+import { SecurityAlertHub } from "./components/SecurityAlertHub/SecurityAlertHub";
 
 const services = [
-  { name: "SOS", icon: Siren, isModal: "sos" },
-  { name: "Voice", path: "#", icon: Mic, isAction: true },
-  { name: "UserInfo", path: "/profile", icon: UserPen },
-  { name: "Setting", icon: Settings, isModal: "setting"},
+  { name: "SOS", icon: Siren, type: "sos" },
+  { name: "Voice", icon: Mic, type: "voice" },
+  { name: "UserInfo", path: "/profile", icon: UserPen, type: "link" },
+  { name: "Setting", icon: Settings, type: "setting" },
 ];
 
 const MOCK_LOCATIONS = [
@@ -56,62 +59,49 @@ const MOCK_LOCATIONS = [
   },
 ];
 
-const mockResponse = `
-# Khám phá Tây Ninh: Đỉnh Núi Bà Đen
-
-Chào mừng bạn đến với nóc nhà Nam Bộ! Dưới đây là lịch trình gợi ý:
-
-* **Sáng sớm:** Di chuyển bằng cáp treo lên đỉnh núi để săn mây.
-* **Trưa:** Thưởng thức đặc sản *Bánh tráng phơi sương* Trảng Bàng.
-* **Lưu ý:** Nhiệt độ trên đỉnh thường thấp hơn 3-5 độ so với chân núi.
-
-> Chúc bạn có một chuyến đi an toàn và đầy trải nghiệm!
-`;
+const members = [
+  "Member 01",
+  "Member 02",
+  "Member 03",
+  "Member 04",
+  "Member 05",
+  "Member 06",
+  "Member 07",
+  "Member 08",
+];
 
 function HomePage() {
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [showResponse, setShowResponse] = useState(false);
-  const [responseContent, setResponseContent] = useState("");
+  const [showSetting, setShowSetting] = useState(false);
+  const [showSOS, setShowSOS] = useState(false);
+  const [sosCountdown, setSosCountdown] = useState(10);
+  const [sosType, setSosType] = useState("accident");
+
   const uid = auth.currentUser?.uid;
   const navigate = useNavigate();
 
   const handleServiceClick = (service) => {
-    if (service.isAction) {
-      setIsVoiceOpen(true);
-      return;
+    switch (service.type) {
+      case "voice":
+        setIsVoiceOpen(true);
+        break;
+      case "sos":
+        setShowSOS(true);
+        break;
+      case "setting":
+        setShowSetting(true);
+        break;
+      case "link":
+        if (service.path === "/profile" && !uid) {
+          navigate("/login");
+        } else {
+          navigate(service.path);
+        }
+        break;
+      default:
+        break;
     }
-    if (service.isModal === "sos") {
-      setShowSOS(true);
-      return;
-    }
-    if (service.isModal === "setting") {
-      setShowSetting(true);
-      return;
-    }
-    if (service.path === "/profile") {
-      if (!uid) navigate("/login");
-      else navigate("/profile");
-      return;
-    }
-    if (service.path) {
-      navigate(service.path);
-    }
-  };
-
-   // SETTINGS
-    const [showSetting, setShowSetting] = useState(false);
-    const [fontSize, setFontSize] = useState("medium");
-    const [darkMode, setDarkMode] = useState(false);
-    const [language, setLanguage] = useState("English");
-  
-    // SOS
-    const [showSOS, setShowSOS] = useState(false);
-    const [sosCountdown, setSosCountdown] = useState(10);
-    const [sosType, setSosType] = useState("accident");
-
-  const handleAIClick = () => {
-    setShowResponse(true);
-    setResponseContent(mockResponse);
   };
 
   return (
@@ -128,12 +118,10 @@ function HomePage() {
 
         {/* ---- PHẦN BỐ CỤC MỚI (2/3 VÀ 1/3) ---- */}
         <div className={styles.topSection}>
-          {/* Cột trái 2/3 chứa HeroBanner */}
           <div className={styles.heroWrapper}>
             <HeroBanner />
           </div>
 
-          {/* Cột phải 1/3 chứa Services Sidebar */}
           <div className={styles.servicesSidebar}>
             {services.map((service) => (
               <motion.div
@@ -141,7 +129,6 @@ function HomePage() {
                 className={styles.serviceItemVertical}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleServiceClick(service)}
-                style={{ cursor: "pointer" }}
               >
                 <div className={styles.navLinkVertical}>
                   <div className={styles.serviceIconWrapperVertical}>
@@ -150,7 +137,6 @@ function HomePage() {
                       strokeWidth={2}
                     />
                   </div>
-
                   <span className={styles.serviceNameLarge}>
                     {service.name}
                   </span>
@@ -159,198 +145,89 @@ function HomePage() {
             ))}
           </div>
         </div>
-        {/* -------------------------------------- */}
 
         <br />
 
-        {/* Khối SearchBox giữ nguyên */}
-        <div className={styles.searchSection}>
-          <div className={styles.inputGrid}>
-            <InputBox
-              label={"From"}
-              placeholder={"Ho Chi Minh City"}
-              className={styles.inputBoxContainer}
-            />
-            <InputBox
-              label={"To"}
-              placeholder={"Ho Chi Minh City"}
-              className={styles.inputBoxContainer}
-            />
-          </div>
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <NavLink
-              to="/search-results"
-              className={({ isActive }) =>
-                isActive
-                  ? `${styles.searchBtn} ${styles.activeSearch}`
-                  : styles.searchBtn
-              }
-            >
-              Search
-            </NavLink>
-          </motion.div>
-        </div>
-
-        <br />
-
-        {/* Khối Bản đồ & Tin tức giữ nguyên */}
-        <div className={`${styles.contentGrid} ${styles.noScrollbar}`}>
+        {/* Khối Bản đồ & Tin tức */}
+        <div className={styles.contentGrid}>
           <TravelMap />
-          <NewsCollection className={`${styles.noScrollbar}`} />
+          <NewsCollection className={styles.noScrollbar} />
         </div>
 
-        <br />
+        {/* <br /> */}
 
-        {/* ================= SETTINGS ================= */}
-        <AnimatePresence>
-          {showSetting && (
-            <motion.div
-              className={styles.modalOverlay}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <motion.div
-                className={styles.settingsCard}
-                initial={{ scale: 0.85 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.85 }}
-              >
-                <h3 className={styles.settingsTitle}>Settings</h3>
+        <SecurityAlertHub />
+      </div>
 
-                <div className={styles.settingsSection}>
-                  <p>🔤 Font Size</p>
-                  <div className={styles.btnRow}>
-                    <button onClick={() => setFontSize("small")}>a</button>
-                    <button onClick={() => setFontSize("medium")}>A</button>
-                    <button onClick={() => setFontSize("large")}>A</button>
-                  </div>
-                </div>
-
-                <div className={styles.settingsSection}>
-                  <p>🌗 Theme</p>
-                  <label className={styles.switch}>
-                    <input
-                      type="checkbox"
-                      checked={darkMode}
-                      onChange={() => setDarkMode(!darkMode)}
-                    />
-                    <span className={styles.slider}></span>
-                  </label>
-                </div>
-
-                <div className={styles.settingsSection}>
-                  <p>🌐 Language</p>
-                  <select
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value)}
-                  >
-                    <option>English</option>
-                    <option>Vietnamese</option>
-                  </select>
-                </div>
-
-                <button
-                  className={styles.applyBtn}
-                  onClick={() => setShowSetting(false)}
-                >
-                  Apply
-                </button>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* ================= SOS ================= */}
-        <AnimatePresence>
-          {showSOS && (
-            <motion.div
-              className={styles.modalOverlay}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <motion.div
-                className={styles.sosCardBig}
-                initial={{ scale: 0.85 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.85 }}
-              >
-                <h2 className={styles.sosTitleBig}>🚨 EMERGENCY SOS</h2>
-
-                <p className={styles.sosWarning}>
-                  Bạn sắp gửi tín hiệu khẩn cấp
-                </p>
-
-                <div className={styles.sosSection}>
-                  <p className={styles.sosLabel}>Tình trạng</p>
-
-                  <select
-                    className={styles.sosSelect}
-                    value={sosType}
-                    onChange={(e) => setSosType(e.target.value)}
-                  >
-                    <option value="accident">Tai nạn</option>
-                    <option value="illness">Bệnh / Sức khỏe</option>
-                    <option value="danger">Nguy hiểm</option>
-                    <option value="other">Khác</option>
-                  </select>
-                </div>
-
-                <div className={styles.sosBox}>
-                  📍 Đang lấy vị trí...
-                </div>
-
-                <p className={styles.sosCountdownBig}>
-                  Tự động gửi sau: {sosCountdown}s
-                </p>
-
-                <div className={styles.sosBtnRow}>
-                  <button
-                    className={styles.sosCancel}
-                    onClick={() => setShowSOS(false)}
-                  >
-                    Cancel
-                  </button>
-
-                  <button
-                    className={styles.sosSend}
-                    onClick={() => {
-                      setShowSOS(false);
-                      alert(`SOS SENT 🚨 Type: ${sosType}`);
-                    }}
-                  >
-                    SEND SOS
-                  </button>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Các Pop-up AI và Floating Button giữ nguyên */}
-        <AnimatePresence>
-          {isVoiceOpen && (
-            <AssitantFloatInput onClose={() => setIsVoiceOpen(false)} />
-          )}
-        </AnimatePresence>
-
-        <motion.div
-          className={styles.aiFloatingBtn}
-          onClick={handleAIClick}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <p>AI</p>
-        </motion.div>
-
-        {showResponse && (
-          <ResponseDisplay
-            content={responseContent}
-            onClose={() => setShowResponse(false)}
+      {/* SETTINGS */}
+      <AnimatePresence>
+        {showSetting && (
+          <SettingsModal
+            onClose={() => setShowSetting(false)}
+            onApply={(data) => {
+              console.log("Settings applied:", data);
+            }}
           />
         )}
-      </div>
+        <AnimatePresence>
+          {showSOS && (
+            <SOSModal
+              onClose={() => setShowSOS(false)}
+              sosType={sosType}
+              setSosType={setSosType}
+              sosCountdown={sosCountdown}
+            />
+          )}
+        </AnimatePresence>
+        {isVoiceOpen && (
+          <AssitantFloatInput onClose={() => setIsVoiceOpen(false)} />
+        )}
+      </AnimatePresence>
+
+      {showResponse && (
+        <ResponseDisplay
+          content={responseContent}
+          onClose={() => setShowResponse(false)}
+        />
+      )}
+
+      {/* PHẦN FOOTER*/}
+      <footer className={styles.footerSection}>
+        <div className={styles.footerContainer}>
+          <h2 className={styles.footerTitle}>Team Members</h2>
+          <div className={styles.memberGrid}>
+            {members.map((member, index) => (
+              <motion.div
+                key={index}
+                className={styles.memberCard}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {member}
+              </motion.div>
+            ))}
+          </div>
+
+          {/* <br /> */}
+
+          <h2 className={styles.footerTitle}>ACCESSIBILITY & SAFETY</h2>
+          <p className={styles.footerDesc}>
+            This project is designed to support accessible and safe travel
+            experiences for everyone, especially elderly people, people with
+            disabilities, and users who need emergency support during their
+            trips.
+          </p>
+
+          <br />
+
+          <div className={styles.contactCard}>
+            <h3 className={styles.contactTitle}>Contact Us</h3>
+            <p>📧 Email: team.accessibilitysafety@gmail.com</p>
+            <p>💻 GitHub: project_TDTT</p>
+            <p>📞 Phone: 0123 456 789</p>
+          </div>
+        </div>
+      </footer>
     </motion.div>
   );
 }
@@ -374,8 +251,8 @@ function InputBox({ label, placeholder, type, className, ...props }) {
             value
               .toLowerCase()
               .normalize("NFD")
-              .replace(/[\u0300-\u036f]/g, ""),
-          ),
+              .replace(/[\u0300-\u036f]/g, "")
+          )
       );
       setSuggestions(filtered);
     } else {
@@ -447,7 +324,8 @@ function InputBox({ label, placeholder, type, className, ...props }) {
   );
 }
 
-// Cập nhật Animation: Thêm boxShadow để tạo hiệu ứng nhấn
+export default HomePage;
+
 const inputFocusAnimation = {
   focus: {
     scale: 0.98,
@@ -461,9 +339,6 @@ const inputFocusAnimation = {
   },
 };
 
-export default HomePage;
-
-// Hiệu ứng khi vào hoặc ra khỏi trang Homepage
 const pageVariants = {
   initial: { opacity: 0, x: -20 },
   animate: { opacity: 1, x: 0 },

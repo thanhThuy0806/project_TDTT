@@ -4,12 +4,6 @@ import { useAuth } from "../../../../context/userAuthenticateContext";
 import { User } from "lucide-react";
 import styles from "./NavBar.module.css";
 
-const navItems = [
-  { name: "Home", route: "/" },
-  { name: "News", route: "/news" },
-  { name: "About", route: "/about" },
-];
-
 const resMethods = [
   {
     name: "Log in",
@@ -37,29 +31,7 @@ export function NavBar(props) {
       {/* Logo Section */}
       <div className={styles.logoSection}>Logo</div>
 
-      {/* Main Navigation */}
-      <div className={styles.menuSection}>
-        <div className={styles.menuList}>
-          {navItems.map((item) => (
-            <motion.div
-              className={styles.menuItemWrapper}
-              key={item.name}
-              whileHover={{ scale: 1.1, color: "#000085" }}
-            >
-              <NavLink
-                className={({ isActive }) =>
-                  isActive
-                    ? `${styles.menuLink} ${styles.activeLink}`
-                    : styles.menuLink
-                }
-                to={item.route}
-              >
-                {item.name}
-              </NavLink>
-            </motion.div>
-          ))}
-        </div>
-      </div>
+      
 
       {/* Auth Section */}
       <div className={styles.authSection}>

@@ -144,3 +144,111 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
+
+
+/* Các class bên dưới được cập nhật sau ngày 22/04/2026 */
+.rainbowInputBox {
+    /* ... cũ ... */
+    transition: background 0.5s ease; /* Để đổi màu mượt */
+}
+
+/* Khi đang ghi âm: Biến thành hình tròn */
+.recordingCircle {
+    width: 80px;      /* Thu nhỏ lại thành hình tròn */
+    height: 80px;
+    border-radius: 50%;
+    background: #ef4444; /* Đổi sang màu đỏ rực rỡ khi ghi âm */
+    animation: none;     /* Tắt animation cầu vồng để tập trung vào màu đỏ */
+    cursor: pointer;
+    justify-content: center;
+}
+
+.recordingContent {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Hiệu ứng vòng tròn lan tỏa xung quanh khi ghi âm */
+.pulseRing {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid #ef4444;
+    animation: pulseOut 1.5s infinite;
+}
+
+@keyframes pulseOut {
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(1.8); opacity: 0; }
+}
+
+.activeMic {
+    color: #4f46e5;
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+/* Đảm bảo nội dung bên trong textarea biến mất mượt mà */
+.innerContent {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+
+
+/* Trạng thái biến thành hình tròn ghi âm */
+.recordingCircle {
+    width: 85px !important; /* Thu nhỏ chiều rộng */
+    height: 85px !important;
+    border-radius: 50% !important;
+    background: linear-gradient(135deg, #ef4444, #b91c1c); /* Chuyển sang đỏ */
+    animation: none; /* Dừng hiệu ứng cầu vồng để báo hiệu đang ghi */
+    padding: 0;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.recordingContent {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Vòng tròn lan tỏa khi đang ghi âm */
+.pulseRing {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid rgba(239, 68, 68, 0.5);
+    animation: pulseOut 1.5s infinite;
+}
+
+@keyframes pulseOut {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* Hiệu ứng rung nhẹ cho Mic khi ở chế độ chờ */
+.activeMic {
+    color: #6366f1;
+    animation: micWobble 2s infinite;
+}
+
+@keyframes micWobble {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
