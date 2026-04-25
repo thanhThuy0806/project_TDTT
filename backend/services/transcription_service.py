@@ -3,7 +3,7 @@ import tempfile
 from faster_whisper import WhisperModel
 
 # load whisper model at startup
-model = WhisperModel("large-v3", device="cuda", compute_type="int8_float16")
+model = WhisperModel("tiny", device="cpu", compute_type="int8")
 
 # actual function to transcrible audio
 # this will be called by API endpoint

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, File, UploadFile
-from ..services.transcription_service import transcribe_audio
+from services.transcription_service import transcribe_audio
 
 router = APIRouter()
 
