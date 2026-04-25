@@ -39,7 +39,7 @@ export function AssistantButton({ onClick, className }) {
   );
 }
 
-export function AssistantFloatInput({ onClose }) {
+export function AssitantFloatInput({ onClose }) {
   const [isSoundMode, setIsSoundMode] = useState(true);
 
   const { isRecording, volume, startRecording, stopRecording } =
@@ -63,7 +63,9 @@ export function AssistantFloatInput({ onClose }) {
     >
       <motion.div
         layout // Hiệu ứng biến hình tự động
-        className={`${styles.rainbowInputBox} ${isRecording ? styles.recordingCircle : ""}`}
+        className={`${styles.rainbowInputBox} ${
+          isRecording ? styles.recordingCircle : ""
+        }`}
         initial={{ y: "100vh", opacity: 0 }}
         animate={{
           y: 0,
@@ -85,7 +87,9 @@ export function AssistantFloatInput({ onClose }) {
             >
               <button
                 onClick={handleMicToggle}
-                className={`${styles.iconBtn} ${styles.modeToggle} ${isSoundMode ? styles.activeMic : ""}`}
+                className={`${styles.iconBtn} ${styles.modeToggle} ${
+                  isSoundMode ? styles.activeMic : ""
+                }`}
               >
                 <Mic size={22} />
               </button>

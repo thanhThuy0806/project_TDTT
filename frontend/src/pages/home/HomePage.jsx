@@ -1,23 +1,24 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { NavLink } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 import { NavBar } from "./components/NavBar/NavBar";
 import { HeroBanner } from "./components/HeroBanner/HeroBanner";
 import { TravelMap } from "./components/MapBox/MapBox";
 import { NewsCollection } from "./components/NewsCollection/NewsCollection";
 import { ResponseDisplay } from "./components/ResponseDisplay/ResponseDisplay";
-import { AssistantFloatInput } from "./components/VoiceAssist/VoiceAssistant";
-import { Image, Mic, Settings, Siren, User } from "lucide-react";
+import { AssitantFloatInput } from "./components/VoiceAssist/VoiceAssistant";
+import { UserPen, Mic, Settings, Siren } from "lucide-react";
+import { auth } from "../../../firebase/firebase";
 import styles from "./HomePage.module.css";
-import { SecurityModule } from "./components/HeroBanner/modules/SecurityModule";
+import { SettingsModal } from "./components/setting/SettingsPage";
+import { SOSModal } from "./components/sos/SosButton";
 import { SecurityAlertHub } from "./components/SecurityAlertHub/SecurityAlertHub";
 
 const services = [
-  { name: "SOS", icon: Siren, isModal: "sos" },
-  { name: "Voice", path: "#", icon: Mic, isAction: true },
-  { name: "Picture", path: "/picture", icon: Image },
-  { name: "Setting", icon: Settings, isModal: "setting" },
+  { name: "SOS", icon: Siren, type: "sos" },
+  { name: "Voice", icon: Mic, type: "voice" },
+  { name: "UserInfo", path: "/profile", icon: UserPen, type: "link" },
+  { name: "Setting", icon: Settings, type: "setting" },
 ];
 
 const MOCK_LOCATIONS = [
@@ -58,7 +59,6 @@ const MOCK_LOCATIONS = [
   },
 ];
 
-// Dữ liệu thành viên từ AboutPage cũ
 const members = [
   "Member 01",
   "Member 02",
@@ -70,32 +70,38 @@ const members = [
   "Member 08",
 ];
 
-const mockResponse = `# Khám phá Tây Ninh: Đỉnh Núi Bà Đen
-Chào mừng bạn đến với nóc nhà Nam Bộ! Dưới đây là lịch trình gợi ý: 
-* **Sáng sớm:** Di chuyển bằng cáp treo lên đỉnh núi để săn mây.
-* **Trưa:** Thưởng thức đặc sản *Bánh tráng phơi sương* Trảng Bàng.
-* **Lưu ý:** Nhiệt độ trên đỉnh thường thấp hơn 3-5 độ so với chân núi.
-> Chúc bạn có một chuyến đi an toàn và đầy trải nghiệm!`;
-
 function HomePage() {
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [showResponse, setShowResponse] = useState(false);
-  const [responseContent, setResponseContent] = useState("");
-
-  // SETTINGS
   const [showSetting, setShowSetting] = useState(false);
-  const [fontSize, setFontSize] = useState("medium");
-  const [darkMode, setDarkMode] = useState(false);
-  const [language, setLanguage] = useState("English");
-
-  // SOS
   const [showSOS, setShowSOS] = useState(false);
   const [sosCountdown, setSosCountdown] = useState(10);
   const [sosType, setSosType] = useState("accident");
 
-  const handleAIClick = () => {
-    setShowResponse(true);
-    setResponseContent(mockResponse);
+  const uid = auth.currentUser?.uid;
+  const navigate = useNavigate();
+
+  const handleServiceClick = (service) => {
+    switch (service.type) {
+      case "voice":
+        setIsVoiceOpen(true);
+        break;
+      case "sos":
+        setShowSOS(true);
+        break;
+      case "setting":
+        setShowSetting(true);
+        break;
+      case "link":
+        if (service.path === "/profile" && !uid) {
+          navigate("/login");
+        } else {
+          navigate(service.path);
+        }
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -122,13 +128,9 @@ function HomePage() {
                 key={service.name}
                 className={styles.serviceItemVertical}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  if (service.isAction) setIsVoiceOpen(true);
-                  if (service.isModal === "sos") setShowSOS(true);
-                  if (service.isModal === "setting") setShowSetting(true);
-                }}
+                onClick={() => handleServiceClick(service)}
               >
-                <NavLink className={styles.navLinkVertical} to={service.path}>
+                <div className={styles.navLinkVertical}>
                   <div className={styles.serviceIconWrapperVertical}>
                     <service.icon
                       className={styles.serviceIconLarge}
@@ -138,194 +140,60 @@ function HomePage() {
                   <span className={styles.serviceNameLarge}>
                     {service.name}
                   </span>
-                </NavLink>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
 
         <br />
+
         {/* Khối Bản đồ & Tin tức */}
-        <div className={`${styles.contentGrid} ${styles.noScrollbar}`}>
-          {/* Khối Bản đồ & Tin tức giữ nguyên */}
-
+        <div className={styles.contentGrid}>
           <TravelMap />
-          <NewsCollection className={`${styles.noScrollbar}`} />
-
-          <br />
-
-          {/* CÁC POPUP NẰM NGOÀI LUỒNG GIAO DIỆN */}
-          <AnimatePresence>
-            {isVoiceOpen && (
-              <AssistantFloatInput onClose={() => setIsVoiceOpen(false)} />
-            )}
-          </AnimatePresence>
-
-          <SecurityAlertHub />
-
-          {showResponse && (
-            <ResponseDisplay
-              content={responseContent}
-              onClose={() => setShowResponse(false)}
-            />
-          )}
-          {/* ================= SETTINGS ================= */}
-          <AnimatePresence>
-            {showSetting && (
-              <motion.div
-                className={styles.modalOverlay}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <motion.div
-                  className={styles.settingsCard}
-                  initial={{ scale: 0.85 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0.85 }}
-                >
-                  <h3 className={styles.settingsTitle}>Settings</h3>
-
-                  <div className={styles.settingsSection}>
-                    <p>🔤 Font Size</p>
-                    <div className={styles.btnRow}>
-                      <button onClick={() => setFontSize("small")}>a</button>
-                      <button onClick={() => setFontSize("medium")}>A</button>
-                      <button onClick={() => setFontSize("large")}>A</button>
-                    </div>
-                  </div>
-
-                  <div className={styles.settingsSection}>
-                    <p>🌗 Theme</p>
-                    <label className={styles.switch}>
-                      <input
-                        type="checkbox"
-                        checked={darkMode}
-                        onChange={() => setDarkMode(!darkMode)}
-                      />
-                      <span className={styles.slider}></span>
-                    </label>
-                  </div>
-
-                  <div className={styles.settingsSection}>
-                    <p>🌐 Language</p>
-                    <select
-                      value={language}
-                      onChange={(e) => setLanguage(e.target.value)}
-                    >
-                      <option>English</option>
-                      <option>Vietnamese</option>
-                    </select>
-                  </div>
-
-                  <button
-                    className={styles.applyBtn}
-                    onClick={() => setShowSetting(false)}
-                  >
-                    Apply
-                  </button>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* ================= SOS ================= */}
-          <AnimatePresence>
-            {showSOS && (
-              <motion.div
-                className={styles.modalOverlay}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <motion.div
-                  className={styles.sosCardBig}
-                  initial={{ scale: 0.85 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0.85 }}
-                >
-                  <h2 className={styles.sosTitleBig}>🚨 EMERGENCY SOS</h2>
-
-                  <p className={styles.sosWarning}>
-                    Bạn sắp gửi tín hiệu khẩn cấp
-                  </p>
-
-                  <div className={styles.sosSection}>
-                    <p className={styles.sosLabel}>Tình trạng</p>
-
-                    <select
-                      className={styles.sosSelect}
-                      value={sosType}
-                      onChange={(e) => setSosType(e.target.value)}
-                    >
-                      <option value="accident">Tai nạn</option>
-                      <option value="illness">Bệnh / Sức khỏe</option>
-                      <option value="danger">Nguy hiểm</option>
-                      <option value="other">Khác</option>
-                    </select>
-                  </div>
-
-                  <div className={styles.sosBox}>📍 Đang lấy vị trí...</div>
-
-                  <p className={styles.sosCountdownBig}>
-                    Tự động gửi sau: {sosCountdown}s
-                  </p>
-
-                  <div className={styles.sosBtnRow}>
-                    <button
-                      className={styles.sosCancel}
-                      onClick={() => setShowSOS(false)}
-                    >
-                      Cancel
-                    </button>
-
-                    <button
-                      className={styles.sosSend}
-                      onClick={() => {
-                        setShowSOS(false);
-                        alert(`SOS SENT 🚨 Type: ${sosType}`);
-                      }}
-                    >
-                      SEND SOS
-                    </button>
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Các Pop-up AI và Floating Button giữ nguyên */}
-          {/* Các Pop-up AI và Floating Button giữ nguyên */}
-          <AnimatePresence>
-            {isVoiceOpen && (
-              <AssitantFloatInput onClose={() => setIsVoiceOpen(false)} />
-            )}
-          </AnimatePresence>
-
-          <motion.div
-            className={styles.aiFloatingBtn}
-            onClick={handleAIClick}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <p>AI</p>
-          </motion.div>
-
-          {showResponse && (
-            <ResponseDisplay
-              content={responseContent}
-              onClose={() => setShowResponse(false)}
-            />
-          )}
+          <NewsCollection className={styles.noScrollbar} />
         </div>
+
+        {/* <br /> */}
+
+        <SecurityAlertHub />
       </div>
 
-      {/* =========================================================
-            PHẦN FOOTER
-        ========================================================= */}
+      {/* SETTINGS */}
+      <AnimatePresence>
+        {showSetting && (
+          <SettingsModal
+            onClose={() => setShowSetting(false)}
+            onApply={(data) => {
+              console.log("Settings applied:", data);
+            }}
+          />
+        )}
+        <AnimatePresence>
+          {showSOS && (
+            <SOSModal
+              onClose={() => setShowSOS(false)}
+              sosType={sosType}
+              setSosType={setSosType}
+              sosCountdown={sosCountdown}
+            />
+          )}
+        </AnimatePresence>
+        {isVoiceOpen && (
+          <AssitantFloatInput onClose={() => setIsVoiceOpen(false)} />
+        )}
+      </AnimatePresence>
+
+      {showResponse && (
+        <ResponseDisplay
+          content={responseContent}
+          onClose={() => setShowResponse(false)}
+        />
+      )}
+
+      {/* PHẦN FOOTER*/}
       <footer className={styles.footerSection}>
         <div className={styles.footerContainer}>
-          {/* CỘT TRÁI: Thành viên nhóm */}
           <h2 className={styles.footerTitle}>Team Members</h2>
           <div className={styles.memberGrid}>
             {members.map((member, index) => (
@@ -340,8 +208,7 @@ function HomePage() {
             ))}
           </div>
 
-          <br />
-          {/* Thông tin dự án và liên hệ */}
+          {/* <br /> */}
 
           <h2 className={styles.footerTitle}>ACCESSIBILITY & SAFETY</h2>
           <p className={styles.footerDesc}>
@@ -457,7 +324,8 @@ function InputBox({ label, placeholder, type, className, ...props }) {
   );
 }
 
-// Cập nhật Animation: Thêm boxShadow để tạo hiệu ứng nhấn
+export default HomePage;
+
 const inputFocusAnimation = {
   focus: {
     scale: 0.98,
@@ -471,9 +339,6 @@ const inputFocusAnimation = {
   },
 };
 
-export default HomePage;
-
-// Hiệu ứng khi vào hoặc ra khỏi trang Homepage
 const pageVariants = {
   initial: { opacity: 0, x: -20 },
   animate: { opacity: 1, x: 0 },

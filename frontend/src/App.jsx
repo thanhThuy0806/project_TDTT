@@ -10,8 +10,6 @@ import SignUpPage from "./pages/auth/Signup";
 import UserInfoPage from "./pages/user_info/UserInfoPage";
 import "./App.css";
 import News from "./pages/news_page/News";
-import ForgotPassword from "./pages/auth/ForgotPassword";
-import VerifyOTP from "./pages/auth/VerifyOTP";
 
 function App() {
   const location = useLocation();
@@ -23,8 +21,6 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/verify-otp" element={<VerifyOTP />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/profile" element={<UserInfoPage />} />
           <Route path="*" element={<ErrorPage />} />
