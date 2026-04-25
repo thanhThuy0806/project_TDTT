@@ -1,0 +1,67 @@
+.mainWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f9f8f6;
+  padding: 1rem 3rem;
+}
+
+.settingCard {
+  margin-top: 2rem;
+  background-color: #efe9e3;
+  border-radius: 0.75rem;
+  padding: 2rem;
+}
+
+.title {
+  color: #000085;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.formGrid {
+  display: grid;
+  gap: 2rem;
+}
+
+.inputBoxContainer {
+  position: relative;
+  border: 1px solid #004452;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  background-color: #f9f8f6;
+}
+
+.inputLabel {
+  position: absolute;
+  top: -0.8rem;
+  left: 1rem;
+  background-color: #efe9e3;
+  padding: 0 0.5rem;
+  color: #000085;
+  font-weight: bold;
+}
+
+.inputField {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding-top: 0.5rem;
+  font-size: 1rem;
+}
+
+.saveBtn {
+  margin-top: 2rem;
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 0.75rem;
+  background-color: #004452;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
