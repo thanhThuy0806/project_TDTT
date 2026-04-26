@@ -1,3 +1,4 @@
+import "expo-standard-web-crypto";
 import { Slot, useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";
 import { View, Text } from "react-native";
@@ -11,7 +12,7 @@ export default function RootLayout() {
   const segments = useSegments();
 
   const [loading, setLoading] = useState(true);
-
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       const inAuthGroup = segments[0] === "(auth)";

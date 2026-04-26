@@ -4,4 +4,5 @@ firebase-admin
 sqlalchemy 
 psycopg2-binary 
 python-dotenv
-apscheduler httpx
+apscheduler
+httpx

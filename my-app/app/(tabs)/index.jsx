@@ -1,245 +1,101 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  FlatList,
-  RefreshControl,
-} from "react-native";
-import { useEffect, useState } from "react";
-import { useRouter } from "expo-router";
-import { MealAPI } from "../../services/mealAPI";
-import { homeStyles } from "../../assets/styles/home.styles";
-import { Image } from "expo-image";
-import { COLORS } from "../../constants/colors";
-import { Ionicons } from "@expo/vector-icons";
-import CategoryFilter from "../../components/CategoryFilter";
-import RecipeCard from "../../components/RecipeCard";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, TextInput, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import FeatureCard from '../../components/FeatureCard';
+import {styles} from "../../assets/styles/(home)/home.styles";
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+export default function HomeScreen() {
+  // Quản lý trạng thái các tính năng (để demo nút gạt)
+  const [activeFeatures, setActiveFeatures] = useState({
+    sos: true,
+    weather: false,
+    map: false,
+    tips: false
+  });
 
-const HomeScreen = () => {
-  const router = useRouter();
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [recipes, setRecipes] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [featuredRecipe, setFeaturedRecipe] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-
-      const [apiCategories, randomMeals, featuredMeal] = await Promise.all([
-        MealAPI.getCategories(),
-        MealAPI.getRandomMeals(12),
-        MealAPI.getRandomMeal(),
-      ]);
-
-      const transformedCategories = apiCategories.map((cat, index) => ({
-        id: index + 1,
-        name: cat.strCategory,
-        image: cat.strCategoryThumb,
-        description: cat.strCategoryDescription,
-      }));
-
-      setCategories(transformedCategories);
-
-      if (!selectedCategory) setSelectedCategory(transformedCategories[0].name);
-
-      const transformedMeals = randomMeals
-        .map((meal) => MealAPI.transformMealData(meal))
-        .filter((meal) => meal !== null);
-
-      setRecipes(transformedMeals);
-
-      const transformedFeatured = MealAPI.transformMealData(featuredMeal);
-      setFeaturedRecipe(transformedFeatured);
-    } catch (error) {
-      console.log("Error loading the data", error);
-    } finally {
-      setLoading(false);
-    }
+  const toggleFeature = (key) => {
+    setActiveFeatures(prev => ({ ...prev, [key]: !prev[key] }));
   };
-
-  const loadCategoryData = async (category) => {
-    try {
-      const meals = await MealAPI.filterByCategory(category);
-      const transformedMeals = meals
-        .map((meal) => MealAPI.transformMealData(meal))
-        .filter((meal) => meal !== null);
-      setRecipes(transformedMeals);
-    } catch (error) {
-      console.error("Error loading category data:", error);
-      setRecipes([]);
-    }
-  };
-
-  const handleCategorySelect = async (category) => {
-    setSelectedCategory(category);
-    await loadCategoryData(category);
-  };
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    // await sleep(2000);
-    await loadData();
-    setRefreshing(false);
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  if (loading && !refreshing)
-    return <LoadingSpinner message="Loading delicions recipes..." />;
 
   return (
-    <View style={homeStyles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={COLORS.primary}
-          />
-        }
-        contentContainerStyle={homeStyles.scrollContent}
-      >
-        {/*  ANIMAL ICONS */}
-        <View style={homeStyles.welcomeSection}>
-          <Image
-            source={require("../../assets/images/lamb.png")}
-            style={{
-              width: 100,
-              height: 100,
-            }}
-          />
-          <Image
-            source={require("../../assets/images/chicken.png")}
-            style={{
-              width: 100,
-              height: 100,
-            }}
-          />
-          <Image
-            source={require("../../assets/images/pork.png")}
-            style={{
-              width: 100,
-              height: 100,
-            }}
+    <SafeAreaView style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        
+        {/* Header: Menu & Avatar */}
+        <View style={styles.header}>
+          <TouchableOpacity>
+            <Ionicons name="grid" size={24} color="#333" />
+          </TouchableOpacity>
+          <Image 
+            source={{ uri: 'https://i.pravatar.cc/150?u=emon' }} 
+            style={styles.avatar} 
           />
         </View>
 
-        {/* FEATURED SECTION */}
-        {featuredRecipe && (
-          <View style={homeStyles.featuredSection}>
-            <TouchableOpacity
-              style={homeStyles.featuredCard}
-              activeOpacity={0.9}
-              onPress={() => router.push(`/recipe/${featuredRecipe.id}`)}
-            >
-              <View style={homeStyles.featuredImageContainer}>
-                <Image
-                  source={{ uri: featuredRecipe.image }}
-                  style={homeStyles.featuredImage}
-                  contentFit="cover"
-                  transition={500}
-                />
-                <View style={homeStyles.featuredOverlay}>
-                  <View style={homeStyles.featuredBadge}>
-                    <Text style={homeStyles.featuredBadgeText}>Featured</Text>
-                  </View>
+        {/* Lời chào */}
+        <View style={styles.greeting}>
+          <Text style={styles.hiText}>Hi Emon 👋</Text>
+          <Text style={styles.welcomeText}>Chào mừng bạn đến với chuyến đi an toàn.</Text>
+        </View>
 
-                  <View style={homeStyles.featuredContent}>
-                    <Text style={homeStyles.featuredTitle} numberOfLines={2}>
-                      {featuredRecipe.title}
-                    </Text>
-
-                    <View style={homeStyles.featuredMeta}>
-                      <View style={homeStyles.metaItem}>
-                        <Ionicons
-                          name="time-outline"
-                          size={16}
-                          color={COLORS.white}
-                        />
-                        <Text style={homeStyles.metaText}>
-                          {featuredRecipe.cookTime}
-                        </Text>
-                      </View>
-                      <View style={homeStyles.metaItem}>
-                        <Ionicons
-                          name="people-outline"
-                          size={16}
-                          color={COLORS.white}
-                        />
-                        <Text style={homeStyles.metaText}>
-                          {featuredRecipe.servings}
-                        </Text>
-                      </View>
-                      {featuredRecipe.area && (
-                        <View style={homeStyles.metaItem}>
-                          <Ionicons
-                            name="location-outline"
-                            size={16}
-                            color={COLORS.white}
-                          />
-                          <Text style={homeStyles.metaText}>
-                            {featuredRecipe.area}
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-                  </View>
-                </View>
-              </View>
+        {/* Thanh tìm kiếm */}
+        <View style={styles.searchSection}>
+          <View style={styles.searchBar}>
+            <TextInput placeholder="Tìm kiếm dịch vụ..." style={styles.searchInput} />
+            <TouchableOpacity style={styles.searchBtn}>
+              <Ionicons name="search" size={20} color="#333" />
             </TouchableOpacity>
           </View>
-        )}
-
-        {categories.length > 0 && (
-          <CategoryFilter
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onSelectCategory={handleCategorySelect}
-          />
-        )}
-
-        <View style={homeStyles.recipesSection}>
-          <View style={homeStyles.sectionHeader}>
-            <Text style={homeStyles.sectionTitle}>{selectedCategory}</Text>
-          </View>
-
-          {recipes.length > 0 ? (
-            <FlatList
-              data={recipes}
-              renderItem={({ item }) => <RecipeCard recipe={item} />}
-              keyExtractor={(item) => item.id.toString()}
-              numColumns={2}
-              columnWrapperStyle={homeStyles.row}
-              contentContainerStyle={homeStyles.recipesGrid}
-              scrollEnabled={false}
-              // ListEmptyComponent={}
-            />
-          ) : (
-            <View style={homeStyles.emptyState}>
-              <Ionicons
-                name="restaurant-outline"
-                size={64}
-                color={COLORS.textLight}
-              />
-              <Text style={homeStyles.emptyTitle}>No recipes found</Text>
-              <Text style={homeStyles.emptyDescription}>
-                Try a different category
-              </Text>
-            </View>
-          )}
         </View>
+
+        {/* Tiêu đề danh mục */}
+        <View style={styles.sectionTitleRow}>
+          <Text style={styles.sectionTitle}>Công cụ hỗ trợ</Text>
+          <TouchableOpacity style={styles.addBtn}>
+            <Text style={styles.addBtnText}>Thêm</Text>
+            <Ionicons name="add-circle" size={16} color="#059669" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Lưới các thẻ (Grid) */}
+        <View style={styles.grid}>
+          <FeatureCard 
+            title="Cảnh báo SOS" 
+            subtitle="Đang sẵn sàng" 
+            icon="shield-checkmark" 
+            bgColor={activeFeatures.sos ? "#818CFF" : "#F0F0F0"} 
+            isEnabled={activeFeatures.sos}
+            onToggle={() => toggleFeature('sos')}
+          />
+          <FeatureCard 
+            title="Thời tiết" 
+            subtitle="Cập nhật 5 phút trước" 
+            icon="cloudy-night" 
+            bgColor={activeFeatures.weather ? "#FFCC80" : "#FFF3E0"} 
+            isEnabled={activeFeatures.weather}
+            onToggle={() => toggleFeature('weather')}
+          />
+          <FeatureCard 
+            title="Bản đồ ngoại tuyến" 
+            subtitle="Đã tải 2 vùng" 
+            icon="map" 
+            bgColor={activeFeatures.map ? "#80DEEA" : "#E0F7FA"} 
+            isEnabled={activeFeatures.map}
+            onToggle={() => toggleFeature('map')}
+          />
+          <FeatureCard 
+            title="Sổ tay an toàn" 
+            subtitle="7 quy tắc cơ bản" 
+            icon="book" 
+            bgColor={activeFeatures.tips ? "#C5E1A5" : "#F1F8E9"} 
+            isEnabled={activeFeatures.tips}
+            onToggle={() => toggleFeature('tips')}
+          />
+        </View>
+
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
-};
-export default HomeScreen;
+}
+

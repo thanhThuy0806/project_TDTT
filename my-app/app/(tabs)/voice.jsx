@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 
-const FavoritesScreen = () => {
+const VoiceCapture = () => {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text>Favorites Screen</Text>
@@ -8,4 +8,4 @@ const FavoritesScreen = () => {
   );
 };
 
-export default FavoritesScreen;
+export default VoiceCapture;

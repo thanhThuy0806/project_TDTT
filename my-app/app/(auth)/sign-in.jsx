@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Platform,
 } from "react-native";
-import { authStyles } from "../../assets/styles/auth.styles";
+import { authStyles } from "../../assets/styles/auth/auth.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { COLORS } from "../../constants/colors";

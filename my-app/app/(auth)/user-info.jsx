@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { authStyles } from "../../assets/styles/auth.styles";
+import { authStyles } from "../../assets/styles/auth/auth.styles";
 import { API_URL } from "../../constants/api";
 import { useLocalSearchParams, useRouter } from "expo-router";
 

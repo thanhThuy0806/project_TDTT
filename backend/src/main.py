@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
 from contextlib import asynccontextmanager
-from src.db.database import engine, SessionLocal
-from src.db.schema import Base, UserProfile
-from src.config.cron import start_cron
+from db.database import engine, SessionLocal
+from db.schema import Base, UserProfile
+from config.cron import start_cron
 from fastapi.middleware.cors import CORSMiddleware
-from src.routes.profile import router as profile_router
+from routes.profile import router as profile_router
 
 # 1. Khai báo Pydantic Model (Hứng dữ liệu từ React Native gửi lên)
 class UserInfoCreate(BaseModel):
