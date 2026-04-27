@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {styles} from "../../assets/styles/(home)/profile.style";
+import {styles} from "../../assets/styles/home/profile.style";
 
 
 const UserInfoScreen = () => {

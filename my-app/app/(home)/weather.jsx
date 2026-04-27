@@ -19,7 +19,7 @@ import {
   Plus,
 } from "lucide-react-native";
 import Thermometer from "../../components/Thermometer";
-import { styles} from "../../assets/styles/(home)/weather.styles";
+import { styles} from "../../assets/styles/home/weather.styles";
 
 
 // --- Main Weather Index Screen ---

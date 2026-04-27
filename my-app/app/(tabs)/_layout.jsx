@@ -1,86 +1,79 @@
-import React from "react";
-import { Tabs } from "expo-router";
-import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
-import { StyleSheet } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Icon } from "lucide-react-native";
+import React from 'react';
+import { View, Dimensions } from 'react-native';
+import { Tabs } from 'expo-router';
+import Svg, { Path } from 'react-native-svg';
+import { Ionicons } from '@expo/vector-icons';
+import FloatingBarButton from '../../components/FloatingBarButton';
+import {styles} from '../../assets/styles/home/tab-bar.style';
 
-const TabsLayout = () => {
+const { width } = Dimensions.get('window');
+
+const TabBarBackground = () => {
+  const center = width / 2;
+  // Công thức đường cong lún
+  const d = `
+    M 0 0
+    L ${center - 45} 0
+    C ${center - 20} 0, ${center - 30} 20, ${center} 20
+    C ${center + 30} 20, ${center + 20} 0, ${center + 45} 0
+    L ${width} 0
+    L ${width} 80
+    L 0 80
+    Z
+  `;
+
   return (
-    <LinearGradient colors={["#F0F4FF", "#E6F9F0"]} style={styles.gradientBg}>
-      <SafeAreaView style={styles.container} edges={["top"]}>
-        <Tabs
-          screenOptions={{
-            headerShown: false,
-            tabBarActiveTintColor: "#818CFF",
-            tabBarInactiveTintColor: "#B0B3C6",
-            tabBarShowLabel: false, // ẩn chữ ở đây
-            tabBarItemStyle: {
-              justifyContent: "center", // Canh giữa theo chiều dọc (Trục Y)
-              alignItems: "center", // Canh giữa theo chiều ngang (Trục X)
-            },
-
-            tabBarStyle: {
-              position: "absolute",
-              bottom: 25,
-              left: 20,
-              right: 20,
-              height: 70, // Chiều cao cố định
-              backgroundColor: "#FFFFFF",
-              borderRadius: 35,
-              borderTopWidth: 0,
-              paddingTop: 10,
-              paddingBottom: 0,
-
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 10 },
-              shadowOpacity: 0.08,
-              shadowRadius: 20,
-              elevation: 10,
-            },
-          }}
-        >
-          <Tabs.Screen
-            name="index"
-            options={{
-              title: "Khám phá",
-              tabBarIcon: ({ color }) => (
-                <MaterialCommunityIcons name="home" size={28} color={color} />
-              ),
-            }}
-          />
-
-          <Tabs.Screen
-            name="voice"
-            options={{
-              title: "Thời tiết",
-              tabBarIcon: ({color}) => <Ionicons name="mic-outline" size={26} color={color}/>,
-            }}
-          />
-
-          <Tabs.Screen
-            name="profile"
-            options={{
-              title: "Hồ sơ",
-              tabBarIcon: ({ color }) => (
-                <Ionicons name="man" size={26} color={color} />
-              ),
-            }}
-          />
-        </Tabs>
-      </SafeAreaView>
-    </LinearGradient>
+    <View style={styles.svgContainer}>
+      <Svg width={width} height={80}>
+        <Path d={d} fill="#FFFFFF" />
+      </Svg>
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
-  gradientBg: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-  },
-});
+export default function TabLayout() {
+  return (
+    <View style={{ flex: 1, backgroundColor: '#F3F4F6' }}>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: styles.tabBar,
+          tabBarShowLabel: false,               // Ẩn nhãn chữ để giao diện clean như hình
+          tabBarActiveTintColor: '#111827',   // Màu icon khi chọn
+          tabBarInactiveTintColor: '#6B7280', // Màu icon khi không chọn
+        }}
+      >
+        {/* Tab 1: Trang chủ */}
+        <Tabs.Screen
+          name="index"
+          options={{
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons name={focused ? "home" : "home-outline"} size={26} color={color} />
+            ),
+          }}
+        />
 
-export default TabsLayout;
+        {/* Tab 2: Nút Floating */}
+        <Tabs.Screen
+          name="voice"
+          options={{
+            tabBarButton: (props) => <FloatingBarButton {...props} />,
+          }}
+        />
+
+        {/* Tab 3: Cá nhân */}
+        <Tabs.Screen
+          name="profile"
+          options={{
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons name={focused ? "person" : "person-outline"} size={26} color={color} />
+            ),
+          }}
+        />
+      </Tabs>
+      
+      {/* Lớp nền SVG được đặt ở dưới cùng */}
+      <TabBarBackground />
+    </View>
+  );
+}

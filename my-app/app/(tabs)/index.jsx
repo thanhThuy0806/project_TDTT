@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Image, TextInput, TouchableOpacity 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import FeatureCard from '../../components/FeatureCard';
-import {styles} from "../../assets/styles/(home)/home.styles";
+import {styles} from "../../assets/styles/home/home.styles";
 
 export default function HomeScreen() {
   // Quản lý trạng thái các tính năng (để demo nút gạt)

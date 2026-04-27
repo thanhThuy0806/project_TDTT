@@ -20,42 +20,6 @@ export const styles = StyleSheet.create({
     paddingBottom: 40,
   },
 
-  // STYLING CHÍNH: HIỂN THỊ NHIỆT KẾ MỚI (Thay thế hoàn toàn)
-  thermometerDisplayContainer: {
-    alignItems: "center",
-    marginVertical: 40,
-    width: "100%",
-    height: 350,
-    justifyContent: "center",
-  }, // Tăng chiều cao để đủ chỗ cho viền mới
-  thermometerValueText: {
-    fontSize: 56,
-    fontWeight: "bold",
-    marginBottom: 15,
-    letterSpacing: -1,
-  },
-  celsiusText: { fontSize: 24, fontWeight: "normal", color: "#999" },
-
-  // Viền ngoài bóng mờ cho toàn bộ cấu trúc (Tạo hiệu ứng Glassmorphism như ảnh mẫu)
-  thermometerOuterFrame: {
-    width: 70, // Đủ rộng cho bầu lớn và viền mờ
-    height: 260, // Đủ cao cho ống và bầu
-    backgroundColor: "#FFFFFF", // Nền trắng bên trong viền mờ
-    borderRadius: 35, // Bo góc cho khung ngoài mờ mờ
-    borderWidth: 1,
-    borderColor: "#E0E0E0", // Viền xám mờ nhẹ
-    paddingHorizontal: 10,
-    paddingTop: 10,
-    alignItems: "center",
-    justifyContent: "flex-start",
-    // Hiệu ứng Glassmorphism nhẹ
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 1, // Shadow cho Android
-  },
-
   // Styling Grid và BottomBar (Giữ nguyên - Rất đẹp)
   statsGrid: {
     flexDirection: "row",

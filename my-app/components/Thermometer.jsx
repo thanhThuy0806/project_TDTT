@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, Animated, Easing } from "react-native";
-import { styles } from '../assets/styles/components/Thermometer.style';
+import { styles } from '../assets/styles/components/thermometer.style';
 /**
  * Thermometer Component
  *

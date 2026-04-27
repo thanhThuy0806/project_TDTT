@@ -5,7 +5,7 @@ const { width } = Dimensions.get("window");
 const cardWidth = (width - 48) / 2;
 
 export const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFF' },
+  container: { flex: 1, backgroundColor: '#ffffff' },
   scrollContent: { paddingHorizontal: 24, paddingBottom: 100 },
   header: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, alignItems: 'center' },
   avatar: { width: 40, height: 40, borderRadius: 20 },

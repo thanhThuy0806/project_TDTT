@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 15,
-    paddingBottom: 100, // Chừa chỗ cho TabBar lơ lửng của bạn
+    paddingBottom: 100,           // Chừa chỗ cho TabBar lơ lửng của bạn
   },
   card: {
     backgroundColor: "#FFFFFF", // Card màu trắng tinh
