@@ -86,6 +86,19 @@ const roseGoldTheme = {
   shadow: "#000000",
 };
 
+const selfTheme = {
+  primary: "#818CFF",
+  background: "#FFF",
+  text: "#000",
+  subText: "#374151",
+  border: "#555",
+  white: "#FFFFFF",
+  textLight: "#888",
+  textLight3: "#333",
+  card: "#FFFFFF",
+  shadow: "#000000",
+};
+
 export const THEMES = {
   coffee: coffeeTheme,
   forest: forestTheme,
@@ -95,8 +108,8 @@ export const THEMES = {
   mint: mintTheme,
   midnight: midnightTheme,
   roseGold: roseGoldTheme,
+  self: selfTheme,
 };
 
-
 // 👇 change this to switch theme
-export const COLORS = THEMES.midnight;
+export const COLORS = THEMES.self;

@@ -7,7 +7,10 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 1. Install dependencies
 
    ```bash
-   npm install
+   cd frontend
+   npm install expo
+   npx expo install --check
+   npx expo install firebase @react-native-async-storage/async-storage
    ```
 
 2. Start the app

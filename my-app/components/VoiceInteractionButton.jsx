@@ -40,7 +40,7 @@ export default function VoiceInteractionButton({ isRecording }) {
           pulse2.value = withRepeat(
             withTiming(1, { duration: 1500 }),
             -1,
-            false,
+            false
           );
         }
       }, 750);
@@ -57,8 +57,13 @@ export default function VoiceInteractionButton({ isRecording }) {
       transform: [
         {
           translateY: withSpring(
-            safeRecordingState.value ? -height * 0.35 : -22,
-            { damping: 14, stiffness: 90 },
+            safeRecordingState.value ? -height * 0.35 : 0,
+            {
+              damping: 22,
+              stiffness: 140,
+              mass: 0.8,
+              overshootClamping: true,
+            }
           ),
         },
       ],
@@ -71,11 +76,11 @@ export default function VoiceInteractionButton({ isRecording }) {
       transform: [{ scale: withSpring(safeRecordingState.value ? 1.5 : 1) }],
       backgroundColor: withTiming(
         safeRecordingState.value ? "#EF4444" : "#673AB7",
-        { duration: 300 },
+        { duration: 300 }
       ),
       shadowColor: withTiming(
         safeRecordingState.value ? "#EF4444" : "#673AB7",
-        { duration: 300 },
+        { duration: 300 }
       ),
     };
   });
@@ -135,7 +140,7 @@ export default function VoiceInteractionButton({ isRecording }) {
         {/* Nút Mic chính */}
         <TouchableOpacity activeOpacity={0.9} onPress={toggleRecording}>
           <Animated.View style={[styles.button, buttonStyle]}>
-            <Ionicons name="mic" size={26} color="#FFF" />
+            <Ionicons name="mic" size={30} color="#FFF" />
           </Animated.View>
         </TouchableOpacity>
       </Animated.View>
@@ -152,20 +157,29 @@ const styles = StyleSheet.create({
     paddingBottom: 120, // Căn chữ nằm trên nút
     zIndex: 5,
   },
-  listeningText: { fontSize: 32, fontWeight: "800", color: "#EF4444" },
-  subText: { fontSize: 16, color: "#6B7280", marginTop: 8, fontWeight: "500" },
+  listeningText: {
+    fontSize: 32,
+    fontWeight: "800",
+    color: "#EF4444",
+  },
+  subText: {
+    fontSize: 16,
+    color: "#6B7280",
+    marginTop: 8,
+    fontWeight: "500",
+  },
   container: {
     position: "absolute",
-    bottom: 30,
+    bottom: 50,
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,
   },
   button: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     justifyContent: "center",
     alignItems: "center",
     shadowOffset: { width: 0, height: 8 },
@@ -175,9 +189,9 @@ const styles = StyleSheet.create({
   },
   pulseRing: {
     position: "absolute",
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     backgroundColor: "#EF4444",
   },
 });

@@ -14,7 +14,8 @@ import {
   ChevronUp,
   AlertTriangle,
 } from "lucide-react-native";
-import { styles } from '../assets/styles/components/danger-banner.style'
+import { styles } from "../assets/styles/components/danger-banner.style";
+
 export default function DangerBanner({ isDanger, dangerDetails }) {
   const [expanded, setExpanded] = React.useState(false);
 
@@ -32,9 +33,15 @@ export default function DangerBanner({ isDanger, dangerDetails }) {
           withTiming(-2, { duration: 100 }),
           withTiming(2, { duration: 100 })
         ),
-        -1, // Lặp vô hạn
-        true // Chạy ngược lại
+        -1,
+        true
       );
+
+      const timer = setTimeout(() => {
+        shakeTranslation.value = withTiming(0, { duration: 200 });
+      }, 5000);
+
+      return () => clearTimeout(timer);
     } else {
       shakeTranslation.value = 0;
       setExpanded(false);
@@ -60,12 +67,12 @@ export default function DangerBanner({ isDanger, dangerDetails }) {
         <View style={styles.mainRow}>
           <View style={styles.textSection}>
             <Text style={styles.title}>
-              {isDanger ? "Cảnh báo nguy hiểm!" : "Set the reminder"}
+              {isDanger ? "Cảnh báo nguy hiểm!" : "Khu vực an toàn"}
             </Text>
             <Text style={styles.subtitle}>
               {isDanger
                 ? "Bạn đang ở vùng có nguy cơ cao. Hãy cẩn trọng!"
-                : "Never miss your morning routine! Set a reminder to stay on track"}
+                : "Mọi thứ đều ổn, bạn có thể thoải mái khám phá!"}
             </Text>
 
             {isDanger ? (
@@ -81,9 +88,7 @@ export default function DangerBanner({ isDanger, dangerDetails }) {
                 )}
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity style={styles.setNowBtn}>
-                <Text style={styles.setNowText}>Set Now</Text>
-              </TouchableOpacity>
+              <Text style={styles.setNowText}>Không phát hiện nguy hiểm</Text>
             )}
           </View>
 

@@ -21,10 +21,7 @@ export const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.7)",
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#4fa8d5",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
+    boxShadow: "0px 4px 8px rgba(31,66,84,0.4)",
     elevation: 6,
   },
   label: {

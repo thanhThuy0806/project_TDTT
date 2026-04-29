@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,21 +8,132 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {styles} from "../../assets/styles/home/profile.style";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
+import { auth, db } from "../../firebase/firebaseConfig";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useRouter } from "expo-router";
+
+import { styles } from "../../assets/styles/profile/profile.style";
 
 const UserInfoScreen = () => {
-  // State quản lý dữ liệu form
+  const router = useRouter();
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
   const [formData, setFormData] = useState({
-    firstName: "Sienna",
-    lastName: "Hewitt",
-    email: "sienna.travel@gmail.com",
-    country: "United States",
-    emergencyPhone: "+1 234 567 890",
+    name: "",
+    phone: "",
+    gender: "male",
+    dob: new Date(),
+    emergencyName: "",
+    emergencyPhone: "",
   });
+
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const onDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    selectedDate && handleInputChange("dob", selectedDate);
+  };
+
+  // Lấy dữ liệu từ Firestore
+  const fetchUserInfo = async () => {
+    const currentUser = auth.currentUser;
+    if (!currentUser) return;
+
+    try {
+      const userDocRef = doc(db, "user-info", currentUser.uid);
+      const docSnap = await getDoc(userDocRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setFormData({
+          name: data.name || "",
+          phone: data.phone || "",
+          gender: data.gender || "male",
+          dob: data.dob ? new Date(data.dob) : new Date(),
+          emergencyName: data.emergencyName || "",
+          emergencyPhone: data.emergencyPhone || "",
+        });
+      }
+    } catch (error) {
+      console.error("Lỗi tải thông tin:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
+
+  const handleSave = async () => {
+    if (!formData.name.trim()) {
+      Alert.alert("Thông báo", "Vui lòng nhập họ và tên");
+      return;
+    }
+
+    const currentUser = auth.currentUser;
+    if (!currentUser) return;
+
+    setSaving(true);
+    try {
+      await setDoc(
+        doc(db, "user-info", currentUser.uid),
+        {
+          name: formData.name,
+          phone: formData.phone,
+          gender: formData.gender,
+          dob: formData.dob.toISOString(),
+          emergencyName: formData.emergencyName,
+          emergencyPhone: formData.emergencyPhone,
+          updatedAt: new Date().toISOString(),
+        },
+        { merge: true }
+      );
+
+      Alert.alert("Thành công", "Thông tin đã được cập nhật!");
+      setIsEditing(false);
+    } catch (error) {
+      Alert.alert("Lỗi", "Không thể lưu thông tin");
+      console.error(error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleLogout = () => {
+    Alert.alert("Đăng xuất", "Bạn có chắc muốn đăng xuất?", [
+      { text: "Hủy", style: "cancel" },
+      {
+        text: "Đăng xuất",
+        style: "destructive",
+        onPress: () => console.log("Đăng xuất..."),
+      },
+    ]);
+  };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text>Đang tải...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -34,185 +145,203 @@ const UserInfoScreen = () => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          {/* Card chứa toàn bộ nội dung */}
-          <View style={styles.card}>
-            {/* 1. Ảnh bìa (Cover Image) */}
-            <View style={styles.coverContainer}>
-              <Image
-                source={{
-                  uri: "https://images.unsplash.com/photo-1506744626753-eba7bc81541e?q=80&w=800&auto=format&fit=crop",
-                }}
-                style={styles.coverImage}
-              />
-              <TouchableOpacity style={styles.closeButton}>
-                <Ionicons name="close" size={20} color="#666" />
-              </TouchableOpacity>
+          <View style={styles.infoSection}>
+            <View style={styles.nameRow}>
+              <Text style={styles.userName}>
+                {formData.name || "Chưa cập nhật"}
+              </Text>
+              <View style={styles.statusBadge}>
+                <View style={styles.statusDot} />
+                <Text style={styles.statusText}>Đang an toàn</Text>
+              </View>
             </View>
+            <Text style={styles.userEmail}>{auth.currentUser?.email}</Text>
+          </View>
 
-            {/* 2. Avatar & Nút hành động trên cùng */}
-            <View style={styles.avatarSection}>
-              <View style={styles.avatarWrapper}>
-                <Image
-                  source={{
-                    uri: "https://images.unsplash.com/photo-1531123897727-8f129e1bf00c?q=80&w=200&auto=format&fit=crop",
-                  }}
-                  style={styles.avatar}
+          <View style={styles.divider} />
+
+          {/* Nút Chỉnh sửa */}
+          {!isEditing && (
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() => setIsEditing(true)}
+            >
+              <Ionicons name="create-outline" size={20} color="#3B82F6" />
+              <Text style={styles.editButtonText}>Chỉnh sửa thông tin</Text>
+            </TouchableOpacity>
+          )}
+
+          <View style={styles.formSection}>
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Họ và tên</Text>
+              {isEditing ? (
+                <TextInput
+                  style={styles.input}
+                  value={formData.name}
+                  onChangeText={(text) => handleInputChange("name", text)}
+                  placeholder="Nhập họ và tên"
                 />
-                <View style={styles.verifiedBadge}>
-                  <MaterialCommunityIcons
-                    name="check-decagram"
-                    size={20}
-                    color="#3B82F6"
-                  />
-                </View>
-              </View>
-
-              <View style={styles.topActions}>
-                <TouchableOpacity style={styles.outlineButton}>
-                  <Ionicons
-                    name="shield-checkmark-outline"
-                    size={16}
-                    color="#374151"
-                  />
-                  <Text style={styles.outlineButtonText}>Bảo mật</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.outlineButton}>
-                  <Text style={styles.outlineButtonText}>Lịch sử đi</Text>
-                </TouchableOpacity>
-              </View>
+              ) : (
+                <Text style={styles.valueText}>
+                  {formData.name || "Chưa cập nhật"}
+                </Text>
+              )}
             </View>
 
-            {/* 3. Tên & Trạng thái */}
-            <View style={styles.infoSection}>
-              <View style={styles.nameRow}>
-                <Text style={styles.userName}>Sienna Hewitt</Text>
-                <View style={styles.statusBadge}>
-                  <View style={styles.statusDot} />
-                  <Text style={styles.statusText}>Đang an toàn</Text>
-                </View>
-              </View>
-              <Text style={styles.userEmail}>{formData.email}</Text>
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Số điện thoại</Text>
+              {isEditing ? (
+                <TextInput
+                  style={styles.input}
+                  value={formData.phone}
+                  keyboardType="phone-pad"
+                  onChangeText={(text) => handleInputChange("phone", text)}
+                />
+              ) : (
+                <Text style={styles.valueText}>
+                  {formData.phone || "Chưa cập nhật"}
+                </Text>
+              )}
             </View>
 
-            {/* 4. Thống kê Du lịch (Travel Stats) */}
-            <View style={styles.statsRow}>
-              <View style={styles.statItem}>
-                <Text style={styles.statLabel}>Chuyến đi</Text>
-                <Text style={styles.statValue}>12</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statLabel}>Điểm an toàn</Text>
-                <Text style={styles.statValue}>5</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statLabel}>Nhóm máu</Text>
-                <Text style={styles.statValue}>O+</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statLabel}>Liên hệ SOS</Text>
-                <Text style={styles.statValue}>3</Text>
-              </View>
+            <View style={[styles.formGroup, { borderBottomWidth: 0 }]}>
+              <Text style={styles.label}>Giới tính</Text>
+              {isEditing ? (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginTop: 8,
+                  }}
+                >
+                  {[
+                    { label: "Nam", value: "male" },
+                    { label: "Nữ", value: "female" },
+                    { label: "Khác", value: "other" },
+                  ].map((item) => (
+                    <TouchableOpacity
+                      key={item.value}
+                      onPress={() => handleInputChange("gender", item.value)}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginRight: 20,
+                      }}
+                    >
+                      <View style={styles.checkBox}>
+                        {formData.gender === item.value && (
+                          <View style={styles.tick} />
+                        )}
+                      </View>
+                      <Text style={{ fontSize: 16, color: "#333" }}>
+                        {item.label}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              ) : (
+                <Text style={styles.valueText}>
+                  {formData.gender === "male"
+                    ? "Nam"
+                    : formData.gender === "female"
+                    ? "Nữ"
+                    : "Khác"}
+                </Text>
+              )}
             </View>
 
-            {/* Đường gạch ngang phân cách */}
-            <View style={styles.divider} />
-
-            {/* 5. Form nhập liệu */}
-            <View style={styles.formSection}>
-              {/* Họ & Tên (Hàng ngang) */}
-              <View style={styles.formGroup}>
-                <Text style={styles.label}>Họ và Tên</Text>
-                <View style={styles.rowInputs}>
-                  <TextInput
-                    style={[styles.input, { flex: 1, marginRight: 10 }]}
-                    value={formData.firstName}
-                    placeholder="Tên"
-                    placeholderTextColor="#9CA3AF"
-                  />
-                  <TextInput
-                    style={[styles.input, { flex: 1 }]}
-                    value={formData.lastName}
-                    placeholder="Họ"
-                    placeholderTextColor="#9CA3AF"
-                  />
-                </View>
-              </View>
-
-              {/* Email */}
-              <View style={styles.formGroup}>
-                <Text style={styles.label}>Địa chỉ Email</Text>
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Ngày sinh</Text>
+              {isEditing ? (
                 <View style={styles.inputWithIcon}>
                   <Ionicons
-                    name="mail-outline"
+                    name="calendar-outline"
                     size={20}
-                    color="#6B7280"
+                    color="#888"
                     style={styles.inputIcon}
                   />
-                  <TextInput
-                    style={styles.inputField}
-                    value={formData.email}
-                    keyboardType="email-address"
-                  />
+                  <TouchableOpacity
+                    style={styles.textInput}
+                    onPress={() => setShowDatePicker(true)}
+                  >
+                    <Text>{formData.dob.toLocaleDateString("vi-VN")}</Text>
+                  </TouchableOpacity>
+                  {showDatePicker && (
+                    <DateTimePicker
+                      value={formData.dob}
+                      mode="date"
+                      display="default"
+                      onChange={onDateChange}
+                    />
+                  )}
                 </View>
-                <View style={styles.verifiedRow}>
-                  <MaterialCommunityIcons
-                    name="check-decagram"
-                    size={16}
-                    color="#3B82F6"
-                  />
-                  <Text style={styles.verifiedText}>
-                    ĐÃ XÁC MINH 2 THG 1, 2025
-                  </Text>
-                </View>
-              </View>
-
-              {/* Quốc gia */}
-              <View style={styles.formGroup}>
-                <Text style={styles.label}>Quốc gia (Country)</Text>
-                <TouchableOpacity style={styles.inputDropdown}>
-                  <Text style={styles.dropdownText}>🇺🇸 {formData.country}</Text>
-                  <Ionicons name="chevron-down" size={20} color="#6B7280" />
-                </TouchableOpacity>
-              </View>
-
-              {/* Số điện thoại khẩn cấp (Thay cho Username) */}
-              <View style={styles.formGroup}>
-                <Text style={styles.label}>Số điện thoại khẩn cấp (SOS)</Text>
-                <View style={styles.inputWithPrefix}>
-                  <View style={styles.prefixBox}>
-                    <Text style={styles.prefixText}>SOS</Text>
-                  </View>
-                  <TextInput
-                    style={styles.inputFieldPrefixed}
-                    value={formData.emergencyPhone}
-                    keyboardType="phone-pad"
-                  />
-                  <Ionicons
-                    name="shield-checkmark"
-                    size={20}
-                    color="#3B82F6"
-                    style={{ marginRight: 12 }}
-                  />
-                </View>
-              </View>
+              ) : (
+                <Text style={styles.valueText}>
+                  {formData.dob.toLocaleDateString("vi-VN")}
+                </Text>
+              )}
             </View>
 
-            {/* 6. Nút Lưu thay đổi */}
-            <View style={styles.footerActions}>
-              <TouchableOpacity style={styles.cancelButton}>
-                <Text style={styles.cancelButtonText}>Hủy</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.saveButton}>
-                <Text style={styles.saveButtonText}>Lưu thay đổi</Text>
-              </TouchableOpacity>
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Người liên hệ khẩn cấp</Text>
+              {isEditing ? (
+                <TextInput
+                  style={styles.input}
+                  value={formData.emergencyName}
+                  onChangeText={(text) =>
+                    handleInputChange("emergencyName", text)
+                  }
+                  placeholder="Tên người thân"
+                />
+              ) : (
+                <Text style={styles.valueText}>
+                  {formData.emergencyName || "Chưa cập nhật"}
+                </Text>
+              )}
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Số điện thoại khẩn cấp</Text>
+              {isEditing ? (
+                <TextInput
+                  style={styles.input}
+                  value={formData.emergencyPhone}
+                  keyboardType="phone-pad"
+                  onChangeText={(text) =>
+                    handleInputChange("emergencyPhone", text)
+                  }
+                />
+              ) : (
+                <Text style={styles.valueText}>
+                  {formData.emergencyPhone || "Chưa cập nhật"}
+                </Text>
+              )}
             </View>
           </View>
 
-          {/* 7. NÚT ĐĂNG XUẤT (Thêm mới vào đây) */}
-          <TouchableOpacity
-            style={styles.logoutButton}
-            onPress={() => console.log("User logged out")}
-          >
+          {/* Nút Lưu & Hủy khi đang chỉnh sửa */}
+          {isEditing && (
+            <View style={styles.footerActions}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setIsEditing(false)}
+              >
+                <Text style={styles.cancelButtonText}>Hủy</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={handleSave}
+                disabled={saving}
+              >
+                <Text style={styles.saveButtonText}>
+                  {saving ? "Đang lưu..." : "Lưu thay đổi"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* Nút Đăng xuất - Luôn hiển thị */}
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Ionicons
               name="log-out-outline"
               size={20}
@@ -226,7 +355,5 @@ const UserInfoScreen = () => {
     </SafeAreaView>
   );
 };
-
-
 
 export default UserInfoScreen;

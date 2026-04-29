@@ -8,7 +8,10 @@ const SafeScreen = ({ children }) => {
   return (
     <View
       style={{
-        paddingTop: insets.top,
+        // paddingTop: insets.top, // Tránh notch/thanh trạng thái
+        // paddingBottom: insets.bottom, // Tránh nút home ảo
+        paddingLeft: insets.left, // Tránh viền cong (iPhone)
+        paddingRight: insets.right, // Tránh viền cong (iPhone)
         flex: 1,
         backgroundColor: COLORS.background,
       }}
@@ -17,4 +20,5 @@ const SafeScreen = ({ children }) => {
     </View>
   );
 };
+
 export default SafeScreen;

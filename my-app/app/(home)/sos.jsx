@@ -1,98 +1,79 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Pressable,
-  Animated as RNAnimated,
-  Alert,
-} from "react-native";
+import React, { useState } from "react";
+import { View, Text, Pressable } from "react-native";
+import { useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ChevronLeft, RSS, Check } from "lucide-react-native";
+import { ChevronLeft, Rss, Check } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Svg, { Circle } from "react-native-svg";
 import Animated, {
   useSharedValue,
   useAnimatedProps,
+  useAnimatedStyle,
   withTiming,
+  withSequence,
   Easing,
 } from "react-native-reanimated";
 import { styles } from "../../assets/styles/home/sos.styles";
-import {
-  PlusSquare,
-  Flame,
-  Building2,
-  Truck,
-  Sword,
-  Waves,
-} from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const EMERGENCY_TYPES = [
-  { id: "medical", label: "Medical", icon: "PlusSquare", color: "#D4E157" },
-  { id: "fire", label: "Fire", icon: "Flame", color: "#FFAB91" },
+  { id: "medical", label: "Y tế", icon: "medkit", color: "#D4E157" },
+  { id: "fire", label: "Hỏa hoạn", icon: "flame", color: "#FFAB91" },
   {
     id: "disaster",
-    label: "Natural disaster",
-    icon: "Building2",
+    label: "Thiên tai",
+    icon: "business",
     color: "#A7FFEB",
   },
-  { id: "accident", label: "Accident", icon: "Truck", color: "#D1C4E9" },
-  { id: "violence", label: "Violence", icon: "Sword", color: "#F48FB1" },
-  { id: "rescue", label: "Rescue", icon: "Waves", color: "#FFF59D" },
+  { id: "accident", label: "Tai nạn", icon: "car", color: "#D1C4E9" },
+  { id: "violence", label: "Bạo lực", icon: "shield", color: "#F48FB1" },
+  { id: "rescue", label: "Cứu hộ", icon: "water", color: "#FFF59D" },
 ];
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export default function SOSScreen() {
+  const router = useRouter();
   const [status, setStatus] = useState("idle"); // 'idle', 'counting', 'sent'
   const [countdown, setCountdown] = useState(3);
   const [selectedType, setSelectedType] = useState(null);
 
-  const IconMap = {
-    PlusSquare,
-    Flame,
-    Building2,
-    Truck,
-    Sword,
-    Waves,
-  };
-
-  // Animation cho vòng tròn Progress
+  // Animation
   const progress = useSharedValue(0);
-  const CIRCLE_LENGTH = 300; // Chu vi vòng tròn
+  const CIRCLE_LENGTH = 300;
   const R = CIRCLE_LENGTH / (2 * Math.PI);
 
   const shakeOffset = useSharedValue(0);
+
   const animatedShakeStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: shakeOffset.value }],
   }));
-
-  const triggerShake = () => {
-    // Hiệu ứng rung lắc UI
-    shakeOffset.value = withSequence(
-      withTiming(-10, { duration: 50 }),
-      withRepeat(withTiming(10, { duration: 50 }), 5, true),
-      withTiming(0, { duration: 50 })
-    );
-
-    // Rung vật lý điện thoại (Kiểu cảnh báo lỗi)
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-  };
 
   const animatedProps = useAnimatedProps(() => ({
     strokeDashoffset: CIRCLE_LENGTH * (1 - progress.value),
   }));
 
+  const triggerShake = () => {
+    shakeOffset.value = withSequence(
+      withTiming(-10, { duration: 50 }),
+      withTiming(10, { duration: 50 }),
+      withTiming(-10, { duration: 50 }),
+      withTiming(10, { duration: 50 }),
+      withTiming(0, { duration: 50 })
+    );
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+  };
+
   const startSOS = () => {
     if (!selectedType) {
-      triggerShake(); // Chạy hiệu ứng rung lắc
-      // Thay vì Alert ngắt quãng, ta có thể dùng một Text thông báo đỏ (tùy chọn)
+      triggerShake();
       return;
     }
 
     setStatus("counting");
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    progress.value = 0;
+
     progress.value = withTiming(1, { duration: 3000, easing: Easing.linear });
 
     let timer = setInterval(() => {
@@ -111,23 +92,23 @@ export default function SOSScreen() {
     setStatus("idle");
     setCountdown(3);
     progress.value = 0;
+    setSelectedType(null);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable style={styles.backBtn}>
+        <Pressable style={styles.backBtn} onPress={() => router.back()}>
           <ChevronLeft color="#000" size={28} />
         </Pressable>
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.title}>Emergency help{"\n"}needed?</Text>
-        <Text style={styles.subtitle}>Press or hold the button to help</Text>
+        <Text style={styles.title}>Hỗ Trợ Khẩn Cấp{"\n"}needed?</Text>
+        <Text style={styles.subtitle}>Nhấn hoặc giữ nút để gửi tín hiệu</Text>
 
         <View style={styles.buttonContainer}>
-          {/* Vòng tròn Progress shadow (chỉ hiện khi counting) */}
           {status === "counting" && (
             <Svg style={styles.svg}>
               <Circle
@@ -152,7 +133,7 @@ export default function SOSScreen() {
             </Svg>
           )}
 
-          {/* Nút bấm chính */}
+          {/* Nút SOS chính */}
           <Pressable
             onPress={status === "idle" ? startSOS : null}
             style={({ pressed }) => [
@@ -164,7 +145,7 @@ export default function SOSScreen() {
               colors={["#FF8A65", "#E91E63"]}
               style={styles.gradient}
             >
-              {status === "idle" && <RSS color="#FFF" size={40} />}
+              {status === "idle" && <Rss color="#FFF" size={40} />}
               {status === "counting" && (
                 <Text style={styles.countText}>{countdown}</Text>
               )}
@@ -173,51 +154,56 @@ export default function SOSScreen() {
           </Pressable>
         </View>
 
+        {/* Phần chọn loại sự cố */}
         <Animated.View style={[styles.emergencySection, animatedShakeStyle]}>
           <Text
             style={[
               styles.sectionTitle,
-              !selectedType && status === "idle" && { color: "#E91E63" }, // Đổi màu tiêu đề nếu chưa chọn
+              !selectedType && status === "idle" && { color: "#E91E63" },
             ]}
           >
-            What's your emergency? {!selectedType && "*"}
+            Tình trạng hiện tại của bạn như thế nào?{" "}
+            {!selectedType && status === "idle" && "*"}
           </Text>
 
           <View style={styles.chipContainer}>
             {EMERGENCY_TYPES.map((item) => {
-              const IconComponent = IconMap[item.icon];
               const isSelected = selectedType === item.id;
 
               return (
                 <Pressable
                   key={item.id}
                   onPress={() => {
-                    setSelectedType(item.id);
-                    Haptics.selectionAsync();
+                    if (status === "idle") {
+                      setSelectedType(item.id);
+                      Haptics.selectionAsync();
+                    }
                   }}
                   style={[styles.chip, isSelected && styles.chipSelected]}
                 >
                   <View
                     style={[styles.iconCircle, { backgroundColor: item.color }]}
                   >
-                    <IconComponent color="#000" size={18} />
+                    <Ionicons name={item.icon} color="#000" size={18} />
                   </View>
                   <Text style={styles.chipLabel}>{item.label}</Text>
                 </Pressable>
               );
             })}
           </View>
-          {!selectedType && (
+
+          {!selectedType && status === "idle" && (
             <Text style={styles.errorHint}>
-              Please select a category before pressing SOS
+              Vui lòng chọn trường hợp cứu trợ
             </Text>
           )}
         </Animated.View>
 
+        {/* Thông báo thành công */}
         {status === "sent" && (
           <View style={styles.successContainer}>
             <Text style={styles.successText}>
-              Email & SMS sent to{"\n"}House agent successfully
+              Email & SMS đã gửi đến{"\n"}các đơn vị hỗ trợ thành công
             </Text>
             <Pressable style={styles.doneBtn} onPress={handleDone}>
               <LinearGradient

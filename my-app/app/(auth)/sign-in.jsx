@@ -35,7 +35,7 @@ const SignInScreen = () => {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password,
+        password
       );
 
       if (userCredential.user) {
@@ -63,19 +63,22 @@ const SignInScreen = () => {
         >
           <View style={authStyles.imageContainer}>
             <Image
-              source={require("../../assets/images/i1.png")}
+              source={require("../../assets/images/smarttourism.jpg")}
               style={authStyles.image}
               contentFit="contain"
             />
           </View>
 
-          <Text style={authStyles.title}>Welcome Back</Text>
+          <Text style={authStyles.title}>Chào Mừng Quay Trở lại</Text>
+          <Text style={authStyles.subtitle}>
+            Hãy đăng nhập để sử dụng ứng dụng
+          </Text>
 
           <View style={authStyles.formContainer}>
             <View style={authStyles.inputContainer}>
               <TextInput
                 style={authStyles.textInput}
-                placeholder="Enter email"
+                placeholder="Nhập email"
                 placeholderTextColor={COLORS.textLight}
                 value={email}
                 onChangeText={setEmail}
@@ -87,7 +90,7 @@ const SignInScreen = () => {
             <View style={authStyles.inputContainer}>
               <TextInput
                 style={authStyles.textInput}
-                placeholder="Enter password"
+                placeholder="Nhập mật khẩu"
                 placeholderTextColor={COLORS.textLight}
                 value={password}
                 onChangeText={setPassword}
@@ -117,7 +120,7 @@ const SignInScreen = () => {
               activeOpacity={0.8}
             >
               <Text style={authStyles.buttonText}>
-                {loading ? "Signing In..." : "Sign In"}
+                {loading ? "Đang đăng nhập..." : "Đăng nhập"}
               </Text>
             </TouchableOpacity>
 

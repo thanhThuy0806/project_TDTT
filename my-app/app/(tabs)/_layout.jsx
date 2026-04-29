@@ -84,7 +84,7 @@ export default function TabLayout() {
                 size={26}
                 color={color}
                 style={{
-                  bottom: 20,
+                  bottom: 10,
                 }}
               />
             ),
@@ -103,7 +103,7 @@ export default function TabLayout() {
                 size={26}
                 color={color}
                 style={{
-                  bottom: 20,
+                  bottom: 10,
                 }}
               />
             ),
@@ -124,19 +124,16 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 50,
+    height: 70,
     zIndex: 10,
   },
   svgContainer: {
     position: "absolute",
     bottom: 0,
     width: "100%",
-    height: 70,
+    height: 100,
     zIndex: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -3 },
-    shadowOpacity: 0.08,
-    shadowRadius: 15,
+    boxShadow: "0px -3px 15px rgba(0,0,0,0.08)",
     elevation: 10,
   },
 });

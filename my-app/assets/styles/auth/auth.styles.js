@@ -31,7 +31,7 @@ export const authStyles = StyleSheet.create({
     fontWeight: "bold",
     color: COLORS.text,
     textAlign: "center",
-    marginBottom: 40,
+    marginBottom: 20,
   },
   subtitle: {
     fontSize: 16,
@@ -46,7 +46,26 @@ export const authStyles = StyleSheet.create({
     marginBottom: 20,
     position: "relative",
   },
+  label: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: COLORS.subtitle,
+    marginBottom: 8,
+  },
+  inputWithIcon: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 10,
+    height: 48,
+    backgroundColor: COLORS.white,
+  },
+  inputIcon: {
+    paddingHorizontal: 15,
+  },
   textInput: {
+    flex: 1,
     fontSize: 16,
     color: COLORS.text,
     paddingVertical: 16,
@@ -55,6 +74,14 @@ export const authStyles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: COLORS.border,
+  },
+  inputBox: {
+    flex: 1,
+    fontSize: 16,
+    color: COLORS.text,
+    paddingVertical: 12,
+    paddingHorizontal: 0,
+    borderWidth: 0,
   },
   eyeButton: {
     position: "absolute",
@@ -68,6 +95,11 @@ export const authStyles = StyleSheet.create({
     borderRadius: 12,
     marginTop: 20,
     marginBottom: 30,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
   buttonDisabled: {
     opacity: 0.7,
@@ -89,5 +121,32 @@ export const authStyles = StyleSheet.create({
   link: {
     color: COLORS.primary,
     fontWeight: "600",
+  },
+  genderContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 10,
+    paddingHorizontal: 5,
+  },
+  genderOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+  },
+  checkBox: {
+    height: 24,
+    width: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 8,
+  },
+  tick: {
+    height: 12,
+    width: 12,
+    borderRadius: 6,
+    backgroundColor: COLORS.primary,
   },
 });

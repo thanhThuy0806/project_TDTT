@@ -43,10 +43,7 @@ export const styles = StyleSheet.create({
     height: 140,
     borderRadius: 70,
     elevation: 15,
-    shadowColor: "#E91E63",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 15,
+    boxShadow: "0px 10px 15px rgba(91,12,39,0.3)",
     backgroundColor: "#FFF",
   },
   gradient: {
@@ -113,10 +110,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#F0F0F0",
     // Đổ bóng nhẹ cho chip
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
+    boxShadow: "0px 2px 5px rgba(0,0,0,0.05)",
     elevation: 2,
   },
   chipSelected: {

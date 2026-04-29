@@ -1,8 +1,7 @@
 import { StyleSheet } from "react-native";
 
-
 export const styles = StyleSheet.create({
-  wrapper: { marginHorizontal: 20, marginBottom: 20 },
+  wrapper: { marginHorizontal: 20, marginBottom: 20, marginTop: 20 },
   container: {
     borderRadius: 24,
     padding: 20,
@@ -20,7 +19,7 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
     alignSelf: "flex-start",
   },
-  setNowText: { color: "#fff", fontSize: 14, fontWeight: "600" },
+  setNowText: { color: "#4E342E", fontSize: 14, fontWeight: "600" },
   toggleBtn: { flexDirection: "row", alignItems: "center" },
   toggleText: { color: "#B71C1C", fontWeight: "700", marginRight: 4 },
   dangerList: {

@@ -1,13 +1,16 @@
 import { StyleSheet } from "react-native";
+import { COLORS } from "../../../constants/colors";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F3F4F6", // Nền tổng thể màu xám rất nhạt
+    backgroundColor: COLORS.background,
   },
   scrollContent: {
-    padding: 15,
-    paddingBottom: 100,           // Chừa chỗ cho TabBar lơ lửng của bạn
+    flexGrow: 1,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 150,
   },
   card: {
     backgroundColor: "#FFFFFF", // Card màu trắng tinh
@@ -15,10 +18,7 @@ export const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 1,
     borderColor: "#E5E7EB",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
+    boxShadow: "0px 4px 10px rgba(0,0,0,0.25)",
     elevation: 3,
   },
 
@@ -178,8 +178,6 @@ export const styles = StyleSheet.create({
     color: "#111827",
     backgroundColor: "#FFFFFF",
   },
-
-  // Input with Icon (Email)
   inputWithIcon: {
     flexDirection: "row",
     alignItems: "center",
@@ -294,7 +292,7 @@ export const styles = StyleSheet.create({
   },
   // STYLES MỚI CHO NÚT ĐĂNG XUẤT
   logoutButton: {
-    backgroundColor: "#111827", // Màu đen than (giống hình mẫu của bạn)
+    backgroundColor: COLORS.primary,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -303,15 +301,52 @@ export const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 16,
     // Đổ bóng cho nút đen
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
+    boxShadow: "0px 4px 8px rgba(0,0,0,0.25)",
     elevation: 5,
   },
   logoutButtonText: {
     color: "#FFFFFF", // Màu chữ trắng
     fontSize: 16,
     fontWeight: "700",
+  },
+  // Nút Chỉnh sửa
+  editButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#EFF6FF",
+    paddingVertical: 12,
+    borderRadius: 12,
+    marginVertical: 10,
+    gap: 8,
+  },
+  editButtonText: {
+    color: "#3B82F6",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  valueText: {
+    fontSize: 16,
+    color: "#374151",
+    backgroundColor: "#F9FAFB",
+    padding: 14,
+    borderRadius: 10,
+    marginTop: 4,
+  },
+  checkBox: {
+    height: 24,
+    width: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 8,
+  },
+  tick: {
+    height: 12,
+    width: 12,
+    borderRadius: 6,
+    backgroundColor: COLORS.primary,
   },
 });

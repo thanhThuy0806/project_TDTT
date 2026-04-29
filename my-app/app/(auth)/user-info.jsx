@@ -9,16 +9,15 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { Ionicons } from "@expo/vector-icons";
 import { authStyles } from "../../assets/styles/auth/auth.styles";
-import { API_URL } from "../../constants/api";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { db } from "../../firebase/firebaseConfig";
+import { auth, db } from "../../firebase/firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
 
 const UserInfoForm = () => {
-  const { userId } = useLocalSearchParams();
+  // const { userId } = useLocalSearchParams();
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -46,18 +45,26 @@ const UserInfoForm = () => {
 
   const handleSubmit = async () => {
     if (loading) return;
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      Alert.alert("Lỗi", "Phiên đăng nhập đã hết hạn. Vui lòng thử lại.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const userDocRef = doc(db, "user-info", userId);
+      const userDocRef = doc(db, "user-info", currentUser.uid);
       await setDoc(userDocRef, {
         name: formData.name,
         gender: formData.gender,
-        dob: formData.dob.toISOString(), // Lưu ISO string để dễ truy vấn
+        dob: formData.dob.toISOString(),
         phone: formData.phone,
         emergencyName: formData.emergencyName,
         emergencyPhone: formData.emergencyPhone,
         updatedAt: new Date().toISOString(),
       });
+
       Alert.alert("Thành công", "Đã cập nhật thông tin!");
       router.replace("/(tabs)/index");
     } catch (error) {
@@ -73,93 +80,154 @@ const UserInfoForm = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={authStyles.keyboardView}
     >
-      <ScrollView contentContainerStyle={authStyles.scrollContent}>
+      <ScrollView
+        style={{ backgroundColor: "#FFFFFF" }}
+        contentContainerStyle={authStyles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <Text style={authStyles.title}>Thông tin cá nhân</Text>
 
         <View style={authStyles.formContainer}>
           <View style={authStyles.inputContainer}>
-            <TextInput
-              style={authStyles.textInput}
-              placeholder="Họ và tên"
-              value={formData.name}
-              onChangeText={(text) => handleInputChange("name", text)}
-            />
-          </View>
-
-          <View style={authStyles.inputContainer}>
-            <TextInput
-              style={authStyles.textInput}
-              placeholder="Số điện thoại"
-              keyboardType="phone-pad"
-              value={formData.phone}
-              onChangeText={(text) => handleInputChange("phone", text)}
-            />
-          </View>
-
-          <View
-            style={[
-              authStyles.inputContainer,
-              { borderWidth: 1, borderColor: "#ccc", borderRadius: 12 },
-            ]}
-          >
-            <Picker
-              selectedValue={formData.gender}
-              onValueChange={(itemValue) =>
-                handleInputChange("gender", itemValue)
-              }
-              style={{ height: 55 }}
-            >
-              <Picker.Item label="Nam" value="male" />
-              <Picker.Item label="Nữ" value="female" />
-              <Picker.Item label="Khác" value="other" />
-            </Picker>
-          </View>
-
-          <View style={authStyles.inputContainer}>
-            <TouchableOpacity
-              style={authStyles.textInput}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <Text style={{ color: formData.dob ? "#000" : "#999" }}>
-                Ngày sinh: {formData.dob.toLocaleDateString("vi-VN")}
-              </Text>
-            </TouchableOpacity>
-            {showDatePicker && (
-              <DateTimePicker
-                value={formData.dob}
-                mode="date"
-                display="default"
-                onChange={onDateChange}
+            <Text style={authStyles.label}>Họ và Tên</Text>
+            <View style={authStyles.inputWithIcon}>
+              <Ionicons
+                name="person-outline"
+                size={20}
+                color="#888"
+                style={authStyles.inputIcon}
               />
-            )}
+              <TextInput
+                style={authStyles.inputBox}
+                placeholder="Họ và tên"
+                value={formData.name}
+                onChangeText={(text) => handleInputChange("name", text)}
+              />
+            </View>
+          </View>
+
+          <View style={authStyles.inputContainer}>
+            <Text style={authStyles.label}>Số Điện Thoại</Text>
+            <View style={authStyles.inputWithIcon}>
+              <Ionicons
+                name="call-outline"
+                size={20}
+                color="#888"
+                style={authStyles.inputIcon}
+              />
+              <TextInput
+                style={authStyles.inputBox}
+                placeholder="Số điện thoại"
+                keyboardType="phone-pad"
+                value={formData.phone}
+                onChangeText={(text) => handleInputChange("phone", text)}
+              />
+            </View>
+          </View>
+
+          <View style={[authStyles.inputContainer, { borderBottomWidth: 0 }]}>
+            <Text style={authStyles.label}>Giới tính</Text>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              {[
+                { label: "Nam", value: "male" },
+                { label: "Nữ", value: "female" },
+                { label: "Khác", value: "other" },
+              ].map((item) => (
+                <TouchableOpacity
+                  key={item.value}
+                  onPress={() => handleInputChange("gender", item.value)}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginRight: 15,
+                  }}
+                >
+                  <View style={authStyles.checkBox}>
+                    {formData.gender === item.value && (
+                      <View style={authStyles.tick} />
+                    )}
+                  </View>
+                  <Text style={{ fontSize: 16, color: "#333" }}>
+                    {item.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          <View style={authStyles.inputContainer}>
+            <Text style={authStyles.label}>Ngày Sinh</Text>
+            <View style={authStyles.inputWithIcon}>
+              <Ionicons
+                name="calendar-outline"
+                size={20}
+                color="#888"
+                style={authStyles.inputIcon}
+              />
+              <TouchableOpacity
+                style={authStyles.inputBox}
+                onPress={() => setShowDatePicker(true)}
+              >
+                <Text>{formData.dob.toLocaleDateString("vi-VN")}</Text>
+              </TouchableOpacity>
+              {showDatePicker && (
+                <DateTimePicker
+                  value={formData.dob}
+                  mode="date"
+                  display="default"
+                  onChange={onDateChange}
+                />
+              )}
+            </View>
           </View>
 
           <Text
-            style={[
-              authStyles.subtitle,
-              { textAlign: "left", marginBottom: 15 },
-            ]}
+            style={[authStyles.label, { textAlign: "left", marginBottom: 15 }]}
           >
-            Liên hệ khẩn cấp
+            Liên hệ của người thân
           </Text>
 
           <View style={authStyles.inputContainer}>
-            <TextInput
-              style={authStyles.textInput}
-              placeholder="Tên người thân"
-              value={formData.emergencyName}
-              onChangeText={(text) => handleInputChange("emergencyName", text)}
-            />
+            <Text style={authStyles.label}>Họ và Tên</Text>
+            <View style={authStyles.inputWithIcon}>
+              <Ionicons
+                name="person-outline"
+                size={20}
+                color="#888"
+                style={authStyles.inputIcon}
+              />
+              <TextInput
+                style={authStyles.inputBox}
+                placeholder="Tên người thân"
+                value={formData.emergencyName}
+                onChangeText={(text) =>
+                  handleInputChange("emergencyName", text)
+                }
+              />
+            </View>
           </View>
 
           <View style={authStyles.inputContainer}>
-            <TextInput
-              style={authStyles.textInput}
-              placeholder="SĐT người thân"
-              keyboardType="phone-pad"
-              value={formData.emergencyPhone}
-              onChangeText={(text) => handleInputChange("emergencyPhone", text)}
-            />
+            <Text style={authStyles.label}>Số Điện Thoại</Text>
+            <View style={authStyles.inputWithIcon}>
+              <Ionicons
+                name="call-outline"
+                size={20}
+                color="#888"
+                style={authStyles.inputIcon}
+              />
+              <TextInput
+                style={authStyles.inputBox}
+                placeholder="SĐT người thân"
+                keyboardType="phone-pad"
+                value={formData.emergencyPhone}
+                onChangeText={(text) =>
+                  handleInputChange("emergencyPhone", text)
+                }
+              />
+            </View>
           </View>
 
           <TouchableOpacity
@@ -172,7 +240,7 @@ const UserInfoForm = () => {
             activeOpacity={0.8}
           >
             <Text style={authStyles.buttonText}>
-              {loading ? "Saving Information..." : "Save Information"}
+              {loading ? "Đang lưu thông tin..." : "Lưu thông tin"}
             </Text>
           </TouchableOpacity>
         </View>

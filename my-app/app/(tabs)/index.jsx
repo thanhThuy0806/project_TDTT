@@ -42,7 +42,7 @@ export default function HomeScreen() {
         if (docSnap.exists()) {
           setUserName(docSnap.data().name || "Người dùng");
         } else {
-          setUserName(user.displayName || "Bạn");
+          setUserName(user.displayName || "");
         }
       },
       (error) => {
@@ -76,23 +76,10 @@ export default function HomeScreen() {
 
         {/* Lời chào */}
         <View style={styles.greeting}>
-          <Text style={styles.hiText}>Hi {userName} 👋</Text>
+          <Text style={styles.hiText}>Xin chào, {userName} 👋</Text>
           <Text style={styles.welcomeText}>
             Chào mừng bạn đến với chuyến đi an toàn.
           </Text>
-        </View>
-
-        {/* Thanh tìm kiếm */}
-        <View style={styles.searchSection}>
-          <View style={styles.searchBar}>
-            <TextInput
-              placeholder="Tìm kiếm dịch vụ..."
-              style={styles.searchInput}
-            />
-            <TouchableOpacity style={styles.searchBtn}>
-              <Ionicons name="search" size={20} color="#333" />
-            </TouchableOpacity>
-          </View>
         </View>
 
         <DangerBanner isDanger={isDangerZone} dangerDetails={dangerInfo} />
@@ -125,7 +112,9 @@ export default function HomeScreen() {
             bgColor={activeFeatures.sos ? "#818CFF" : "#F0F0F0"}
             isEnabled={activeFeatures.sos}
             onToggle={() => toggleFeature("sos")}
+            navigateTo="/(home)/sos"
           />
+
           <FeatureCard
             title="Thời tiết"
             subtitle="Cập nhật 5 phút trước"
@@ -133,7 +122,9 @@ export default function HomeScreen() {
             bgColor={activeFeatures.weather ? "#FFCC80" : "#FFF3E0"}
             isEnabled={activeFeatures.weather}
             onToggle={() => toggleFeature("weather")}
+            navigateTo="/(home)/weather"
           />
+
           <FeatureCard
             title="Bản đồ ngoại tuyến"
             subtitle="Đã tải 2 vùng"
@@ -142,6 +133,7 @@ export default function HomeScreen() {
             isEnabled={activeFeatures.map}
             onToggle={() => toggleFeature("map")}
           />
+
           <FeatureCard
             title="Sổ tay an toàn"
             subtitle="7 quy tắc cơ bản"

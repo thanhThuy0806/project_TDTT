@@ -67,20 +67,23 @@ const SignUpScreen = () => {
           {/* Image Container */}
           <View style={authStyles.imageContainer}>
             <Image
-              source={require("../../assets/images/i2.png")}
+              source={require("../../assets/images/smarttourism.jpg")}
               style={authStyles.image}
               contentFit="contain"
             />
           </View>
 
-          <Text style={authStyles.title}>Create Account</Text>
+          <Text style={authStyles.title}>Chào Thành Viên Mới</Text>
+          <Text style={authStyles.subtitle}>
+            Hãy tạo tài khoản và trải nghiệm!
+          </Text>
 
           <View style={authStyles.formContainer}>
             {/* Email Input */}
             <View style={authStyles.inputContainer}>
               <TextInput
                 style={authStyles.textInput}
-                placeholder="Enter email"
+                placeholder="Nhập email"
                 placeholderTextColor={COLORS.textLight}
                 value={email}
                 onChangeText={setEmail}
@@ -93,7 +96,7 @@ const SignUpScreen = () => {
             <View style={authStyles.inputContainer}>
               <TextInput
                 style={authStyles.textInput}
-                placeholder="Enter password"
+                placeholder="Nhập mật khẩu"
                 placeholderTextColor={COLORS.textLight}
                 value={password}
                 onChangeText={setPassword}
@@ -123,7 +126,7 @@ const SignUpScreen = () => {
               activeOpacity={0.8}
             >
               <Text style={authStyles.buttonText}>
-                {loading ? "Creating Account..." : "Sign Up"}
+                {loading ? "Đang tạo tài khoản..." : "Đăng ký"}
               </Text>
             </TouchableOpacity>
 
