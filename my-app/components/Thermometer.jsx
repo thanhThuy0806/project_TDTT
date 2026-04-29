@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, Animated, Easing } from "react-native";
-import { styles } from '../assets/styles/components/thermometer.style';
+import { styles } from "../assets/styles/components/thermometer.style";
 /**
  * Thermometer Component
  *
@@ -38,7 +38,7 @@ function Ticks({ tubeHeight, tubeWidth, tickCount }) {
           backgroundColor: "rgba(255,255,255,0.55)",
           borderRadius: 2,
         }}
-      />,
+      />
     );
   }
   return <>{ticks}</>;
@@ -48,7 +48,7 @@ function Ticks({ tubeHeight, tubeWidth, tickCount }) {
 export default function Thermometer({
   temperature,
   minTemp = 0,
-  maxTemp = 100,
+  maxTemp = 50,
   unit = "°C",
   tubeHeight = 150,
   tubeWidth = 34,
@@ -78,8 +78,15 @@ export default function Thermometer({
 
   // Colour shifts: blue → orange → red with temperature
   const fillColor = animRatio.interpolate({
-    inputRange: [0, 0.35, 0.85, 1],
-    outputRange: ["#64b5f6", "#85cfd5", "#9bff21", "#f44336"],
+    inputRange: [0, 0.4, 0.6, 0.8, 1],
+    // Tương ứng: 0°C (Rất lạnh), 20°C (Mát), 30°C (Ấm), 40°C (Nóng), 50°C (Rất nóng)
+    outputRange: [
+      "#64b5f6", // Blue (Lạnh)
+      "#4caf50", // Green (Mát mẻ - Khoảng 20°C)
+      "#ffeb3b", // Yellow (Ấm áp - Khoảng 30°C)
+      "#ff9800", // Orange (Nóng - Khoảng 40°C)
+      "#f44336", // Red (Cực nóng)
+    ],
   });
 
   // ── Layout math ────────────────────────────────────────────────────────────

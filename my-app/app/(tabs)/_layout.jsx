@@ -1,12 +1,12 @@
-import React from 'react';
-import { View, Dimensions } from 'react-native';
-import { Tabs } from 'expo-router';
-import Svg, { Path } from 'react-native-svg';
-import { Ionicons } from '@expo/vector-icons';
-import FloatingBarButton from '../../components/FloatingBarButton';
-import {styles} from '../../assets/styles/home/tab-bar.style';
+import React from "react";
+import { View, Dimensions } from "react-native";
+import { Tabs } from "expo-router";
+import Svg, { Path } from "react-native-svg";
+import { Ionicons } from "@expo/vector-icons";
+import FloatingBarButton from "../../components/FloatingBarButton";
+import { styles } from "../../assets/styles/home/tab-bar.style";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const TabBarBackground = () => {
   const center = width / 2;
@@ -33,14 +33,14 @@ const TabBarBackground = () => {
 
 export default function TabLayout() {
   return (
-    <View style={{ flex: 1, backgroundColor: '#F3F4F6' }}>
+    <View style={{ flex: 1, backgroundColor: "#F3F4F6" }}>
       <Tabs
         screenOptions={{
           headerShown: false,
           tabBarStyle: styles.tabBar,
-          tabBarShowLabel: false,               // Ẩn nhãn chữ để giao diện clean như hình
-          tabBarActiveTintColor: '#111827',   // Màu icon khi chọn
-          tabBarInactiveTintColor: '#6B7280', // Màu icon khi không chọn
+          tabBarShowLabel: false,
+          tabBarActiveTintColor: "#111827",
+          tabBarInactiveTintColor: "#6B7280",
         }}
       >
         {/* Tab 1: Trang chủ */}
@@ -48,7 +48,11 @@ export default function TabLayout() {
           name="index"
           options={{
             tabBarIcon: ({ color, focused }) => (
-              <Ionicons name={focused ? "home" : "home-outline"} size={26} color={color} />
+              <Ionicons
+                name={focused ? "home" : "home-outline"}
+                size={26}
+                color={color}
+              />
             ),
           }}
         />
@@ -66,13 +70,16 @@ export default function TabLayout() {
           name="profile"
           options={{
             tabBarIcon: ({ color, focused }) => (
-              <Ionicons name={focused ? "person" : "person-outline"} size={26} color={color} />
+              <Ionicons
+                name={focused ? "person" : "person-outline"}
+                size={26}
+                color={color}
+              />
             ),
           }}
         />
       </Tabs>
-      
-      {/* Lớp nền SVG được đặt ở dưới cùng */}
+
       <TabBarBackground />
     </View>
   );

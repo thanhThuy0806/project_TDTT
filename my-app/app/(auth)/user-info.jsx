@@ -14,9 +14,12 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { authStyles } from "../../assets/styles/auth/auth.styles";
 import { API_URL } from "../../constants/api";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { db } from "../../firebase/firebaseConfig";
+import { doc, setDoc } from "firebase/firestore";
 
 const UserInfoForm = () => {
   const { userId } = useLocalSearchParams();
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -28,6 +31,7 @@ const UserInfoForm = () => {
   });
 
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
@@ -41,32 +45,24 @@ const UserInfoForm = () => {
   };
 
   const handleSubmit = async () => {
+    if (loading) return;
+    setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/favorites/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: userId, // UID từ Firebase
-          name: formData.name,
-          gender: formData.gender,
-          dob: formData.dob.toISOString().split("T")[0], // Định dạng YYYY-MM-DD cho PostgreSQL
-          phone: formData.phone,
-          emergencyName: formData.emergencyName,
-          emergencyPhone: formData.emergencyPhone,
-        }),
+      const userDocRef = doc(db, "user-info", userId);
+      await setDoc(userDocRef, {
+        name: formData.name,
+        gender: formData.gender,
+        dob: formData.dob.toISOString(), // Lưu ISO string để dễ truy vấn
+        phone: formData.phone,
+        emergencyName: formData.emergencyName,
+        emergencyPhone: formData.emergencyPhone,
+        updatedAt: new Date().toISOString(),
       });
-      if (response.ok) {
-        Alert.alert("Success", "Profile updated successfully!");
-        router.replace("/(tabs)/home"); // Chuyển vào trang chính của App
-      } else {
-        const errorData = await response.json();
-        Alert.alert("Error", errorData.detail || "Something went wrong");
-      }
+      Alert.alert("Thành công", "Đã cập nhật thông tin!");
+      router.replace("/(tabs)/index");
     } catch (error) {
-      Alert.alert("Network Error", "Cannot connect to server");
-      console.log(error);
+      Alert.alert("Lỗi", "Không thể lưu dữ liệu");
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -167,10 +163,17 @@ const UserInfoForm = () => {
           </View>
 
           <TouchableOpacity
-            style={authStyles.authButton}
+            style={[
+              authStyles.authButton,
+              loading && authStyles.buttonDisabled,
+            ]}
             onPress={handleSubmit}
+            disabled={loading}
+            activeOpacity={0.8}
           >
-            <Text style={authStyles.buttonText}>Lưu thông tin</Text>
+            <Text style={authStyles.buttonText}>
+              {loading ? "Saving Information..." : "Save Information"}
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
