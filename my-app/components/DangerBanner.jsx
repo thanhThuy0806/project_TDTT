@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -14,7 +14,7 @@ import {
   ChevronUp,
   AlertTriangle,
 } from "lucide-react-native";
-
+import { styles } from '../assets/styles/components/danger-banner.style'
 export default function DangerBanner({ isDanger, dangerDetails }) {
   const [expanded, setExpanded] = React.useState(false);
 

@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   Image,
   TextInput,
@@ -12,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import FeatureCard from "../../components/FeatureCard";
 import { styles } from "../../assets/styles/home/home.styles";
-import { doc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { db, auth } from "../../firebase/firebaseConfig";
 import DangerBanner from "../../components/DangerBanner";
 
