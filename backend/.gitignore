@@ -1,2 +1,29 @@
+<<<<<<< HEAD
 .env
 serviceAccountKey.json
+=======
+# --- Python & FastAPI ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# --- Environment & Secrets (CỰC KỲ QUAN trọng) ---
+.env
+.flaskenv
+serviceAccountKey.json
+
+# --- Virtual Environments ---
+venv/
+.venv/
+env/
+
+# --- IDE & Editors ---
+.vscode/
+.idea/
+*.swp
+
+# --- OS Files ---
+.DS_Store
+Thumbs.db
+>>>>>>> fc06a9a53121c73fa6cf78423bc147b96eeb377f
