@@ -1,0 +1,13 @@
+[
+  {
+    "name": "Khu vực sạt lở Núi Bà Đen",
+    "polygon": [
+      [106.680, 10.760],
+      [106.685, 10.760],
+      [106.685, 10.765],
+      [106.680, 10.765]
+    ],
+    "alert_text": "Cảnh báo: Khu vực phía trước đang có nguy cơ sạt lở cao. Đề nghị bật chế độ SOS hoặc chuyển hướng!",
+    "severity": "high"
+  }
+]

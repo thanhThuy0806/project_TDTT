@@ -1,9 +1,18 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from shapely.geometry import Point, Polygon
+from pydantic import BaseModel
 import json
+import logging
 
-app = FastAPI()
+from danger_service import danger_service
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = FastAPI(
+    title="Accessibility & Safety API",
+    description="API cảnh báo nguy hiểm kết hợp Static Zones + Dynamic WebRAG",
+)
 
 # ── CORS middleware (cho phép frontend kết nối) ──
 app.add_middleware(
@@ -14,90 +23,104 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ---------------------------------------------------------
-# MOCK DATA: Giả lập một vùng nguy hiểm (VD: Khu vực sạt lở)
-# Tọa độ Polygon: (Kinh độ - lng, Vĩ độ - lat)
-# ---------------------------------------------------------
-DANGER_ZONE = Polygon([
-    (106.680, 10.760),
-    (106.685, 10.760),
-    (106.685, 10.765),
-    (106.680, 10.765)
-])
 
 # ---------------------------------------------------------
-# CÁC THÀNH PHẦN THEO SƠ ĐỒ TUẦN TỰ
+# REQUEST / RESPONSE MODELS
 # ---------------------------------------------------------
-
-class WebRAG:
-    @staticmethod
-    def truy_van_vung_nguy_hiem(coords: tuple) -> str:
-        """Bước 4 & 5: Nhận tọa độ, truy vấn RAG/DB và trả về 'Kết quả vùng'"""
-        # Giả lập nội dung cảnh báo sinh ra từ dữ liệu thực tế
-        return "Cảnh báo: Khu vực phía trước đang có nguy cơ sạt lở cao. Đề nghị bật chế độ SOS hoặc chuyển hướng!"
+class CheckDangerRequest(BaseModel):
+    lat: float
+    lng: float
 
 
-class GeofencingService:
-    @staticmethod
-    def kiem_tra_vi_tri(lat: float, lng: float) -> dict:
-        """Bước 3 & 6: System gọi kiểm tra vị trí. Geofencing tự gọi WebRAG nếu cần."""
-        user_point = Point(lng, lat) # Shapely dùng hệ (x, y) = (lng, lat)
-        
-        # Kiểm tra xem tọa độ GPS có rơi vào vùng nguy hiểm không
-        if DANGER_ZONE.contains(user_point):
-            # Bước 4 & 5: Gọi WebRAG để lấy thông tin vùng nguy hiểm
-            alert_text = WebRAG.truy_van_vung_nguy_hiem((lat, lng))
-            
-            # Bước 6: Trả về 'Kết quả lân cận' (có nguy hiểm) cho System
-            return {"is_danger": True, "alert_text": alert_text}
-        
-        # Bước 6: Trả về 'Kết quả lân cận' (an toàn) cho System
-        return {"is_danger": False, "alert_text": ""}
+class AlertItem(BaseModel):
+    type: str        # "static" | "dynamic"
+    severity: str    # "low" | "medium" | "high"
+    text: str
+    source: str | None = None
+    zone: str | None = None
 
 
-def phan_tich_rui_ro(lat: float, lng: float) -> dict:
-    """Khối màu vàng và khối rẽ nhánh [alt] trong sơ đồ"""
-    # Bước 3: System gọi GeofencingService
-    ket_qua_lan_can = GeofencingService.kiem_tra_vi_tri(lat, lng)
-    
-    # Khối alt: Rẽ nhánh luồng dựa trên kết quả lân cận
-    if ket_qua_lan_can["is_danger"]:
-        # Trường hợp [có nguy hiểm]
-        return {
-            "status": "danger",
-            "alertText": ket_qua_lan_can["alert_text"]
-        }
-    else:
-        # Trường hợp [không có nguy hiểm]
-        return {
-            "status": "safe",
-            "message": "Trạng thái an toàn"
-        }
+class CheckDangerResponse(BaseModel):
+    lat: float
+    lng: float
+    place_name: str | None
+    is_danger: bool
+    status: str      # "safe" | "danger"
+    alerts: list[AlertItem]
+
 
 # ---------------------------------------------------------
-# SYSTEM API (Tương tác với WebBrowser qua WebSocket)
+# REST API ENDPOINTS
+# ---------------------------------------------------------
+
+@app.post("/api/check-danger", response_model=CheckDangerResponse)
+async def check_danger(req: CheckDangerRequest):
+    """
+    Kiểm tra nguy hiểm tại tọa độ (lat, lng).
+
+    Luồng hoạt động:
+    1. Kiểm tra static danger zones (vùng cấm vĩnh viễn)
+    2. Reverse geocode tọa độ → tên địa danh
+    3. Kiểm tra cache (TTL 5 phút)
+    4. Nếu cache miss: SearXNG search → LLM phân tích
+    5. Trả về kết quả kết hợp
+    """
+    result = await danger_service.check(req.lat, req.lng)
+    return CheckDangerResponse(
+        lat=result["lat"],
+        lng=result["lng"],
+        place_name=result.get("place_name"),
+        is_danger=result["is_danger"],
+        status=result["status"],
+        alerts=[AlertItem(**a) for a in result.get("alerts", [])],
+    )
+
+
+@app.get("/api/health")
+async def health_check():
+    """Health check endpoint."""
+    return {"status": "ok", "service": "danger-warning"}
+
+
+# ---------------------------------------------------------
+# WEBSOCKET ENDPOINT (giữ nguyên cho realtime tracking)
 # ---------------------------------------------------------
 
 @app.websocket("/ws/tracking")
 async def websocket_endpoint(websocket: WebSocket):
-    """Quản lý Bước 2, 7, 9: Luồng giao tiếp realtime"""
+    """
+    Quản lý luồng giao tiếp realtime qua WebSocket.
+    Sử dụng DangerCheckService (có cache) để tránh overload LLM.
+    """
     await websocket.accept()
-    print("WebBrowser đã kết nối!")
+    logger.info("WebBrowser đã kết nối!")
     try:
         while True:
-            # Bước 2: System nhận 'chuyển tọa độ (coords)' từ WebBrowser
+            # Nhận tọa độ từ WebBrowser
             data = await websocket.receive_text()
             coords = json.loads(data)
             lat = float(coords.get("lat"))
             lng = float(coords.get("lng"))
 
-            # System tự gọi tiến trình nội bộ 'phân tích rủi ro()'
-            result = phan_tich_rui_ro(lat, lng)
+            # Gọi DangerCheckService (kết hợp static + dynamic + cache)
+            result = await danger_service.check(lat, lng)
 
-            # Bước 7 & 9: Gửi cảnh báo (alertText) hoặc trạng thái an toàn về lại WebBrowser
-            await websocket.send_json(result)
+            # Gửi kết quả về WebBrowser
+            response = {
+                "status": result["status"],
+                "is_danger": result["is_danger"],
+                "place_name": result.get("place_name"),
+                "alerts": result.get("alerts", []),
+            }
+            # Backward compatibility: include alertText for existing frontend
+            if result["is_danger"] and result.get("alerts"):
+                response["alertText"] = result["alerts"][0].get("text", "")
+            else:
+                response["alertText"] = ""
+
+            await websocket.send_json(response)
 
     except WebSocketDisconnect:
-        print("WebBrowser đã ngắt kết nối.")
+        logger.info("WebBrowser đã ngắt kết nối.")
     except Exception as e:
-        print(f"Lỗi dữ liệu đầu vào: {e}")
+        logger.error(f"Lỗi dữ liệu đầu vào: {e}")

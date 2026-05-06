@@ -1,3 +1,9 @@
 fastapi
 uvicorn[standard]
 shapely
+geopy
+langchain-community
+langchain-ollama
+langchain-core
+langgraph
+requests
