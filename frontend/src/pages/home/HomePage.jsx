@@ -10,6 +10,7 @@ import { AssitantFloatInput } from "./components/VoiceAssist/VoiceAssistant";
 import { UserPen, Mic, Settings, Siren } from "lucide-react";
 import { auth } from "../../../firebase/firebase";
 import styles from "./HomePage.module.css";
+import useDangerTracking from "../../custom-hook/useDangerTracking";
 import { SettingsModal } from "./components/setting/SettingsPage";
 import { SOSModal } from "./components/sos/SosButton";
 import { SecurityAlertHub } from "./components/SecurityAlertHub/SecurityAlertHub";
@@ -77,6 +78,9 @@ function HomePage() {
   const [showSOS, setShowSOS] = useState(false);
   const [sosCountdown, setSosCountdown] = useState(10);
   const [sosType, setSosType] = useState("accident");
+
+  // Hook kết nối backend danger warning
+  const { alerts, isDanger, placeName, userPosition, isConnected, error: dangerError } = useDangerTracking();
 
   const uid = auth.currentUser?.uid;
   const navigate = useNavigate();
@@ -150,13 +154,19 @@ function HomePage() {
 
         {/* Khối Bản đồ & Tin tức */}
         <div className={styles.contentGrid}>
-          <TravelMap />
+          <TravelMap userPosition={userPosition} />
           <NewsCollection className={styles.noScrollbar} />
         </div>
 
         {/* <br /> */}
 
-        <SecurityAlertHub />
+        <SecurityAlertHub
+          alerts={alerts}
+          isDanger={isDanger}
+          placeName={placeName}
+          isConnected={isConnected}
+          error={dangerError}
+        />
       </div>
 
       {/* SETTINGS */}

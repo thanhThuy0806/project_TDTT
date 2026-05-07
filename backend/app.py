@@ -4,7 +4,7 @@ from pydantic import BaseModel
 import json
 import logging
 
-from danger_service import danger_service
+from backend.danger_service import danger_service
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

@@ -1,7 +1,32 @@
-.leaflet-control-attribution {
-    display: none;
+.mapContainer {
+    border-radius: 1.25em;
+    overflow: hidden;
 }
 
-.leaflet-attribution-flag {
-    display: none !important;
+/* User location marker - pulsing blue dot */
+.userMarker {
+    background: transparent;
+    border: none;
+}
+
+.userMarker div {
+    width: 20px;
+    height: 20px;
+    background: #3b82f6;
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 0 0 rgba(59, 130, 246, 0.4);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(59, 130, 246, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
 }

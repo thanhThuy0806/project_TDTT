@@ -1,6 +1,6 @@
 // import * as React from 'react'
 // import Map, {Marker, NavigationControl, FullscreenControl} from 'react-map-gl'
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 // Fix lỗi không hiển thị marker mặc định
 import L from "leaflet";
@@ -16,13 +16,35 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
+// Icon riêng cho vị trí user (xanh dương)
+const userIcon = L.divIcon({
+  className: styles.userMarker,
+  html: '<div class="user-marker-pulse"></div>',
+  iconSize: [20, 20],
+  iconAnchor: [10, 10],
+});
+
 // Thông tin token, khi hoàn thành tích hợp api thì chuyển nó thành
 // token thật
 const MAPBOX_TOKEN = "MAPBOX_ACCESS_TOKEN";
 
+// Default vị trí (Hà Nội) nếu chưa có GPS
+const DEFAULT_POSITION = [21.0285, 105.8542];
+
+// Component con để di chuyển map khi vị trí thay đổi
+function MapUpdater({ center }) {
+  const map = useMap();
+  if (center) {
+    map.setView(center, map.getZoom());
+  }
+  return null;
+}
+
 // phiên bản sử dụng Open Street map
-export function TravelMap() {
-  const position = [21.0285, 105.8542];
+export function TravelMap({ userPosition }) {
+  const center = userPosition
+    ? [userPosition.lat, userPosition.lng]
+    : DEFAULT_POSITION;
 
   return (
     <div
@@ -34,8 +56,8 @@ export function TravelMap() {
       }}
     >
       <MapContainer
-        center={position}
-        zoom={13}
+        center={center}
+        zoom={15}
         style={{ height: "100%", width: "100%" }}
         attributionControl={false}
       >
@@ -44,6 +66,23 @@ export function TravelMap() {
           url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
           className={"leaflet-attribution-flag leaflet-control-attribution"}
         />
+
+        {/* Di chuyển map theo vị trí user */}
+        <MapUpdater center={center} />
+
+        {/* Marker vị trí hiện tại của user */}
+        {userPosition && (
+          <Marker
+            position={[userPosition.lat, userPosition.lng]}
+            icon={userIcon}
+          >
+            <Popup>
+              📍 Vị trí của bạn
+              <br />
+              <small>{userPosition.lat.toFixed(5)}, {userPosition.lng.toFixed(5)}</small>
+            </Popup>
+          </Marker>
+        )}
       </MapContainer>
     </div>
   );
