@@ -9,6 +9,8 @@ import { auth, googleProvider } from "../../../firebase/firebase";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import styles from "./auth.module.css";
 
+
+
 function Login() {
   const navigate = useNavigate();
 

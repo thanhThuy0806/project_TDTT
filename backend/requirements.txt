@@ -1,6 +1,10 @@
-fastapi
-uvicorn
-# voice recognition model
+fastapi 
+uvicorn 
 faster-whisper
-# handle file uploads in FastAPI     
 python-multipart
+firebase-admin 
+sqlalchemy 
+psycopg2-binary 
+python-dotenv
+apscheduler
+httpx

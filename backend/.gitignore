@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+.env
+serviceAccountKey.json
+=======
 # --- Python & FastAPI ---
 __pycache__/
 *.py[cod]
@@ -22,3 +27,13 @@ env/
 # --- OS Files ---
 .DS_Store
 Thumbs.db
+>>>>>>> fc06a9a53121c73fa6cf78423bc147b96eeb377f
+=======
+.env
+firebase-key.json
+virtualEnv/ 
+__pycache__/
+*.pyc
+.vscode/
+.DS_Store
+>>>>>>> frontend_App

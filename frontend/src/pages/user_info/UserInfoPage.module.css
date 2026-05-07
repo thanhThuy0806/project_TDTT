@@ -207,7 +207,7 @@
 
 /* Điều chỉnh tiêu đề để tránh bị đè nếu trên màn hình rất nhỏ */
 @media screen and (max-width: 480px) {
-  .title {
-    margin-top: 2rem;
-  }
+    .title {
+        margin-top: 2rem;
+    }
 }
