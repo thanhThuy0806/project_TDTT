@@ -8,7 +8,7 @@
 # ở thư mục my-app, tải về các thư mục cần thiết  
 npm install --legacy-peer-deps  
 # tải expo  
-npm install --legacy-peer-deps  
+npm install expo --legacy-peer-deps  
 ```
 
 - Cần phải tạo **firebase** và điền các key tương tự với tên key có trong ```env.example```( các key này có thể được tìm thấy trong **General**)  
