@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 # ─────────────────────────────────────────────
 SEARXNG_HOST = os.getenv("SEARXNG_HOST", "http://localhost:8888")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "Gemma4:E2B")
+OLLAMA_BASE_URL = os.getenv('OLLAMA_BASE_URL', 'https://vowel-clerk-elope.ngrok-free.dev')
 CACHE_TTL_SECONDS = int(os.getenv("CACHE_TTL", "300"))  # 5 minutes
 GRID_PRECISION = 3  # Decimal places for grid rounding (~111m per 0.001°)
 
@@ -168,9 +169,15 @@ Trả lời theo ĐÚNG format JSON sau (không thêm gì khác):
     "alert_text": "Mô tả ngắn gọn tình trạng nguy hiểm (nếu có) hoặc chuỗi rỗng nếu an toàn"
 }}"""
 
-    def __init__(self, searxng_host: str = SEARXNG_HOST, model: str = OLLAMA_MODEL):
+    def __init__(self, searxng_host: str = SEARXNG_HOST, model: str = OLLAMA_MODEL, base_url: str = OLLAMA_BASE_URL):
         self.searx = SearxSearchWrapper(searx_host=searxng_host)
-        self.llm = ChatOllama(model=model, temperature=0)
+        self.llm = ChatOllama(
+                model=model,
+                base_url=base_url,
+                temperature=0,
+                headers={
+                "ngrok-skip-browser-warning": "true"
+            })
 
     def _search(self, place_name: str) -> str:
         """Tìm kiếm tin tức liên quan đến nguy hiểm tại khu vực."""

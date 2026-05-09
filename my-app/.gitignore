@@ -1,0 +1,8 @@
+# Secrects
+.env
+# Enviroments
+.expo
+node_modules
+
+
+expo-env.d.ts
