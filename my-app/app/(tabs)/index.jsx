@@ -112,7 +112,7 @@ export default function HomeScreen() {
             bgColor={activeFeatures.sos ? "#818CFF" : "#F0F0F0"}
             isEnabled={activeFeatures.sos}
             onToggle={() => toggleFeature("sos")}
-            navigateTo="/(home)/sos"
+            navigateTo="/sos"
           />
 
           <FeatureCard
@@ -122,7 +122,7 @@ export default function HomeScreen() {
             bgColor={activeFeatures.weather ? "#FFCC80" : "#FFF3E0"}
             isEnabled={activeFeatures.weather}
             onToggle={() => toggleFeature("weather")}
-            navigateTo="/(home)/weather"
+            navigateTo="/weather"
           />
 
           <FeatureCard

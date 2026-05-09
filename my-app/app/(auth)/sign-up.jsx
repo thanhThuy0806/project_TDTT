@@ -43,7 +43,7 @@ const SignUpScreen = () => {
 
       Alert.alert("User created successfully");
       router.replace({
-        pathname: "/(auth)/user-info",
+        pathname: "/user-info",
         params: { userId: user.uid },
       });
     } catch (error) {
@@ -133,7 +133,7 @@ const SignUpScreen = () => {
             {/* Sign In Link */}
             <TouchableOpacity
               style={authStyles.linkContainer}
-              onPress={() => router.push("/(auth)/sign-in")}
+              onPress={() => router.push("/sign-in")}
             >
               <Text style={authStyles.linkText}>
                 Already have an account?{" "}

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Switch } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { styles } from "../assets/styles/components/feature-card.style";
@@ -10,7 +10,6 @@ const FeatureCard = ({
   icon,
   bgColor,
   isEnabled,
-  onToggle,
   navigateTo,
 }) => {
   const router = useRouter();
@@ -63,17 +62,6 @@ const FeatureCard = ({
         >
           {subtitle}
         </Text>
-      </View>
-
-      {/* 3. Switch */}
-      <View style={styles.switchContainer}>
-        <Switch
-          trackColor={{ false: "#D1D5DB", true: "#A5B4FC" }}
-          thumbColor={isEnabled ? "#FFFFFF" : "#F3F4F6"}
-          onValueChange={onToggle}
-          value={isEnabled}
-          style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
-        />
       </View>
     </TouchableOpacity>
   );

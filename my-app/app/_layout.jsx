@@ -1,5 +1,5 @@
 import { Slot, useRouter, useSegments } from "expo-router";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -29,7 +29,7 @@ export default function RootLayout() {
 
       if (!user) {
         if (!inAuthGroup) {
-          router.replace("/(auth)/sign-up");
+          router.replace("/sign-up");
         }
         return;
       }
@@ -42,11 +42,11 @@ export default function RootLayout() {
 
         if (hasCompletedInfo) {
           if (inAuthGroup) {
-            router.replace("/(tabs)/index");
+            router.replace("/index");
           }
         } else {
           if (segments[1] !== "user-info") {
-            router.replace("/(auth)/user-info");
+            router.replace("/user-info");
           }
         }
       } catch (error) {
