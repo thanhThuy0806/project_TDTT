@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import styles from "./auth.module.css";
 import { Mail, ArrowLeft } from "lucide-react";
 import { InputBox } from "./components/InputBox";
-import { confirmInforExist } from "../../../api/authentication";
+// import { confirmInforExist } from "../../../api/authentication";
 
 function ForgotPassword() {
   const navigate = useNavigate();
@@ -12,12 +12,8 @@ function ForgotPassword() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
     setIsLoading(true);
-    if (!confirmInforExist(identifier)) {
-        // Xử lý lỗi có thể sử dụng css style để báo không nhận
-    }
     // Giả lập gọi API gửi OTP
     setTimeout(() => {
       // Điều hướng sang trang nhập OTP

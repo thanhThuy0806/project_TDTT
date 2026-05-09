@@ -7,10 +7,12 @@
   background-color: white;
   overflow-x: hidden;
   padding-top: 1em;
+  padding-top: 1em;
 }
 
 .mainWrapper {
   width: 95%;
+  /* Bỏ justify-content nếu có để tránh ảnh hưởng layout dọc */
   /* Bỏ justify-content nếu có để tránh ảnh hưởng layout dọc */
 }
 
@@ -213,14 +215,23 @@
 .inputWrapper {
   position: relative;
   width: 100%;
+  position: relative;
+  width: 100%;
 }
 
 .relativeZ20 {
   position: relative;
   z-index: 20;
+  position: relative;
+  z-index: 20;
 }
 
 .inputField {
+  height: 100%;
+  width: 100%; /* Thay cho w-full */
+  border: none;
+  background: transparent;
+  font-size: 0.875rem;
   height: 100%;
   width: 100%; /* Thay cho w-full */
   border: none;
@@ -240,9 +251,21 @@
   overflow: hidden;
   border: 1px solid #dbeafe;
   background-color: #ffffff; /* Khớp với màu input */
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-top: 0.25rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  z-index: 50;
+  overflow: hidden;
+  border: 1px solid #dbeafe;
+  background-color: #ffffff; /* Khớp với màu input */
 }
 
 .suggestionsScroll {
+  max-height: 15rem; /* Thay cho max-h-60 (60 * 4px = 240px) */
+  overflow-y: auto;
   max-height: 15rem; /* Thay cho max-h-60 (60 * 4px = 240px) */
   overflow-y: auto;
 }
@@ -252,17 +275,26 @@
   border-bottom: 1px solid #f9fafb;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  padding: 0.75rem;
+  border-bottom: 1px solid #f9fafb;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .suggestionItem:last-child {
+  border-bottom: none;
   border-bottom: none;
 }
 
 .suggestionItem:hover {
   background-color: #eff6ff; /* Thay cho hover:bg-blue-50 */
+  background-color: #eff6ff; /* Thay cho hover:bg-blue-50 */
 }
 
 .suggestionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -272,9 +304,18 @@
   font-weight: 700;
   color: #1e3a8a; /* Blue-900 */
   font-size: 0.875rem;
+  font-weight: 700;
+  color: #1e3a8a; /* Blue-900 */
+  font-size: 0.875rem;
 }
 
 .statusBadge {
+  font-size: 10px;
+  background-color: #dcfce7; /* Green-100 */
+  color: #15803d; /* Green-700 */
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-weight: 500;
   font-size: 10px;
   background-color: #dcfce7; /* Green-100 */
   color: #15803d; /* Green-700 */
@@ -289,13 +330,21 @@
   margin-top: 0.25rem;
   display: flex;
   align-items: center;
+  font-size: 0.75rem;
+  color: #9ca3af; /* Gray-400 */
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
 }
 
 /* Đảm bảo no-scrollbar hoạt động cho cả suggestions */
 .noScrollbar::-webkit-scrollbar {
   display: none;
+  display: none;
 }
 .noScrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -774,9 +823,7 @@
 /* =========================================================
    BỐ CỤC TOP SECTION (HERO 2/3 + SIDEBAR 1/3)
 ========================================================= */
-/* =========================================================
-   BỐ CỤC TOP SECTION (HERO 2/3 + SIDEBAR 1/3)
-========================================================= */
+
 .topSection {
   display: grid;
   grid-template-columns: 4fr 1fr;
@@ -802,6 +849,7 @@
   gap: 1rem;
   height: 100%;
   justify-content: space-between;
+  justify-content: space-between;
   min-width: 0; /* Ngăn chặn Grid Blowout cho cột phải */
 }
 
@@ -822,6 +870,9 @@
 
 .serviceItemVertical:hover {
   border-color: #000085; /* Nhấn mạnh viền khi trỏ chuột để dễ nhận biết */
+  transform: translateX(
+    -4px
+  ); /* Hiệu ứng lướt nhẹ ra để biết là nút bấm được */
   transform: translateX(
     -4px
   ); /* Hiệu ứng lướt nhẹ ra để biết là nút bấm được */
@@ -871,6 +922,10 @@
 
   .servicesSidebar {
     display: grid;
+    grid-template-columns: repeat(
+      2,
+      1fr
+    ); /* Chia thành 2 cột trên điện thoại để tiết kiệm chỗ */
     grid-template-columns: repeat(
       2,
       1fr

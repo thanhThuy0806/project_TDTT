@@ -9,8 +9,6 @@ import { auth, googleProvider } from "../../../firebase/firebase";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import styles from "./auth.module.css";
 
-
-
 function Login() {
   const navigate = useNavigate();
 
@@ -21,7 +19,7 @@ function Login() {
 
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  // const [rememberMe, setRememberMe] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
