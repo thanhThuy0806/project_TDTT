@@ -3,14 +3,13 @@ import {
   View,
   Text,
   ScrollView,
-  Image,
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   Alert,
 } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -41,7 +40,7 @@ const UserInfoScreen = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const onDateChange = (event, selectedDate) => {
+  const onDateChange = (_, selectedDate) => {
     setShowDatePicker(false);
     selectedDate && handleInputChange("dob", selectedDate);
   };

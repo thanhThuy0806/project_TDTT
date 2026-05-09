@@ -1,53 +1,16 @@
-# Welcome to your Expo app 👋
+# Các Lưu Ý Khi Sử Dụng
+- Expo Go đối với các thiết bị ngoại vi như điện thoại phiên bản sử dụng SDK54.0.x  
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+- Node.js được sử dụng để phát triển là **phiên bản v20.20.2**, cần phải đảm bảo tải đúng  
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   cd frontend
-   npm install expo
-   npx expo install --check
-   npx expo install firebase @react-native-async-storage/async-storage
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+- Do các thư viện từ npm và npx đã hỗ trợ sử dụng cho SDK55.x.x nên các bản trước đó đã trở thành ```legacy``` khi tải cần phải thêm cờ như sau  
+```cmd  
+# ở thư mục my-app, tải về các thư mục cần thiết  
+npm install --legacy-peer-deps  
+# tải expo  
+npm install --legacy-peer-deps  
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- Cần phải tạo **firebase** và điền các key tương tự với tên key có trong ```env.example```( các key này có thể được tìm thấy trong **General**)  
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Ở file ```DangerBanner.jsx``` phiên bản hiện tại sử dụng đường dẫn để truy cập backend thông thường là ```192.168.x.y```( địa chỉ mạng nội bộ cùng với máy tính tổ chức dịch vụ), khi sử dụng thì chúng ta cần phải điền lại trường này( có thể tìm được bằng cách dùng lệnh ```ipconfig``` trong **cmd** và là địa chỉ của Card mạng Wifi không dây) với cú pháp **ws://ip_address:8000/ws/tracking**
