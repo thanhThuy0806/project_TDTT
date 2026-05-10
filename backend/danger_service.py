@@ -157,11 +157,17 @@ KẾT QUẢ TÌM KIẾM:
 NGÀY HÔM NAY: {today}
 
 YÊU CẦU:
-1. CHỈ xem xét các sự kiện xảy ra trong vòng 24 giờ qua (dựa trên ngày hôm nay).
-2. Bỏ qua hoàn toàn tin tức cũ hơn 24 giờ.
-3. Tập trung vào: tai nạn giao thông, ngập lụt, kẹt xe, cháy nổ, thời tiết xấu, sạt lở.
-4. Trả lời bằng tiếng Việt.
+Đối với các mối nguy hiểm cố hữu do tự nhiên như địa hình, khí hậu và tương tự
+1. Đánh giá ĐẶC ĐIỂM ĐỊA LÝ/MÔI TRƯỜNG cố hữu (ví dụ: núi tuyết, eo biển xung đột, vực sâu, rừng rậm).
+2. Đánh giá CÁC SỰ KIỆN MỚI NHẤT từ dữ liệu thời gian thực (tai nạn, thời tiết cực đoan, bạo loạn).
+3. Nếu khu vực có rủi ro tự nhiên rõ ràng (như đỉnh núi Everest, Nam Cực) HOẶC có tin tức nguy hiểm, đánh giá is_danger = true.
 
+Đối với các mối nguy hiểm là hoạt động an ninh chính trị, con người, tình trạng xã hội và tương tự
+1. CHỈ xem xét các sự kiện xảy ra trong vòng 24 giờ qua (dựa trên ngày hôm nay).
+2. Tập trung vào: tai nạn giao thông, ngập lụt, kẹt xe, cháy nổ, thời tiết xấu, sạt lở.
+3. Nếu là các thảm hoạ kéo dài như bất ổn chính trị( xung đột sắc tộc), thảm họa nhân đạo, thảm họa( như sự cố nhà máy điện hạt nhân) thì nên lấy khoảng thời gian 2 năm trở lại đây
+
+Trả lời bằng TIẾNG VIỆT.
 Trả lời theo ĐÚNG format JSON sau (không thêm gì khác):
 {{
     "is_danger": true hoặc false,
@@ -181,9 +187,11 @@ Trả lời theo ĐÚNG format JSON sau (không thêm gì khác):
 
     def _search(self, place_name: str) -> str:
         """Tìm kiếm tin tức liên quan đến nguy hiểm tại khu vực."""
-        query = f"{place_name} tai nạn ngập lụt kẹt xe cháy nổ thời tiết"
+        query = f"{place_name} safety warning danger risks news"
         try:
             results = self.searx.run(query=query)
+            
+            print(f'Search Result: {results}\n\n')
             return results if results else "Không tìm thấy kết quả."
         except Exception as e:
             logger.error(f"SearXNG search failed: {e}")
@@ -215,6 +223,8 @@ Trả lời theo ĐÚNG format JSON sau (không thêm gì khác):
                 content = content.split("```")[1].split("```")[0].strip()
 
             result = json.loads(content)
+            print(f'LLM gen result: {result}\n\n')
+            
             return {
                 "is_danger": result.get("is_danger", False),
                 "severity": result.get("severity", "low"),

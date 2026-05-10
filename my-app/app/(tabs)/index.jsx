@@ -4,6 +4,7 @@ import {
   Text,
   ScrollView,
   Image,
+  TextInput,
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -83,6 +84,16 @@ export default function HomeScreen() {
 
         <DangerBanner isDanger={isDangerZone} dangerDetails={dangerInfo} />
 
+        {/* Nút giả lập để bạn TEST (Xóa khi xong) */}
+        <TouchableOpacity
+          onPress={() => setIsDangerZone(!isDangerZone)}
+          style={{ alignSelf: "center", marginBottom: 10 }}
+        >
+          <Text style={{ color: "#666" }}>
+            🚩 [Test] Chuyển đổi vùng nguy hiểm
+          </Text>
+        </TouchableOpacity>
+
         {/* Tiêu đề danh mục */}
         <View style={styles.sectionTitleRow}>
           <Text style={styles.sectionTitle}>Công cụ hỗ trợ</Text>
@@ -101,7 +112,7 @@ export default function HomeScreen() {
             bgColor={activeFeatures.sos ? "#818CFF" : "#F0F0F0"}
             isEnabled={activeFeatures.sos}
             onToggle={() => toggleFeature("sos")}
-            navigateTo="/(home)/sos"
+            navigateTo="/sos"
           />
 
           <FeatureCard
@@ -111,7 +122,7 @@ export default function HomeScreen() {
             bgColor={activeFeatures.weather ? "#FFCC80" : "#FFF3E0"}
             isEnabled={activeFeatures.weather}
             onToggle={() => toggleFeature("weather")}
-            navigateTo="/(home)/weather"
+            navigateTo="/weather"
           />
 
           <FeatureCard

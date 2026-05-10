@@ -66,7 +66,7 @@ const UserInfoForm = () => {
       });
 
       Alert.alert("Thành công", "Đã cập nhật thông tin!");
-      router.replace("/(tabs)/index");
+       router.replace("/(tabs)");
     } catch (error) {
       Alert.alert("Lỗi", "Không thể lưu dữ liệu");
       console.error(error);

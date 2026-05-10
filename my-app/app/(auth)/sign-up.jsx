@@ -43,7 +43,7 @@ const SignUpScreen = () => {
 
       Alert.alert("User created successfully");
       router.replace({
-        pathname: "/(auth)/user-info",
+        pathname: "/user-info",
         params: { userId: user.uid },
       });
     } catch (error) {

@@ -62,7 +62,7 @@ export default function DangerBanner({ isDanger: initialIsDanger = false, danger
   useEffect(() => {
     // THAY ĐỔI ĐỊA CHỈ IP NÀY BẰNG IP IPv4 CỦA MÁY TÍNH TRÊN MẠNG WIFI
     // Ví dụ: "ws://192.168.1.10:8000/ws/tracking"
-    const BACKEND_WS_URL = "ws://192.168.1.52:8000/ws/tracking"; 
+    const BACKEND_WS_URL = "ws://192.168.88.221:8000/ws/tracking"; 
 
     // Khởi tạo kết nối WebSocket
     ws.current = new WebSocket(BACKEND_WS_URL);
