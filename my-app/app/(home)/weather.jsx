@@ -352,21 +352,29 @@ const UnifiedCard = ({
   </Pressable>
 );
 
-const getWeatherAdvice = (current, aqiInfo) => {
-  const advice = [];
+ const getWeatherAdvice = async (lat, lon) => {
+ try {
+    const res = await fetch(
+      `${API_URL}/weather?lat=${lat}&lon=${lon}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // nếu backend cần auth
+        },
+      }
+    );
 
-  if (aqiInfo?.advice) advice.push(aqiInfo.advice);
+    if (!res.ok) {
+      throw new Error(`HTTP error ${res.status}`);
+    }
 
-  if (current?.uv >= 8)
-    advice.push("Tia UV rất cao, hạn chế ra ngoài 10h - 15h.");
+    const data = await res.json();
 
-  if (current?.humidity >= 85) advice.push("Độ ẩm cao, dễ oi bức và khó chịu.");
+    return data?.advice || [];
+  } catch (error) {
+    console.error("getWeatherAdvice error:", error);
 
-  if (current?.wind_kph >= 30)
-    advice.push("Gió mạnh, chú ý khi di chuyển ngoài trời.");
-
-  if (current?.gust_kph >= 45) advice.push("Có gió giật mạnh, nên cẩn thận.");
-
-  if (current?.temp_c >= 35) advice.push("Nhiệt độ cao, nhớ bổ sung nước.");
-  return advice.slice(0, 4);
+    return ["Không thể lấy lời khuyên thời tiết lúc này."];
+  }
 };
