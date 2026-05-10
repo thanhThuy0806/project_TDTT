@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  TouchableOpacity,
-  StyleSheet,
-  View,
-  Text,
-  Dimensions,
-} from "react-native";
+import { TouchableOpacity, StyleSheet, Text, Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, {
   useAnimatedStyle,
@@ -15,6 +9,9 @@ import Animated, {
   useSharedValue,
   interpolate,
 } from "react-native-reanimated";
+import { Audio } from "expo-av";
+import api from "@/constants/api";
+import { sendVoiceToBackend } from "@/services/voiceService";
 
 const { height } = Dimensions.get("window");
 
@@ -27,13 +24,43 @@ export default function VoiceInteractionButton({ isRecording }) {
   const pulse1 = useSharedValue(0);
   const pulse2 = useSharedValue(0);
 
+  const [recording, setRecording] = useState(null);
+  const [processing, setProcessing] = useState(false);
+
+  async function startRecording() {
+    try {
+      await Audio.requestPermissionsAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+      setRecording(recording);
+    } catch (err) {
+      console.error("Failed to start recording", err);
+    }
+  }
+
+  async function stopRecording() {
+    if (!recording) return;
+    const currentRecording = recording;
+    setRecording(undefined);
+    await currentRecording.stopAndUnloadAsync();
+    const uri = currentRecording.getURI();
+    const result = await sendVoiceToBackend(uri);
+    await handleBackendResponse(result);
+  }
+
   const toggleRecording = () => {
     const nextState = !active;
     setActive(nextState);
-    safeRecordingState.value = nextState; // Kích hoạt ẩn Tab Bar ở Layout
+    safeRecordingState.value = nextState;
 
     if (nextState) {
-      // Khi bật: Tạo 2 vòng sóng âm lặp lại liên tục (Beat effect)
+      startRecording();
       pulse1.value = withRepeat(withTiming(1, { duration: 1500 }), -1, false);
       setTimeout(() => {
         if (safeRecordingState.value) {
@@ -45,9 +72,24 @@ export default function VoiceInteractionButton({ isRecording }) {
         }
       }, 750);
     } else {
-      // Khi tắt: Dừng sóng âm
+      stopRecording();
       pulse1.value = 0;
       pulse2.value = 0;
+    }
+  };
+
+  const handleBackendResponse = async (result) => {
+    const { sound } = await Audio.Sound.createAsync({
+      uri: `http://192.168.1.5:8000/${result.audio}`,
+    });
+    await sound.playAsync();
+
+    if (result.type === "map") {
+      console.log(result.location);
+    } else if (result.type === "place") {
+      console.log(result.text);
+    } else {
+      alert(result.text);
     }
   };
 

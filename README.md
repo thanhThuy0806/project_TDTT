@@ -22,3 +22,38 @@ Chạy đồng thời backend và frontend
 - **Frontend:**
   `cd frontend`
   `npm run dev`
+
+Flow:
+
+```
+Audio
+↓
+STT
+↓
+LLM intent extraction
+↓
+Router
+├── Goong
+├── Wikipedia
+└── Unsupported
+↓
+LLM response generation
+↓
+TTS
+↓
+Audio response
+```
+
+### 3. Yêu cầu:
+
+Bổ sung file .env với mẫu:
+
+```
+PORT=8000
+GOONG_API_KEY=xxxx
+```
+
+Bổ sung file my-app/app/constants: đổi địa chỉ thành ip của máy.
+Đồng thời sửa luôn trong voiceinteraction.js: trong hàm const handleBackendResponse = async (result), đổi thành địa chỉ IP máy
+
+Lưu ý, frontend và backend chạy trong cùng 1 mạng

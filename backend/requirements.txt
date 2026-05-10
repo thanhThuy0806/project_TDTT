@@ -8,3 +8,9 @@ psycopg2-binary
 python-dotenv
 apscheduler
 httpx
+
+transformers 
+torch 
+edge-tts 
+requests 
+sentencepiece
