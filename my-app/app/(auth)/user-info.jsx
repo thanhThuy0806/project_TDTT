@@ -21,10 +21,14 @@ import { doc, setDoc } from "firebase/firestore";
 // --- Dữ liệu tĩnh cho các tùy chọn ---
 const MOBILITY_OPTIONS = [
   { id: "normal", label: "Bình thường", icon: "accessibility-outline" },
-  { id: "wheelchair", label: "Sử dụng xe lăn", icon:  "car-outline"},
+  { id: "wheelchair", label: "Sử dụng xe lăn", icon: "car-outline" },
   { id: "walking_difficulty", label: "Khó khăn đi lại", icon: "walk-outline" },
   { id: "blind", label: "Khiếm thị", icon: "eye-off-outline" },
-  { id: "elderly_assisted", label: "Cần người trợ giúp", icon: "people-outline" },
+  {
+    id: "elderly_assisted",
+    label: "Cần người trợ giúp",
+    icon: "people-outline",
+  },
 ];
 
 const CONDITION_OPTIONS = [
@@ -39,21 +43,20 @@ const CONDITION_OPTIONS = [
 const UserInfoForm = () => {
   const router = useRouter();
 
-  // 1. Cập nhật state formData để chứa 2 trường mới
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     gender: "male",
     dob: new Date(),
-    mobility: "normal", // Giá trị mặc định (Single choice)
-    conditions: [],     // Mảng chứa các bệnh trạng (Multi choice)
+    mobility: "normal",
+    conditions: [],
     emergencyName: "",
     emergencyPhone: "",
   });
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   // State quản lý hiển thị Modal
   const [modalVisible, setModalVisible] = useState({
     mobility: false,
@@ -124,7 +127,8 @@ const UserInfoForm = () => {
   const getConditionsLabel = () => {
     if (formData.conditions.length === 0) return "Không có bệnh trạng nào";
     if (formData.conditions.length === 1) {
-      return CONDITION_OPTIONS.find((o) => o.id === formData.conditions[0])?.label;
+      return CONDITION_OPTIONS.find((o) => o.id === formData.conditions[0])
+        ?.label;
     }
     return `Đã chọn ${formData.conditions.length} bệnh trạng`;
   };
@@ -146,7 +150,12 @@ const UserInfoForm = () => {
           <View style={authStyles.inputContainer}>
             <Text style={authStyles.label}>Họ và Tên</Text>
             <View style={authStyles.inputWithIcon}>
-              <Ionicons name="person-outline" size={20} color="#888" style={authStyles.inputIcon} />
+              <Ionicons
+                name="person-outline"
+                size={20}
+                color="#888"
+                style={authStyles.inputIcon}
+              />
               <TextInput
                 style={authStyles.inputBox}
                 placeholder="Họ và tên"
@@ -159,7 +168,12 @@ const UserInfoForm = () => {
           <View style={authStyles.inputContainer}>
             <Text style={authStyles.label}>Số Điện Thoại</Text>
             <View style={authStyles.inputWithIcon}>
-              <Ionicons name="call-outline" size={20} color="#888" style={authStyles.inputIcon} />
+              <Ionicons
+                name="call-outline"
+                size={20}
+                color="#888"
+                style={authStyles.inputIcon}
+              />
               <TextInput
                 style={authStyles.inputBox}
                 placeholder="Số điện thoại"
@@ -172,7 +186,9 @@ const UserInfoForm = () => {
 
           <View style={[authStyles.inputContainer, { borderBottomWidth: 0 }]}>
             <Text style={authStyles.label}>Giới tính</Text>
-            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
               {[
                 { label: "Nam", value: "male" },
                 { label: "Nữ", value: "female" },
@@ -181,12 +197,20 @@ const UserInfoForm = () => {
                 <TouchableOpacity
                   key={item.value}
                   onPress={() => handleInputChange("gender", item.value)}
-                  style={{ flexDirection: "row", alignItems: "center", marginRight: 15 }}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginRight: 15,
+                  }}
                 >
                   <View style={authStyles.checkBox}>
-                    {formData.gender === item.value && <View style={authStyles.tick} />}
+                    {formData.gender === item.value && (
+                      <View style={authStyles.tick} />
+                    )}
                   </View>
-                  <Text style={{ fontSize: 16, color: "#333" }}>{item.label}</Text>
+                  <Text style={{ fontSize: 16, color: "#333" }}>
+                    {item.label}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -195,12 +219,25 @@ const UserInfoForm = () => {
           <View style={authStyles.inputContainer}>
             <Text style={authStyles.label}>Ngày Sinh</Text>
             <View style={authStyles.inputWithIcon}>
-              <Ionicons name="calendar-outline" size={20} color="#888" style={authStyles.inputIcon} />
-              <TouchableOpacity style={authStyles.inputBox} onPress={() => setShowDatePicker(true)}>
+              <Ionicons
+                name="calendar-outline"
+                size={20}
+                color="#888"
+                style={authStyles.inputIcon}
+              />
+              <TouchableOpacity
+                style={authStyles.inputBox}
+                onPress={() => setShowDatePicker(true)}
+              >
                 <Text>{formData.dob.toLocaleDateString("vi-VN")}</Text>
               </TouchableOpacity>
               {showDatePicker && (
-                <DateTimePicker value={formData.dob} mode="date" display="default" onChange={onDateChange} />
+                <DateTimePicker
+                  value={formData.dob}
+                  mode="date"
+                  display="default"
+                  onChange={onDateChange}
+                />
               )}
             </View>
           </View>
@@ -209,10 +246,17 @@ const UserInfoForm = () => {
           <View style={authStyles.inputContainer}>
             <Text style={authStyles.label}>Hỗ trợ di chuyển</Text>
             <View style={authStyles.inputWithIcon}>
-              <Ionicons name="body-outline" size={20} color="#888" style={authStyles.inputIcon} />
+              <Ionicons
+                name="body-outline"
+                size={20}
+                color="#888"
+                style={authStyles.inputIcon}
+              />
               <TouchableOpacity
                 style={authStyles.inputBox}
-                onPress={() => setModalVisible({ ...modalVisible, mobility: true })}
+                onPress={() =>
+                  setModalVisible({ ...modalVisible, mobility: true })
+                }
               >
                 <Text style={{ color: formData.mobility ? "#000" : "#999" }}>
                   {getMobilityLabel()}
@@ -225,12 +269,23 @@ const UserInfoForm = () => {
           <View style={authStyles.inputContainer}>
             <Text style={authStyles.label}>Bệnh trạng (Tùy chọn)</Text>
             <View style={authStyles.inputWithIcon}>
-              <Ionicons name="medical-outline" size={20} color="#888" style={authStyles.inputIcon} />
+              <Ionicons
+                name="medical-outline"
+                size={20}
+                color="#888"
+                style={authStyles.inputIcon}
+              />
               <TouchableOpacity
                 style={authStyles.inputBox}
-                onPress={() => setModalVisible({ ...modalVisible, conditions: true })}
+                onPress={() =>
+                  setModalVisible({ ...modalVisible, conditions: true })
+                }
               >
-                <Text style={{ color: formData.conditions.length > 0 ? "#000" : "#999" }}>
+                <Text
+                  style={{
+                    color: formData.conditions.length > 0 ? "#000" : "#999",
+                  }}
+                >
                   {getConditionsLabel()}
                 </Text>
               </TouchableOpacity>
@@ -238,19 +293,31 @@ const UserInfoForm = () => {
           </View>
 
           {/* ... Liên hệ người thân ... */}
-          <Text style={[authStyles.label, { textAlign: "left", marginBottom: 15, marginTop: 10 }]}>
+          <Text
+            style={[
+              authStyles.label,
+              { textAlign: "left", marginBottom: 15, marginTop: 10 },
+            ]}
+          >
             Liên hệ của người thân
           </Text>
 
           <View style={authStyles.inputContainer}>
             <Text style={authStyles.label}>Họ và Tên</Text>
             <View style={authStyles.inputWithIcon}>
-              <Ionicons name="person-outline" size={20} color="#888" style={authStyles.inputIcon} />
+              <Ionicons
+                name="person-outline"
+                size={20}
+                color="#888"
+                style={authStyles.inputIcon}
+              />
               <TextInput
                 style={authStyles.inputBox}
                 placeholder="Tên người thân"
                 value={formData.emergencyName}
-                onChangeText={(text) => handleInputChange("emergencyName", text)}
+                onChangeText={(text) =>
+                  handleInputChange("emergencyName", text)
+                }
               />
             </View>
           </View>
@@ -258,19 +325,29 @@ const UserInfoForm = () => {
           <View style={authStyles.inputContainer}>
             <Text style={authStyles.label}>Số Điện Thoại</Text>
             <View style={authStyles.inputWithIcon}>
-              <Ionicons name="call-outline" size={20} color="#888" style={authStyles.inputIcon} />
+              <Ionicons
+                name="call-outline"
+                size={20}
+                color="#888"
+                style={authStyles.inputIcon}
+              />
               <TextInput
                 style={authStyles.inputBox}
                 placeholder="SĐT người thân"
                 keyboardType="phone-pad"
                 value={formData.emergencyPhone}
-                onChangeText={(text) => handleInputChange("emergencyPhone", text)}
+                onChangeText={(text) =>
+                  handleInputChange("emergencyPhone", text)
+                }
               />
             </View>
           </View>
 
           <TouchableOpacity
-            style={[authStyles.authButton, loading && authStyles.buttonDisabled]}
+            style={[
+              authStyles.authButton,
+              loading && authStyles.buttonDisabled,
+            ]}
             onPress={handleSubmit}
             disabled={loading}
             activeOpacity={0.8}
@@ -284,9 +361,9 @@ const UserInfoForm = () => {
 
       {/* ================= MODAL: HỖ TRỢ DI CHUYỂN (SINGLE SELECT) ================= */}
       <Modal visible={modalVisible.mobility} transparent animationType="fade">
-        <TouchableOpacity 
-          style={customStyles.modalOverlay} 
-          activeOpacity={1} 
+        <TouchableOpacity
+          style={customStyles.modalOverlay}
+          activeOpacity={1}
           onPress={() => setModalVisible({ ...modalVisible, mobility: false })}
         >
           <View style={customStyles.modalContent}>
@@ -308,7 +385,11 @@ const UserInfoForm = () => {
                     <Text style={customStyles.listText}>{item.label}</Text>
                   </View>
                   <Ionicons
-                    name={formData.mobility === item.id ? "radio-button-on" : "radio-button-off"}
+                    name={
+                      formData.mobility === item.id
+                        ? "radio-button-on"
+                        : "radio-button-off"
+                    }
                     size={22}
                     color={formData.mobility === item.id ? "#000085" : "#CCC"}
                   />
@@ -321,14 +402,18 @@ const UserInfoForm = () => {
 
       {/* ================= BỆNH TRẠNG (MULTI SELECT) ================= */}
       <Modal visible={modalVisible.conditions} transparent animationType="fade">
-        <TouchableOpacity 
-          style={customStyles.modalOverlay} 
-          activeOpacity={1} 
-          onPress={() => setModalVisible({ ...modalVisible, conditions: false })}
+        <TouchableOpacity
+          style={customStyles.modalOverlay}
+          activeOpacity={1}
+          onPress={() =>
+            setModalVisible({ ...modalVisible, conditions: false })
+          }
         >
           <View style={customStyles.modalContent}>
             <View style={customStyles.modalHeader}>
-              <Text style={customStyles.modalTitle}>Các bệnh trạng cần lưu ý</Text>
+              <Text style={customStyles.modalTitle}>
+                Các bệnh trạng cần lưu ý
+              </Text>
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
               {CONDITION_OPTIONS.map((item) => {
@@ -352,16 +437,17 @@ const UserInfoForm = () => {
                 );
               })}
             </ScrollView>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={customStyles.doneButton}
-              onPress={() => setModalVisible({ ...modalVisible, conditions: false })}
+              onPress={() =>
+                setModalVisible({ ...modalVisible, conditions: false })
+              }
             >
               <Text style={customStyles.doneButtonText}>Xong</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
       </Modal>
-
     </KeyboardAvoidingView>
   );
 };

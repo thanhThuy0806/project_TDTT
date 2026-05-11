@@ -59,7 +59,6 @@ const MOCK_LOCATIONS = [
   },
 ];
 
-// Dữ liệu thành viên từ AboutPage cũ
 const members = [
   "Member 01",
   "Member 02",
@@ -70,13 +69,6 @@ const members = [
   "Member 07",
   "Member 08",
 ];
-
-const mockResponse = `# Khám phá Tây Ninh: Đỉnh Núi Bà Đen
-Chào mừng bạn đến với nóc nhà Nam Bộ! Dưới đây là lịch trình gợi ý: 
-* **Sáng sớm:** Di chuyển bằng cáp treo lên đỉnh núi để săn mây.
-* **Trưa:** Thưởng thức đặc sản *Bánh tráng phơi sương* Trảng Bàng.
-* **Lưu ý:** Nhiệt độ trên đỉnh thường thấp hơn 3-5 độ so với chân núi.
-> Chúc bạn có một chuyến đi an toàn và đầy trải nghiệm!`;
 
 function HomePage() {
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);

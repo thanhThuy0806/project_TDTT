@@ -4,8 +4,9 @@ from app.services.weather.risk_engine import compute_risk
 from app.services.weather.trend_engine import detect_trend, multi_day_reasoning
 from app.services.weather.health_engine import compute_health_risk
 from app.services.weather.advice_engine import generate_advice
+from fastapi import HTTPException
 
-def get_weather_data(lat, lon, user_profile=None):
+def get_weather(lat, lon, user_profile=None):
     res = call_weather_api("forecast.json", {
         "q": f"{lat},{lon}",
         "days": 3,

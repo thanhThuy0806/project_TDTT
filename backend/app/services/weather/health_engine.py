@@ -33,9 +33,9 @@ def compute_health_risk(features, user_profile=None):
 
     conditions = user_profile.get("conditions", [])
 
-    birth_date = user_profile.get("birth_date")
+    dob = user_profile.get("dob")
 
-    if birth_date and is_elderly(birth_date):
+    if dob and is_elderly(dob):
         if features["temp"] > 35:
             risk += 0.3
         if features["uv"] > 7:
@@ -51,6 +51,14 @@ def compute_health_risk(features, user_profile=None):
         if features["rain_prob"] > 60:
             risk += 0.2
 
+    if mobility == "blind":
+        if features["wind"] > 35:
+            risk += 0.2
+
+    if mobility == "elderly_assisted":
+        if features["temp"] > 35:
+            risk += 0.3
+
     # Health conditions
 
     if "respiratory" in conditions:
@@ -65,12 +73,24 @@ def compute_health_risk(features, user_profile=None):
         if features["humidity"] > 85:
             risk += 0.2
 
+    if "asthma" in conditions:
+        if aqi and aqi >= 3:
+            risk += 0.4
+
+    if "migraine" in conditions:
+        if features["temp"] > 35:
+            risk += 0.2
+
+    if "diabetes" in conditions:
+        if heat_index > 38:
+            risk += 0.2
+
     # AQI
     if "respiratory" in conditions:
         if aqi and aqi >= 3:
             risk += 0.4
 
-    if is_elderly(birth_date):
+    if is_elderly(dob):
         if aqi and aqi >= 4:
             risk += 0.3
             

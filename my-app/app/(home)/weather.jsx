@@ -15,89 +15,19 @@ import {
   Droplets,
   Sun,
   Fan,
-  Minus,
-  Plus,
   Gauge,
-  CloudRain,
 } from "lucide-react-native";
+import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import Thermometer from "../../components/Thermometer";
 import { styles } from "../../assets/styles/home/weather.styles";
-// import { getWeatherData } from "../../services/weatherService";
-
-const MOCK_WEATHER_DATA = {
-  location: { name: "Ho Chi Minh City" },
-  current: {
-    temp_c: 32,
-    humidity: 65,
-    wind_kph: 15.5,
-    uv: 8,
-    pressure_mb: 1012,
-    gust_kph: 22.3,
-    air_quality: {
-      "us-epa-index": 1,
-    },
-  },
-  forecast: {
-    forecastday: [
-      {
-        date: "2024-01-15",
-        day: {
-          maxtemp_c: 34,
-          mintemp_c: 24,
-          daily_chance_of_rain: 20,
-          condition: { text: "Nắng" },
-        },
-      },
-      {
-        date: "2024-01-16",
-        day: {
-          maxtemp_c: 31,
-          mintemp_c: 25,
-          daily_chance_of_rain: 40,
-          condition: { text: "Mây rải rác" },
-        },
-      },
-      {
-        date: "2024-01-17",
-        day: {
-          maxtemp_c: 33,
-          mintemp_c: 23,
-          daily_chance_of_rain: 10,
-          condition: { text: "Nắng" },
-        },
-      },
-    ],
-  },
-};
+import { getWeatherData } from "../../services/weatherService";
 
 export default function WeatherIndex() {
   const router = useRouter();
-  const [weatherData, setWeatherData] = useState(MOCK_WEATHER_DATA);
-  const [currentTemp, setCurrentTemp] = useState(
-    MOCK_WEATHER_DATA.current.temp_c
-  );
-
-  const [loading, setLoading] = useState(false);
-
-  // const [weatherData, setWeatherData] = useState(null);
-  // const [loading, setLoading] = useState(true);
-
-  // const loadData = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const data = await getWeatherData("Ho Chi Minh");
-  //     setWeatherData(data);
-  //   } catch (error) {
-  //     Alert.alert("Lỗi", "Không thể kết nối tới máy chủ Backend");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   loadData();
-  // }, []);
+  const [weatherData, setWeatherData] = useState(null);
+  const [currentTemp, setCurrentTemp] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const getAQIText = (aqiData) => {
     const index = aqiData?.["us-epa-index"] || 0;
@@ -105,115 +35,72 @@ export default function WeatherIndex() {
       0: {
         text: "Đang cập nhật",
         color: "#9E9E9E",
-        advice: "Đang cập nhật dữ liệu",
       },
       1: {
         text: "Tốt",
         color: "#4CAF50",
-        advice: "Thích hợp cho hoạt động ngoài trời",
       },
       2: {
         text: "Trung bình",
         color: "#FFC107",
-        advice: "Người nhạy cảm nên hạn chế ra ngoài",
       },
       3: {
         text: "Kém",
         color: "#FF9800",
-        advice: "Nên đeo khẩu trang khi ra ngoài",
       },
       4: {
         text: "Rất kém",
         color: "#F44336",
-        advice: "Hạn chế tối đa hoạt động ngoài trời",
       },
       5: {
         text: "Nguy hại",
         color: "#9C27B0",
-        advice: "Ở trong nhà, đóng kín cửa",
       },
     };
-
     return (
       aqiLevels[index] || {
         text: "Không rõ",
         color: "#999",
-        advice: "Không có dữ liệu",
       }
     );
   };
 
-  const aqiInfo = getAQIText(weatherData?.current?.air_quality);
-  const weatherAdvice = getWeatherAdvice(weatherData?.current, aqiInfo);
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const { status } = await Location.requestForegroundPermissionsAsync();
 
-  // if (loading) return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+      if (status !== "granted") {
+        Alert.alert("Lỗi", "Bạn chưa cấp quyền vị trí");
+        return;
+      }
 
-  const refreshData = () => {
-    // Tạo dữ liệu mới random cho mock
-    const newTemp = Math.floor(Math.random() * (38 - 25 + 1) + 25); // 25-38 độ
-    const newHumidity = Math.floor(Math.random() * (90 - 50 + 1) + 50); // 50-90%
-    const newWind = (Math.random() * (30 - 5) + 5).toFixed(1); // 5-30 km/h
-    const newUV = Math.floor(Math.random() * (11 - 1 + 1) + 1); // 1-11 UV
-    const newAQI = Math.floor(Math.random() * 5) + 1; // 1-5 AQI index
-    const newPressure = Math.floor(Math.random() * (1025 - 990 + 1) + 990);
-    const newGust = (Math.random() * (35 - 10) + 10).toFixed(1);
+      const location = await Location.getCurrentPositionAsync({});
+      const lat = location.coords.latitude;
+      const lon = location.coords.longitude;
 
-    const newForecast = {
-      forecastday: [
-        {
-          date: "2024-01-15",
-          day: {
-            maxtemp_c: Math.floor(Math.random() * (36 - 28 + 1) + 28),
-            mintemp_c: Math.floor(Math.random() * (26 - 22 + 1) + 22),
-            daily_chance_of_rain: Math.floor(Math.random() * 100),
-            condition: {
-              text: ["Nắng", "Mây", "Mưa nhẹ"][Math.floor(Math.random() * 3)],
-            },
-          },
-        },
-        {
-          date: "2024-01-16",
-          day: {
-            maxtemp_c: Math.floor(Math.random() * (36 - 28 + 1) + 28),
-            mintemp_c: Math.floor(Math.random() * (26 - 22 + 1) + 22),
-            daily_chance_of_rain: Math.floor(Math.random() * 100),
-            condition: {
-              text: ["Nắng", "Mây", "Mưa nhẹ"][Math.floor(Math.random() * 3)],
-            },
-          },
-        },
-        {
-          date: "2024-01-17",
-          day: {
-            maxtemp_c: Math.floor(Math.random() * (36 - 28 + 1) + 28),
-            mintemp_c: Math.floor(Math.random() * (26 - 22 + 1) + 22),
-            daily_chance_of_rain: Math.floor(Math.random() * 100),
-            condition: {
-              text: ["Nắng", "Mây", "Mưa nhẹ"][Math.floor(Math.random() * 3)],
-            },
-          },
-        },
-      ],
-    };
+      const data = await getWeatherData(lat, lon);
 
-    const newWeatherData = {
-      location: { name: "Ho Chi Minh City" },
-      current: {
-        temp_c: newTemp,
-        humidity: newHumidity,
-        wind_kph: parseFloat(newWind),
-        uv: newUV,
-        pressure_mb: newPressure,
-        gust_kph: parseFloat(newGust),
-        air_quality: {
-          "us-epa-index": newAQI,
-        },
-      },
-      forecast: newForecast,
-    };
-    setWeatherData(newWeatherData);
-    setCurrentTemp(newTemp);
+      setWeatherData(data);
+
+      setCurrentTemp(data?.current?.temp_c || 0);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Lỗi", "Không thể tải dữ liệu thời tiết");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  if (loading || !weatherData)
+    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+
+  const aqiInfo = getAQIText(weatherData?.current?.air_quality);
+  const weatherAdvice = weatherData?.advice || [];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -227,7 +114,7 @@ export default function WeatherIndex() {
           {weatherData?.location?.name || "Thời Tiết"}
         </Text>
 
-        <Pressable style={styles.iconBtn} onPress={refreshData}>
+        <Pressable style={styles.iconBtn} onPress={loadData}>
           <MoreHorizontal color="#000" size={24} />
         </Pressable>
       </View>
@@ -288,18 +175,6 @@ export default function WeatherIndex() {
           ))}
         </View>
 
-        {/* <View style={styles.bottomBar}>
-          <View style={styles.fanSection}>
-            <View style={styles.fanIconBg}>
-              <Fan color="#5C6BC0" size={20} />
-            </View>
-            <Text style={styles.fanText}>Chất lượng không khí</Text>
-          </View>
-          <Text style={[styles.qualityValue, { color: aqiInfo.color }]}>
-            {aqiInfo.text}
-          </Text>
-        </View> */}
-
         <View style={styles.forecastSection}>
           <Text style={styles.forecastTitle}>📅 3 ngày tới</Text>
 
@@ -351,30 +226,3 @@ const UnifiedCard = ({
     </Text>
   </Pressable>
 );
-
- const getWeatherAdvice = async (lat, lon) => {
- try {
-    const res = await fetch(
-      `${API_URL}/weather?lat=${lat}&lon=${lon}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // nếu backend cần auth
-        },
-      }
-    );
-
-    if (!res.ok) {
-      throw new Error(`HTTP error ${res.status}`);
-    }
-
-    const data = await res.json();
-
-    return data?.advice || [];
-  } catch (error) {
-    console.error("getWeatherAdvice error:", error);
-
-    return ["Không thể lấy lời khuyên thời tiết lúc này."];
-  }
-};

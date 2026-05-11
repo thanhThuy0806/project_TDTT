@@ -1,14 +1,13 @@
 from pydantic import BaseModel
 from typing import List, Optional
-
-class EmergencyContact(BaseModel):
-    name: str
-    phone: str
+from datetime import date
 
 class UserProfile(BaseModel):
     name: str
-    birth_date: str
+    phone: str
     gender: str
+    dob: date
     mobility: str
     conditions: List[str]
-    emergency_contact: Optional[EmergencyContact]
+    emergencyName: Optional[str] = None
+    emergencyPhone: Optional[str] = None
