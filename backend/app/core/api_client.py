@@ -3,7 +3,8 @@ from app.config.weather import settings
 
 def call_weather_api(endpoint, params=None):
     url = f"{settings.BASE_URL}{endpoint}"
-
+    print(f'This is an url: {url}')
+    
     query = {"key": settings.WEATHER_API_KEY}
 
     if params:

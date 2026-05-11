@@ -1,9 +1,6 @@
 from datetime import datetime
+from app.services.weather.health_engine import is_elderly
 
-def is_elderly(birth_date: str):
-    birth = datetime.strptime(birth_date,"%Y-%m-%d")
-    age = (datetime.now() - birth).days // 365
-    return age >= 60
 
 def deduplicate(items):
     seen = set()
@@ -23,7 +20,7 @@ def generate_general_advice(features, risk):
     if features["uv"] > 8:
         advice.append("UV cao, nên tránh ra ngoài vào buổi trưa.")
 
-    if features["rain_prob"] > 60:
+    if features["rain_prob"] > 50:
         advice.append("Khả năng mưa cao, nên mang theo ô hoặc áo mưa.")
 
     if features["wind"] > 30:
@@ -65,11 +62,10 @@ def generate_health_advice(features, health_risk, user_profile):
 
     # Heart disease
     if "heart_disease" in conditions:
-        if features["temp"] > 35:
+        if features["temp"] > 32:
             advice.append("Nhiệt độ cao có thể ảnh hưởng đến tim mạch.")
 
     # Arthritis
-
     if "arthritis" in conditions:
         if features["humidity"] > 85:
             advice.append("Độ ẩm cao có thể làm tăng cảm giác đau nhức khớp.")

@@ -42,10 +42,12 @@
       "expo-secure-store",
       "@react-native-community/datetimepicker",
       "expo-web-browser",
-      "expo-location",
-      {
-        "locationWhenInUsePermission": "Cho phép ứng dụng truy cập vị trí của bạn."
-      }
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Cho phép ứng dụng truy cập vị trí của bạn."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

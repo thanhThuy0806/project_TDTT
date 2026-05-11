@@ -4,13 +4,14 @@ def compute_heat_index(temp, humidity):
     return temp + 0.33 * humidity - 4
 
 def is_elderly(birth_date: str):
+    date_only = birth_date.split('T')[0]
+    
     birth = datetime.strptime(
-        birth_date,
+        date_only,
         "%Y-%m-%d"
     )
-
-    age = (datetime.now() - birth).days // 365
-
+    
+    age = (datetime.now().date() - birth.date()).days // 365
     return age >= 60
 
 def compute_health_risk(features, user_profile=None):

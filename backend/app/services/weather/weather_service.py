@@ -7,7 +7,7 @@ from app.services.weather.advice_engine import generate_advice
 from fastapi import HTTPException
 
 def get_weather(lat, lon, user_profile=None):
-    res = call_weather_api("forecast.json", {
+    res = call_weather_api("/forecast.json", {
         "q": f"{lat},{lon}",
         "days": 3,
         "aqi": "yes"
@@ -18,7 +18,6 @@ def get_weather(lat, lon, user_profile=None):
             status_code=res.status_code,
             detail="Failed to fetch weather data"
         )
-
     data = res.json()
 
     current = data["current"]

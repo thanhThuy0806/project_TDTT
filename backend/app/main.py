@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from app.routes.weather import router as weather_route
-from app.routes.auth import user_route
+from app.routes.auth import router as user_route
 
 app = FastAPI()
 
