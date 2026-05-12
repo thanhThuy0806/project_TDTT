@@ -15,6 +15,10 @@ import { Image } from "expo-image";
 import { COLORS } from "../../constants/colors";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/firebaseConfig";
+<<<<<<< HEAD
+=======
+import AsyncStorage from "@react-native-async-storage/async-storage";
+>>>>>>> BE_Weather
 
 const SignInScreen = () => {
   const router = useRouter();
@@ -37,6 +41,12 @@ const SignInScreen = () => {
         email,
         password
       );
+<<<<<<< HEAD
+=======
+      // User' Id token
+      const token = await userCredential.user.getIdToken()
+      await AsyncStorage.setItem("token", token)
+>>>>>>> BE_Weather
 
       if (userCredential.user) {
         router.push("/");

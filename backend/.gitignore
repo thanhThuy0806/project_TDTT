@@ -8,6 +8,7 @@ __pycache__/
 .env
 .flaskenv
 serviceAccountKey.json
+firebase-key.json
 
 # --- Virtual Environments ---
 venv/

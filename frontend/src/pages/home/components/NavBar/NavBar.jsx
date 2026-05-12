@@ -31,8 +31,6 @@ export function NavBar(props) {
       {/* Logo Section */}
       <div className={styles.logoSection}>Logo</div>
 
-      
-
       {/* Auth Section */}
       <div className={styles.authSection}>
         {!user ? (

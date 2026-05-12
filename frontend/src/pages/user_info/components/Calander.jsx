@@ -32,7 +32,9 @@ export function CustomDatePicker({ label, value, onChange }) {
   }, []);
 
   useEffect(() => {
-    const date = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    const date = `${year}-${String(month).padStart(2, "0")}-${String(
+      day
+    ).padStart(2, "0")}`;
     onChange?.(date);
   }, [day, month, year]);
 
@@ -43,7 +45,9 @@ export function CustomDatePicker({ label, value, onChange }) {
 
         <div className={styles.customSelect} ref={dayRef}>
           <div
-            className={`${styles.selectHeader} ${isDayOpen ? styles.active : ""}`}
+            className={`${styles.selectHeader} ${
+              isDayOpen ? styles.active : ""
+            }`}
             onClick={() => {
               setIsDayOpen(!isDayOpen);
               setIsMonthOpen(false);
@@ -58,7 +62,9 @@ export function CustomDatePicker({ label, value, onChange }) {
               {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((d) => (
                 <div
                   key={d}
-                  className={`${styles.optionItem} ${day === d ? styles.selected : ""}`}
+                  className={`${styles.optionItem} ${
+                    day === d ? styles.selected : ""
+                  }`}
                   onClick={() => {
                     setDay(d);
                     setIsDayOpen(false);
@@ -73,7 +79,9 @@ export function CustomDatePicker({ label, value, onChange }) {
 
         <div className={styles.customSelect} ref={monthRef}>
           <div
-            className={`${styles.selectHeader} ${isMonthOpen ? styles.active : ""}`}
+            className={`${styles.selectHeader} ${
+              isMonthOpen ? styles.active : ""
+            }`}
             onClick={() => {
               setIsMonthOpen(!isMonthOpen);
               setIsDayOpen(false); // Đóng day nếu đang mở
@@ -91,7 +99,9 @@ export function CustomDatePicker({ label, value, onChange }) {
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                 <div
                   key={m}
-                  className={`${styles.optionItem} ${month === m ? styles.selected : ""}`}
+                  className={`${styles.optionItem} ${
+                    month === m ? styles.selected : ""
+                  }`}
                   onClick={() => {
                     setMonth(m);
                     setIsMonthOpen(false);

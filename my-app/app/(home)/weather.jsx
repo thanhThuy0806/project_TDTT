@@ -15,6 +15,7 @@ import {
   Droplets,
   Sun,
   Fan,
+<<<<<<< HEAD
   Minus,
   Plus,
   Gauge,
@@ -98,6 +99,21 @@ export default function WeatherIndex() {
   // useEffect(() => {
   //   loadData();
   // }, []);
+=======
+  Gauge,
+} from "lucide-react-native";
+import * as Location from "expo-location";
+import { useRouter } from "expo-router";
+import Thermometer from "../../components/Thermometer";
+import { styles } from "../../assets/styles/home/weather.styles";
+import { getWeatherData } from "../../services/weatherService";
+
+export default function WeatherIndex() {
+  const router = useRouter();
+  const [weatherData, setWeatherData] = useState(null);
+  const [currentTemp, setCurrentTemp] = useState(0);
+  const [loading, setLoading] = useState(true);
+>>>>>>> BE_Weather
 
   const getAQIText = (aqiData) => {
     const index = aqiData?.["us-epa-index"] || 0;
@@ -105,44 +121,68 @@ export default function WeatherIndex() {
       0: {
         text: "Đang cập nhật",
         color: "#9E9E9E",
+<<<<<<< HEAD
         advice: "Đang cập nhật dữ liệu",
+=======
+>>>>>>> BE_Weather
       },
       1: {
         text: "Tốt",
         color: "#4CAF50",
+<<<<<<< HEAD
         advice: "Thích hợp cho hoạt động ngoài trời",
+=======
+>>>>>>> BE_Weather
       },
       2: {
         text: "Trung bình",
         color: "#FFC107",
+<<<<<<< HEAD
         advice: "Người nhạy cảm nên hạn chế ra ngoài",
+=======
+>>>>>>> BE_Weather
       },
       3: {
         text: "Kém",
         color: "#FF9800",
+<<<<<<< HEAD
         advice: "Nên đeo khẩu trang khi ra ngoài",
+=======
+>>>>>>> BE_Weather
       },
       4: {
         text: "Rất kém",
         color: "#F44336",
+<<<<<<< HEAD
         advice: "Hạn chế tối đa hoạt động ngoài trời",
+=======
+>>>>>>> BE_Weather
       },
       5: {
         text: "Nguy hại",
         color: "#9C27B0",
+<<<<<<< HEAD
         advice: "Ở trong nhà, đóng kín cửa",
       },
     };
 
+=======
+      },
+    };
+>>>>>>> BE_Weather
     return (
       aqiLevels[index] || {
         text: "Không rõ",
         color: "#999",
+<<<<<<< HEAD
         advice: "Không có dữ liệu",
+=======
+>>>>>>> BE_Weather
       }
     );
   };
 
+<<<<<<< HEAD
   const aqiInfo = getAQIText(weatherData?.current?.air_quality);
   const weatherAdvice = getWeatherAdvice(weatherData?.current, aqiInfo);
 
@@ -215,6 +255,45 @@ export default function WeatherIndex() {
     setCurrentTemp(newTemp);
   };
 
+=======
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== "granted") {
+        Alert.alert("Lỗi", "Bạn chưa cấp quyền vị trí");
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      const lat = location.coords.latitude;
+      const lon = location.coords.longitude;
+
+      const data = await getWeatherData(lat, lon);
+
+      setWeatherData(data);
+
+      setCurrentTemp(data?.current?.temp_c || 0);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Lỗi", "Không thể tải dữ liệu thời tiết");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  if (loading || !weatherData)
+    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+
+  const aqiInfo = getAQIText(weatherData?.current?.air_quality);
+  const weatherAdvice = weatherData?.advice || [];
+
+>>>>>>> BE_Weather
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -227,7 +306,11 @@ export default function WeatherIndex() {
           {weatherData?.location?.name || "Thời Tiết"}
         </Text>
 
+<<<<<<< HEAD
         <Pressable style={styles.iconBtn} onPress={refreshData}>
+=======
+        <Pressable style={styles.iconBtn} onPress={loadData}>
+>>>>>>> BE_Weather
           <MoreHorizontal color="#000" size={24} />
         </Pressable>
       </View>
@@ -288,6 +371,7 @@ export default function WeatherIndex() {
           ))}
         </View>
 
+<<<<<<< HEAD
         {/* <View style={styles.bottomBar}>
           <View style={styles.fanSection}>
             <View style={styles.fanIconBg}>
@@ -300,6 +384,8 @@ export default function WeatherIndex() {
           </Text>
         </View> */}
 
+=======
+>>>>>>> BE_Weather
         <View style={styles.forecastSection}>
           <Text style={styles.forecastTitle}>📅 3 ngày tới</Text>
 
@@ -350,6 +436,7 @@ const UnifiedCard = ({
       {rightValue}
     </Text>
   </Pressable>
+<<<<<<< HEAD
 );
 
 const getWeatherAdvice = (current, aqiInfo) => {
@@ -370,3 +457,6 @@ const getWeatherAdvice = (current, aqiInfo) => {
   if (current?.temp_c >= 35) advice.push("Nhiệt độ cao, nhớ bổ sung nước.");
   return advice.slice(0, 4);
 };
+=======
+);
+>>>>>>> BE_Weather

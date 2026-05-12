@@ -41,7 +41,17 @@
       ],
       "expo-secure-store",
       "@react-native-community/datetimepicker",
+<<<<<<< HEAD
       "expo-web-browser"
+=======
+      "expo-web-browser",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Cho phép ứng dụng truy cập vị trí của bạn."
+        }
+      ]
+>>>>>>> BE_Weather
     ],
     "experiments": {
       "typedRoutes": true,
