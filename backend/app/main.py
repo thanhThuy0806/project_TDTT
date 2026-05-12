@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 #from routes.profile import router as profile_router
-from src.routes.sos import router as sos_router
+from backend.app.routes.sos import router as sos_router
 
 # 1. Khai báo Pydantic Model (Hứng dữ liệu từ React Native gửi lên)
 class UserInfoCreate(BaseModel):
