@@ -1,7 +1,11 @@
+import os
 # File: backend/src/routes/sos.py
 from fastapi import APIRouter
 from pydantic import BaseModel
+from dotenv import load_dotenv
 import requests
+# load env
+load_dotenv()
 
 router = APIRouter()
 
@@ -23,7 +27,7 @@ async def search_rescue_unit(request: SOSRequest):
         keyword = "police station"
 
     # API Key của SerpApi
-    API_KEY = "YOUR_API_KEY"
+    API_KEY = os.getenv("SERP_API")
 
     try:
         url = f"https://serpapi.com/search.json?engine=google_maps&q={keyword}&ll=@{request.lat},{request.lng},14z&type=search&api_key={API_KEY}"
