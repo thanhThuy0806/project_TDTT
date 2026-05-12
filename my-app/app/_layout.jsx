@@ -41,8 +41,8 @@ export default function RootLayout() {
           userInfoSnap.exists() && userInfoSnap.data().name?.trim();
 
         if (hasCompletedInfo) {
-          if (inAuthGroup) {
-            router.replace("/(tabs)/index");
+          if (inAuthGroup || segments[1] === 'user-info') {
+            router.replace("/(tabs)");
           }
         } else {
           if (segments[1] !== "user-info") {

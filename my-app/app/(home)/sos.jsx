@@ -20,6 +20,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { styles } from "../../assets/styles/home/sos.styles";
 import { Ionicons } from "@expo/vector-icons";
+import { API_URL } from "@/constants/api";
 
 const EMERGENCY_TYPES = [
   { id: "medical", label: "Y tế", icon: "medkit", color: "#D4E157" },
@@ -115,7 +116,7 @@ useEffect(() => {
     try {
       const isAvailable = await SMS.isAvailableAsync();
 
-      const response = await fetch('http://192.168.1.13:8000/api/sos/search', {
+      const response = await fetch(`${API_URL}/api/sos/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

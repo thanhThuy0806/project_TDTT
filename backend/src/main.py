@@ -1,13 +1,9 @@
-from fastapi import FastAPI, HTTPException, Depends, status
-from sqlalchemy.orm import Session
+from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional
-from contextlib import asynccontextmanager
-from db.database import engine, SessionLocal, Base
-from config.cron import start_cron
 from fastapi.middleware.cors import CORSMiddleware
 #from routes.profile import router as profile_router
-from routes.sos import router as sos_router
+from src.routes.sos import router as sos_router
 
 # 1. Khai báo Pydantic Model (Hứng dữ liệu từ React Native gửi lên)
 class UserInfoCreate(BaseModel):
@@ -19,27 +15,8 @@ class UserInfoCreate(BaseModel):
     emergencyName: str
     emergencyPhone: str
 
-# 2. Dependency để lấy DB session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    Base.metadata.create_all(bind=engine)
-    try:
-        start_cron()
-    except Exception as e:
-        print(f"Cron error: {e}")
-    
-    print("Application is starting up...")
-    yield
-    print("Application is shutting down...")
-
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -57,7 +34,3 @@ app.include_router(sos_router, prefix="/api/sos", tags=["SOS"])
 @app.get("/api/health")
 def health_check():
     return {"status": "ok"}
-
-# uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-
-
