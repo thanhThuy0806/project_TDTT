@@ -37,22 +37,15 @@ const SignUpScreen = () => {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
-<<<<<<< HEAD
-        password
-=======
         password,
->>>>>>> BE_Weather
       );
       const user = userCredential.user;
 
       Alert.alert("User created successfully");
-<<<<<<< HEAD
-=======
       // User' Id token
       const token = await userCredential.user.getIdToken();
       await AsyncStorage.setItem("token", token);
 
->>>>>>> BE_Weather
       router.replace({
         pathname: "/user-info",
         params: { userId: user.uid },
@@ -144,11 +137,7 @@ const SignUpScreen = () => {
             {/* Sign In Link */}
             <TouchableOpacity
               style={authStyles.linkContainer}
-<<<<<<< HEAD
-              onPress={() => router.push("/(auth)/sign-in")}
-=======
               onPress={() => router.push("/sign-in")}
->>>>>>> BE_Weather
             >
               <Text style={authStyles.linkText}>
                 Already have an account?{" "}

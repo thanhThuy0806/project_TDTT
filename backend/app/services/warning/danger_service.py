@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 # CONFIG
 # ─────────────────────────────────────────────
 SEARXNG_HOST = os.getenv("SEARXNG_HOST", "http://localhost:8888")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "Gemma4:E2B")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "Gemma4:E4B")
 OLLAMA_BASE_URL = os.getenv('OLLAMA_BASE_URL', 'https://vowel-clerk-elope.ngrok-free.dev')
 CACHE_TTL_SECONDS = int(os.getenv("CACHE_TTL", "300"))  # 5 minutes
 GRID_PRECISION = 3  # Decimal places for grid rounding (~111m per 0.001°)

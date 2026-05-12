@@ -1,59 +1,16 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from app.schemas.warning import CheckDangerRequest, CheckDangerResponse, AlertItem
 import json
 import logging
+from app.services.warning.danger_service import danger_service
 
-from backend.danger_service import danger_service
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(
-    title="Accessibility & Safety API",
-    description="API cảnh báo nguy hiểm kết hợp Static Zones + Dynamic WebRAG",
-)
+router = APIRouter(prefix="/warning", tags=["Warning"])
 
-# ── CORS middleware (cho phép frontend kết nối) ──
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
-# ---------------------------------------------------------
-# REQUEST / RESPONSE MODELS
-# ---------------------------------------------------------
-class CheckDangerRequest(BaseModel):
-    lat: float
-    lng: float
-
-
-class AlertItem(BaseModel):
-    type: str        # "static" | "dynamic"
-    severity: str    # "low" | "medium" | "high"
-    text: str
-    source: str | None = None
-    zone: str | None = None
-
-
-class CheckDangerResponse(BaseModel):
-    lat: float
-    lng: float
-    place_name: str | None
-    is_danger: bool
-    status: str      # "safe" | "danger"
-    alerts: list[AlertItem]
-
-
-# ---------------------------------------------------------
-# REST API ENDPOINTS
-# ---------------------------------------------------------
-
-@app.post("/api/check-danger", response_model=CheckDangerResponse)
+@router.post("/check-danger", response_model=CheckDangerResponse)
 async def check_danger(req: CheckDangerRequest):
     """
     Kiểm tra nguy hiểm tại tọa độ (lat, lng).
@@ -74,19 +31,10 @@ async def check_danger(req: CheckDangerRequest):
         status=result["status"],
         alerts=[AlertItem(**a) for a in result.get("alerts", [])],
     )
-
-
-@app.get("/api/health")
-async def health_check():
-    """Health check endpoint."""
-    return {"status": "ok", "service": "danger-warning"}
-
-
 # ---------------------------------------------------------
 # WEBSOCKET ENDPOINT (giữ nguyên cho realtime tracking)
 # ---------------------------------------------------------
-
-@app.websocket("/ws/tracking")
+@router.websocket("/ws/tracking")
 async def websocket_endpoint(websocket: WebSocket):
     """
     Quản lý luồng giao tiếp realtime qua WebSocket.

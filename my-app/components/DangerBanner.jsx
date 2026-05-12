@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import React, { useEffect, useState, useRef } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-=======
-import React, { useEffect } from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
->>>>>>> BE_Weather
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -20,7 +15,6 @@ import {
   AlertTriangle,
 } from "lucide-react-native";
 import { styles } from "../assets/styles/components/danger-banner.style";
-<<<<<<< HEAD
 import * as Location from 'expo-location'; // Import thư viện lấy vị trí của Expo
 
 // Đổi tên props thành initial để sử dụng state nội bộ cho realtime
@@ -34,28 +28,16 @@ export default function DangerBanner({ isDanger: initialIsDanger = false, danger
   // Refs để quản lý kết nối và theo dõi vị trí tránh memory leak
   const ws = useRef(null);
   const locationSubscription = useRef(null);
-=======
-
-export default function DangerBanner({ isDanger, dangerDetails }) {
-  const [expanded, setExpanded] = React.useState(false);
->>>>>>> BE_Weather
 
   // Animation value cho độ rung và màu sắc
   const shakeTranslation = useSharedValue(0);
   const dangerProgress = useSharedValue(isDanger ? 1 : 0);
 
-<<<<<<< HEAD
   // 1. EFFECT XỬ LÝ ANIMATION (Giữ nguyên của bạn)
-=======
->>>>>>> BE_Weather
   useEffect(() => {
     dangerProgress.value = withTiming(isDanger ? 1 : 0, { duration: 500 });
 
     if (isDanger) {
-<<<<<<< HEAD
-=======
-      // Tạo hiệu ứng rung nhẹ liên tục khi có nguy hiểm
->>>>>>> BE_Weather
       shakeTranslation.value = withRepeat(
         withSequence(
           withTiming(-2, { duration: 100 }),
@@ -76,12 +58,11 @@ export default function DangerBanner({ isDanger, dangerDetails }) {
     }
   }, [isDanger]);
 
-<<<<<<< HEAD
   // 2. EFFECT MỚI: XỬ LÝ WEBSOCKET VÀ LOCATION TRACKING
   useEffect(() => {
     // THAY ĐỔI ĐỊA CHỈ IP NÀY BẰNG IP IPv4 CỦA MÁY TÍNH TRÊN MẠNG WIFI
     // Ví dụ: "ws://192.168.1.10:8000/ws/tracking"
-    const BACKEND_WS_URL = "ws://192.168.88.221:8000/ws/tracking"; 
+    const BACKEND_WS_URL = "ws://192.168.88.221:8000/warning/ws/tracking"; 
 
     // Khởi tạo kết nối WebSocket
     ws.current = new WebSocket(BACKEND_WS_URL);
@@ -161,17 +142,11 @@ export default function DangerBanner({ isDanger, dangerDetails }) {
   }, []);
 
   // 3. RENDER UI (Giữ nguyên hoàn toàn cấu trúc UI của bạn)
-=======
->>>>>>> BE_Weather
   const animatedContainerStyle = useAnimatedStyle(() => {
     const backgroundColor = interpolateColor(
       dangerProgress.value,
       [0, 1],
-<<<<<<< HEAD
       ["#E8F5E9", "#FFCDD2"] 
-=======
-      ["#E8F5E9", "#FFCDD2"] // Màu xanh lá nhạt (bình thường) -> Đỏ nhạt (nguy hiểm)
->>>>>>> BE_Weather
     );
 
     return {
@@ -220,10 +195,6 @@ export default function DangerBanner({ isDanger, dangerDetails }) {
           </View>
         </View>
 
-<<<<<<< HEAD
-=======
-        {/* Phần hiển thị nguy hiểm khi toggle */}
->>>>>>> BE_Weather
         {isDanger && expanded && (
           <View style={styles.dangerList}>
             {dangerDetails.map((item, index) => (
@@ -237,8 +208,4 @@ export default function DangerBanner({ isDanger, dangerDetails }) {
       </Animated.View>
     </View>
   );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> BE_Weather

@@ -8,23 +8,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-<<<<<<< HEAD
-=======
   Modal,
   StyleSheet,
->>>>>>> BE_Weather
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Ionicons } from "@expo/vector-icons";
 import { authStyles } from "../../assets/styles/auth/auth.styles";
-<<<<<<< HEAD
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { auth, db } from "../../firebase/firebaseConfig";
-import { doc, setDoc } from "firebase/firestore";
-
-const UserInfoForm = () => {
-  // const { userId } = useLocalSearchParams();
-=======
 import { useRouter } from "expo-router";
 import { auth, db } from "../../firebase/firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
@@ -52,7 +41,6 @@ const CONDITION_OPTIONS = [
 ];
 
 const UserInfoForm = () => {
->>>>>>> BE_Weather
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -60,11 +48,8 @@ const UserInfoForm = () => {
     phone: "",
     gender: "male",
     dob: new Date(),
-<<<<<<< HEAD
-=======
     mobility: "normal",
     conditions: [],
->>>>>>> BE_Weather
     emergencyName: "",
     emergencyPhone: "",
   });
@@ -72,15 +57,12 @@ const UserInfoForm = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
 
-<<<<<<< HEAD
-=======
   // State quản lý hiển thị Modal
   const [modalVisible, setModalVisible] = useState({
     mobility: false,
     conditions: false,
   });
 
->>>>>>> BE_Weather
   const handleInputChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
   };
@@ -92,8 +74,6 @@ const UserInfoForm = () => {
     }
   };
 
-<<<<<<< HEAD
-=======
   // Hàm xử lý chọn Bệnh trạng (Đa lựa chọn)
   const toggleCondition = (id) => {
     const newConditions = formData.conditions.includes(id)
@@ -102,7 +82,6 @@ const UserInfoForm = () => {
     handleInputChange("conditions", newConditions);
   };
 
->>>>>>> BE_Weather
   const handleSubmit = async () => {
     if (loading) return;
     const currentUser = auth.currentUser;
@@ -115,31 +94,21 @@ const UserInfoForm = () => {
     setLoading(true);
     try {
       const userDocRef = doc(db, "user-info", currentUser.uid);
-<<<<<<< HEAD
-=======
       // 2. Ghi dữ liệu lên Firebase bao gồm 2 trường mới
->>>>>>> BE_Weather
       await setDoc(userDocRef, {
         name: formData.name,
         gender: formData.gender,
         dob: formData.dob.toISOString(),
         phone: formData.phone,
-<<<<<<< HEAD
-=======
         mobility: formData.mobility,
         conditions: formData.conditions,
->>>>>>> BE_Weather
         emergencyName: formData.emergencyName,
         emergencyPhone: formData.emergencyPhone,
         updatedAt: new Date().toISOString(),
       });
 
       Alert.alert("Thành công", "Đã cập nhật thông tin!");
-<<<<<<< HEAD
-       router.replace("/(tabs)");
-=======
       router.replace("/(tabs)/");
->>>>>>> BE_Weather
     } catch (error) {
       Alert.alert("Lỗi", "Không thể lưu dữ liệu");
       console.error(error);
@@ -148,8 +117,6 @@ const UserInfoForm = () => {
     }
   };
 
-<<<<<<< HEAD
-=======
   // Render Label cho Mobility
   const getMobilityLabel = () => {
     const option = MOBILITY_OPTIONS.find((o) => o.id === formData.mobility);
@@ -166,7 +133,6 @@ const UserInfoForm = () => {
     return `Đã chọn ${formData.conditions.length} bệnh trạng`;
   };
 
->>>>>>> BE_Weather
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -180,10 +146,7 @@ const UserInfoForm = () => {
         <Text style={authStyles.title}>Thông tin cá nhân</Text>
 
         <View style={authStyles.formContainer}>
-<<<<<<< HEAD
-=======
           {/* ... (Tên, SĐT, Giới tính) ... */}
->>>>>>> BE_Weather
           <View style={authStyles.inputContainer}>
             <Text style={authStyles.label}>Họ và Tên</Text>
             <View style={authStyles.inputWithIcon}>
@@ -279,10 +242,6 @@ const UserInfoForm = () => {
             </View>
           </View>
 
-<<<<<<< HEAD
-          <Text
-            style={[authStyles.label, { textAlign: "left", marginBottom: 15 }]}
-=======
           {/* ================= HỖ TRỢ DI CHUYỂN ================= */}
           <View style={authStyles.inputContainer}>
             <Text style={authStyles.label}>Hỗ trợ di chuyển</Text>
@@ -339,7 +298,6 @@ const UserInfoForm = () => {
               authStyles.label,
               { textAlign: "left", marginBottom: 15, marginTop: 10 },
             ]}
->>>>>>> BE_Weather
           >
             Liên hệ của người thân
           </Text>
@@ -400,8 +358,6 @@ const UserInfoForm = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-<<<<<<< HEAD
-=======
 
       {/* ================= MODAL: HỖ TRỢ DI CHUYỂN (SINGLE SELECT) ================= */}
       <Modal visible={modalVisible.mobility} transparent animationType="fade">
@@ -492,13 +448,10 @@ const UserInfoForm = () => {
           </View>
         </TouchableOpacity>
       </Modal>
->>>>>>> BE_Weather
     </KeyboardAvoidingView>
   );
 };
 
-<<<<<<< HEAD
-=======
 // --- CSS Nạp thêm cho các Modal để đảm bảo tính tối giản ---
 const customStyles = StyleSheet.create({
   modalOverlay: {
@@ -560,5 +513,4 @@ const customStyles = StyleSheet.create({
   },
 });
 
->>>>>>> BE_Weather
 export default UserInfoForm;

@@ -3,20 +3,14 @@ import {
   View,
   Text,
   ScrollView,
-<<<<<<< HEAD
-=======
   Image,
->>>>>>> BE_Weather
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   Alert,
-<<<<<<< HEAD
-=======
   Modal,
   StyleSheet,
->>>>>>> BE_Weather
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -28,8 +22,6 @@ import { useRouter } from "expo-router";
 
 import { styles } from "../../assets/styles/profile/profile.style";
 
-<<<<<<< HEAD
-=======
 // --- Dữ liệu tĩnh cho các tùy chọn ---
 const MOBILITY_OPTIONS = [
   { id: "normal", label: "Bình thường", icon: "accessibility-outline" },
@@ -48,7 +40,6 @@ const CONDITION_OPTIONS = [
   { id: "diabetes", label: "Tiểu đường", icon: "water-outline" },
 ];
 
->>>>>>> BE_Weather
 const UserInfoScreen = () => {
   const router = useRouter();
 
@@ -57,25 +48,19 @@ const UserInfoScreen = () => {
   const [saving, setSaving] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-<<<<<<< HEAD
-=======
   // Thêm state cho Modal
   const [modalVisible, setModalVisible] = useState({
     mobility: false,
     conditions: false,
   });
 
->>>>>>> BE_Weather
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     gender: "male",
     dob: new Date(),
-<<<<<<< HEAD
-=======
-    mobility: "normal", // Thêm trường mobility
-    conditions: [],     // Thêm trường conditions
->>>>>>> BE_Weather
+    mobility: "normal", 
+    conditions: [],
     emergencyName: "",
     emergencyPhone: "",
   });
@@ -84,17 +69,11 @@ const UserInfoScreen = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-<<<<<<< HEAD
-  const onDateChange = (_, selectedDate) => {
-=======
   const onDateChange = (event, selectedDate) => {
->>>>>>> BE_Weather
     setShowDatePicker(false);
     selectedDate && handleInputChange("dob", selectedDate);
   };
 
-<<<<<<< HEAD
-=======
   const toggleCondition = (id) => {
     const newConditions = formData.conditions.includes(id)
       ? formData.conditions.filter((item) => item !== id)
@@ -102,7 +81,6 @@ const UserInfoScreen = () => {
     handleInputChange("conditions", newConditions);
   };
 
->>>>>>> BE_Weather
   // Lấy dữ liệu từ Firestore
   const fetchUserInfo = async () => {
     const currentUser = auth.currentUser;
@@ -119,11 +97,8 @@ const UserInfoScreen = () => {
           phone: data.phone || "",
           gender: data.gender || "male",
           dob: data.dob ? new Date(data.dob) : new Date(),
-<<<<<<< HEAD
-=======
-          mobility: data.mobility || "normal", // Nạp dữ liệu mobility
-          conditions: data.conditions || [],   // Nạp dữ liệu conditions
->>>>>>> BE_Weather
+          mobility: data.mobility || "normal",
+          conditions: data.conditions || [], 
           emergencyName: data.emergencyName || "",
           emergencyPhone: data.emergencyPhone || "",
         });
@@ -157,11 +132,8 @@ const UserInfoScreen = () => {
           phone: formData.phone,
           gender: formData.gender,
           dob: formData.dob.toISOString(),
-<<<<<<< HEAD
-=======
-          mobility: formData.mobility,       // Lưu dữ liệu mobility
-          conditions: formData.conditions,   // Lưu dữ liệu conditions
->>>>>>> BE_Weather
+          mobility: formData.mobility,
+          conditions: formData.conditions,
           emergencyName: formData.emergencyName,
           emergencyPhone: formData.emergencyPhone,
           updatedAt: new Date().toISOString(),
@@ -190,14 +162,6 @@ const UserInfoScreen = () => {
     ]);
   };
 
-<<<<<<< HEAD
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-=======
   // Hàm render hiển thị nhãn
   const getMobilityLabel = () => {
     const option = MOBILITY_OPTIONS.find((o) => o.id === formData.mobility);
@@ -216,7 +180,6 @@ const UserInfoScreen = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
->>>>>>> BE_Weather
           <Text>Đang tải...</Text>
         </View>
       </SafeAreaView>
@@ -295,17 +258,7 @@ const UserInfoScreen = () => {
             <View style={[styles.formGroup, { borderBottomWidth: 0 }]}>
               <Text style={styles.label}>Giới tính</Text>
               {isEditing ? (
-<<<<<<< HEAD
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginTop: 8,
-                  }}
-                >
-=======
                 <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 8 }}>
->>>>>>> BE_Weather
                   {[
                     { label: "Nam", value: "male" },
                     { label: "Nữ", value: "female" },
@@ -314,7 +267,6 @@ const UserInfoScreen = () => {
                     <TouchableOpacity
                       key={item.value}
                       onPress={() => handleInputChange("gender", item.value)}
-<<<<<<< HEAD
                       style={{
                         flexDirection: "row",
                         alignItems: "center",
@@ -329,28 +281,12 @@ const UserInfoScreen = () => {
                       <Text style={{ fontSize: 16, color: "#333" }}>
                         {item.label}
                       </Text>
-=======
-                      style={{ flexDirection: "row", alignItems: "center", marginRight: 20 }}
-                    >
-                      <View style={styles.checkBox}>
-                        {formData.gender === item.value && <View style={styles.tick} />}
-                      </View>
-                      <Text style={{ fontSize: 16, color: "#333" }}>{item.label}</Text>
->>>>>>> BE_Weather
                     </TouchableOpacity>
                   ))}
                 </View>
               ) : (
                 <Text style={styles.valueText}>
-<<<<<<< HEAD
-                  {formData.gender === "male"
-                    ? "Nam"
-                    : formData.gender === "female"
-                    ? "Nữ"
-                    : "Khác"}
-=======
                   {formData.gender === "male" ? "Nam" : formData.gender === "female" ? "Nữ" : "Khác"}
->>>>>>> BE_Weather
                 </Text>
               )}
             </View>
@@ -359,7 +295,6 @@ const UserInfoScreen = () => {
               <Text style={styles.label}>Ngày sinh</Text>
               {isEditing ? (
                 <View style={styles.inputWithIcon}>
-<<<<<<< HEAD
                   <Ionicons
                     name="calendar-outline"
                     size={20}
@@ -379,14 +314,6 @@ const UserInfoScreen = () => {
                       display="default"
                       onChange={onDateChange}
                     />
-=======
-                  <Ionicons name="calendar-outline" size={20} color="#888" style={styles.inputIcon} />
-                  <TouchableOpacity style={styles.textInput} onPress={() => setShowDatePicker(true)}>
-                    <Text>{formData.dob.toLocaleDateString("vi-VN")}</Text>
-                  </TouchableOpacity>
-                  {showDatePicker && (
-                    <DateTimePicker value={formData.dob} mode="date" display="default" onChange={onDateChange} />
->>>>>>> BE_Weather
                   )}
                 </View>
               ) : (
@@ -396,9 +323,7 @@ const UserInfoScreen = () => {
               )}
             </View>
 
-<<<<<<< HEAD
-=======
-            {/* --- TRƯỜNG MỚI: HỖ TRỢ DI CHUYỂN --- */}
+            {/* --- HỖ TRỢ DI CHUYỂN --- */}
             <View style={styles.formGroup}>
               <Text style={styles.label}>Hỗ trợ di chuyển</Text>
               {isEditing ? (
@@ -416,7 +341,7 @@ const UserInfoScreen = () => {
               )}
             </View>
 
-            {/* --- TRƯỜNG MỚI: BỆNH TRẠNG --- */}
+            {/* --- BỆNH TRẠNG --- */}
             <View style={styles.formGroup}>
               <Text style={styles.label}>Bệnh trạng</Text>
               {isEditing ? (
@@ -434,20 +359,13 @@ const UserInfoScreen = () => {
               )}
             </View>
 
->>>>>>> BE_Weather
             <View style={styles.formGroup}>
               <Text style={styles.label}>Người liên hệ khẩn cấp</Text>
               {isEditing ? (
                 <TextInput
                   style={styles.input}
                   value={formData.emergencyName}
-<<<<<<< HEAD
-                  onChangeText={(text) =>
-                    handleInputChange("emergencyName", text)
-                  }
-=======
                   onChangeText={(text) => handleInputChange("emergencyName", text)}
->>>>>>> BE_Weather
                   placeholder="Tên người thân"
                 />
               ) : (
@@ -464,13 +382,7 @@ const UserInfoScreen = () => {
                   style={styles.input}
                   value={formData.emergencyPhone}
                   keyboardType="phone-pad"
-<<<<<<< HEAD
-                  onChangeText={(text) =>
-                    handleInputChange("emergencyPhone", text)
-                  }
-=======
                   onChangeText={(text) => handleInputChange("emergencyPhone", text)}
->>>>>>> BE_Weather
                 />
               ) : (
                 <Text style={styles.valueText}>
@@ -485,14 +397,10 @@ const UserInfoScreen = () => {
             <View style={styles.footerActions}>
               <TouchableOpacity
                 style={styles.cancelButton}
-<<<<<<< HEAD
-                onPress={() => setIsEditing(false)}
-=======
                 onPress={() => {
                   setIsEditing(false);
                   fetchUserInfo(); // Reset lại data cũ nếu hủy
                 }}
->>>>>>> BE_Weather
               >
                 <Text style={styles.cancelButtonText}>Hủy</Text>
               </TouchableOpacity>
@@ -510,22 +418,11 @@ const UserInfoScreen = () => {
 
           {/* Nút Đăng xuất - Luôn hiển thị */}
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-<<<<<<< HEAD
-            <Ionicons
-              name="log-out-outline"
-              size={20}
-              color="#FFFFFF"
-              style={{ marginRight: 8 }}
-            />
-=======
             <Ionicons name="log-out-outline" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
->>>>>>> BE_Weather
             <Text style={styles.logoutButtonText}>Đăng xuất</Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
-<<<<<<< HEAD
-=======
 
       {/* ================= MODAL: HỖ TRỢ DI CHUYỂN ================= */}
       <Modal visible={modalVisible.mobility} transparent animationType="fade">
@@ -607,14 +504,10 @@ const UserInfoScreen = () => {
         </TouchableOpacity>
       </Modal>
 
->>>>>>> BE_Weather
     </SafeAreaView>
   );
 };
 
-<<<<<<< HEAD
-export default UserInfoScreen;
-=======
 // CSS bổ sung cho Modal (được đính kèm nội tuyến để không phá vỡ cấu trúc file style riêng của bạn)
 const customStyles = StyleSheet.create({
   modalOverlay: {
@@ -677,4 +570,3 @@ const customStyles = StyleSheet.create({
 });
 
 export default UserInfoScreen;
->>>>>>> BE_Weather
