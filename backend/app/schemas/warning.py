@@ -23,3 +23,9 @@ class CheckDangerResponse(BaseModel):
     is_danger: bool
     status: str      # "safe" | "danger"
     alerts: list[AlertItem]
+
+class LocationInfomation(BaseModel):
+    lat: float
+    lng: float
+    traffic: str
+    weather: dict[ str, str]

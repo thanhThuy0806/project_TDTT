@@ -84,16 +84,6 @@ export default function HomeScreen() {
 
         <DangerBanner isDanger={isDangerZone} dangerDetails={dangerInfo} />
 
-        {/* Nút giả lập để bạn TEST (Xóa khi xong) */}
-        <TouchableOpacity
-          onPress={() => setIsDangerZone(!isDangerZone)}
-          style={{ alignSelf: "center", marginBottom: 10 }}
-        >
-          <Text style={{ color: "#666" }}>
-            🚩 [Test] Chuyển đổi vùng nguy hiểm
-          </Text>
-        </TouchableOpacity>
-
         {/* Tiêu đề danh mục */}
         <View style={styles.sectionTitleRow}>
           <Text style={styles.sectionTitle}>Công cụ hỗ trợ</Text>

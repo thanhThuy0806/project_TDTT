@@ -1,6 +1,2 @@
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: "http://10.0.100.47:800/api",
-  timeout: 15000,
-});
+// all the service from this ip address
+export const API_URL = "192.168.88.221"

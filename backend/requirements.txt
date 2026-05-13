@@ -2,6 +2,7 @@ fastapi
 uvicorn[standard]
 shapely
 geopy
+langchain
 langchain-community
 langchain-ollama
 langchain-core

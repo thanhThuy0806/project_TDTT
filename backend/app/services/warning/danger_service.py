@@ -20,45 +20,82 @@ from geopy.geocoders import Nominatim
 from shapely.geometry import Point, Polygon
 from langchain_community.utilities import SearxSearchWrapper
 from langchain_ollama.chat_models import ChatOllama
-
+from langchain.agents import create_agent
+from langchain_ollama.chat_models import ChatOllama
+from langchain_core.tools import tool
+from langchain.agents import create_agent
+# other lib
+import json
+import logging
+from dotenv import load_dotenv
+from app.prompt.system_prompt import WARNING_SERVICE_SYSTEM_PROMPT
+# load secret
+load_dotenv()
+SEARXNG_URL = os.getenv('SEARXNG_URL')
+OLLAMA_MODEL_NAME = os.getenv('OLLAMA_MODEL_NAME')
+OLLAMA_BASE_URL = os.getenv('OLLAMA_URL')
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
+today = datetime.today()
 # ─────────────────────────────────────────────
 # CONFIG
 # ─────────────────────────────────────────────
-SEARXNG_HOST = os.getenv("SEARXNG_HOST", "http://localhost:8888")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "Gemma4:E4B")
-OLLAMA_BASE_URL = os.getenv('OLLAMA_BASE_URL', 'https://vowel-clerk-elope.ngrok-free.dev')
+SEARXNG_HOST = os.getenv("SEARXNG_URL", "http://localhost:8888")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL_NAME", "Gemma4:E4B")
+OLLAMA_BASE_URL = os.getenv('OLLAMA_BASE_URL', 'http://localhost:11434')
 CACHE_TTL_SECONDS = int(os.getenv("CACHE_TTL", "300"))  # 5 minutes
 GRID_PRECISION = 3  # Decimal places for grid rounding (~111m per 0.001°)
 
 DANGER_ZONES_FILE = os.path.join(os.path.dirname(__file__), "danger_zones.json")
-
-
-# ─────────────────────────────────────────────
-# REVERSE GEOCODER
-# ─────────────────────────────────────────────
-class ReverseGeocoder:
-    """Chuyển đổi (lat, lng) → tên địa danh bằng Nominatim (OpenStreetMap)."""
-
-    def __init__(self):
-        self.geolocator = Nominatim(user_agent="project_tdtt_safety")
-
-    def get_place_name(self, lat: float, lng: float) -> str:
-        """Reverse geocode tọa độ thành tên địa phương."""
-        try:
-            location = self.geolocator.reverse(
-                (lat, lng), language="vi", exactly_one=True, timeout=10
-            )
-            if location and location.address:
-                return location.address
-            return f"{lat}, {lng}"
-        except Exception as e:
-            logger.warning(f"Reverse geocoding failed: {e}")
-            return f"{lat}, {lng}"
-
-
+# INTEGRATED TOOLS
+searXNG = SearxSearchWrapper(searx_host=SEARXNG_HOST)
+@tool("search tool")
+def search_data(query: str):
+    """
+    Arg:
+        query: a str of keyword use for searching on SearXNG
+    Output: real time data relavant with searching str return by SearXNG 
+    Always use this to retrieve real time data on Internet before response
+    this is an integrated meta search engine to help LLM retrieves real time data
+    """
+    # integrate searxng
+    return searXNG.run(query=query)
+@tool('map access tool')
+def search_map(lat: float, lng: float, limit: int = 2) -> str:
+    """ 
+    Args:
+        lat: latitude
+        log: longtitude
+        limit: maximum number of function call per reply
+    Output: a string contains information of the position on the map
+    the tool help model to search and retrieve infomation from map through map API calling
+    information may include:
+        - name of that location
+        - weather
+        - traffic
+        - etc...
+    """
+    return [lat, lng]
+@tool("reverse geocoding tool")
+def reverse_geocoding(lat: float, lng: float) -> str:
+    """
+        Agrs:
+            - lat: latitude, a float number represent the latitude of the place on the map you want to find its name
+            - lng: longitude, a float number represent the longitude of the place on the map you want to find its name  
+        Output: the exact location name represent as a strin
+        Use this function when you need to find the name of the position but only have latitude and longitude of that location
+    """
+    try:
+        geo = Nominatim(user_agent="project TDTT")
+        location = geo.reverse(
+            query=(lat, lng), language='vi', exactly_one=True, timeout=10
+        )
+        if location and location.address:
+            return location.address
+        return f"{lat, lng}"
+    except Exception as e:
+        logger.warning(f"Reverse geocoding failed: {e}")
+        return f"{lat, lng}"
 # ─────────────────────────────────────────────
 # CACHE LAYER
 # ─────────────────────────────────────────────
@@ -142,105 +179,59 @@ class StaticDangerZones:
 # WEBRAG SERVICE (SearXNG + LLM)
 # ─────────────────────────────────────────────
 class WebRAGService:
-    """
-    Tìm kiếm thông tin nguy hiểm thời gian thực qua SearXNG,
-    sau đó dùng LLM phân tích kết quả.
-    """
-
-    # Prompt ép LLM chỉ lọc tin trong 24h và trả về JSON
-    ANALYSIS_PROMPT = """Bạn là một hệ thống cảnh báo an toàn du lịch. 
-Dựa trên các kết quả tìm kiếm sau đây về khu vực "{place_name}", hãy phân tích và trả lời:
-
-KẾT QUẢ TÌM KIẾM:
-{search_results}
-
-NGÀY HÔM NAY: {today}
-
-YÊU CẦU:
-Đối với các mối nguy hiểm cố hữu do tự nhiên như địa hình, khí hậu và tương tự
-1. Đánh giá ĐẶC ĐIỂM ĐỊA LÝ/MÔI TRƯỜNG cố hữu (ví dụ: núi tuyết, eo biển xung đột, vực sâu, rừng rậm).
-2. Đánh giá CÁC SỰ KIỆN MỚI NHẤT từ dữ liệu thời gian thực (tai nạn, thời tiết cực đoan, bạo loạn).
-3. Nếu khu vực có rủi ro tự nhiên rõ ràng (như đỉnh núi Everest, Nam Cực) HOẶC có tin tức nguy hiểm, đánh giá is_danger = true.
-
-Đối với các mối nguy hiểm là hoạt động an ninh chính trị, con người, tình trạng xã hội và tương tự
-1. CHỈ xem xét các sự kiện xảy ra trong vòng 24 giờ qua (dựa trên ngày hôm nay).
-2. Tập trung vào: tai nạn giao thông, ngập lụt, kẹt xe, cháy nổ, thời tiết xấu, sạt lở.
-3. Nếu là các thảm hoạ kéo dài như bất ổn chính trị( xung đột sắc tộc), thảm họa nhân đạo, thảm họa( như sự cố nhà máy điện hạt nhân) thì nên lấy khoảng thời gian 2 năm trở lại đây
-
-Trả lời bằng TIẾNG VIỆT.
-Trả lời theo ĐÚNG format JSON sau (không thêm gì khác):
-{{
-    "is_danger": true hoặc false,
-    "severity": "low" hoặc "medium" hoặc "high",
-    "alert_text": "Mô tả ngắn gọn tình trạng nguy hiểm (nếu có) hoặc chuỗi rỗng nếu an toàn"
-}}"""
-
-    def __init__(self, searxng_host: str = SEARXNG_HOST, model: str = OLLAMA_MODEL, base_url: str = OLLAMA_BASE_URL):
-        self.searx = SearxSearchWrapper(searx_host=searxng_host)
-        self.llm = ChatOllama(
-                model=model,
-                base_url=base_url,
-                temperature=0,
-                headers={
-                "ngrok-skip-browser-warning": "true"
-            })
-
-    def _search(self, place_name: str) -> str:
-        """Tìm kiếm tin tức liên quan đến nguy hiểm tại khu vực."""
-        query = f"{place_name} safety warning danger risks news"
-        try:
-            results = self.searx.run(query=query)
-            
-            print(f'Search Result: {results}\n\n')
-            return results if results else "Không tìm thấy kết quả."
-        except Exception as e:
-            logger.error(f"SearXNG search failed: {e}")
-            return f"Lỗi tìm kiếm: {e}"
-
-    async def analyze(self, place_name: str) -> dict:
-        """Tìm kiếm + dùng LLM phân tích kết quả."""
-        # Step 1: Search
-        search_results = self._search(place_name)
-
-        # Step 2: Build prompt
-        today = datetime.now().strftime("%Y-%m-%d %H:%M")
-        prompt = self.ANALYSIS_PROMPT.format(
-            place_name=place_name,
-            search_results=search_results,
-            today=today,
+    """Agentic RAG combine with SearXNG and Mapbox"""
+    def __init__(self):
+        # temparature = 0: ràng buộc không cho phép 'sáng tạo' thêm từ thông tin sẵn có
+        # reasoning = true: cho phép model suy luận
+        self.llm = ChatOllama(model=OLLAMA_MODEL_NAME,
+                              base_url=OLLAMA_BASE_URL,
+                              temperature=0,
+                              reasoning=True,
+                              headers={"ngork-skip-browser-warning": "true"})
+        self.agent = create_agent(self.llm, tools=[reverse_geocoding, search_data])
+        self.geolocator = Nominatim(user_agent="project_tdtt_safety")
+        
+    async def analyze(self, lat: float, lng: float):
+        query = WARNING_SERVICE_SYSTEM_PROMPT.format(
+            lat=lat,
+            lng=lng,
+            today=today
         )
-
-        # Step 3: Call LLM
+        input = {"messages": [("user", query)]}
         try:
-            response = await self.llm.ainvoke(prompt)
-            content = response.content.strip()
-
-            # Try to extract JSON from response
-            # Handle case where LLM wraps JSON in ```json ... ```
+            # Phân tích tình huống bằng agent
+            response = await self.agent.ainvoke(input=input)
+            # Lọc lấy kết quả
+            if isinstance(response, dict) and "output" in response:
+                content = response["output"].strip()
+            elif isinstance(response, dict) and "messages" in response:
+                content = response["messages"][-1].content.strip()
+            else:
+                content = str(response).strip()
+            # Trích xuất file json
             if "```json" in content:
-                content = content.split("```json")[1].split("```")[0].strip()
+                    content = content.split("```json")[1].split('```')[0].strip()
             elif "```" in content:
-                content = content.split("```")[1].split("```")[0].strip()
+                    content = content.split("```")[1].split("```")[0].strip()
 
             result = json.loads(content)
-            print(f'LLM gen result: {result}\n\n')
-            
+            print(f'LLM gen result: {result}')
+            # Trả kết quả
             return {
                 "is_danger": result.get("is_danger", False),
                 "severity": result.get("severity", "low"),
                 "alert_text": result.get("alert_text", ""),
-                "source": "web_rag",
+                "source": "agentic LLM + SearXNG + MapBox",
             }
         except json.JSONDecodeError:
-            logger.warning(f"LLM returned non-JSON response: {content[:200]}")
-            # Fallback: if LLM mentions danger keywords, flag as potential danger
+            logger.warning(f'LLM return non-JSON response: {content[:200]}')
             danger_keywords = ["ngập", "tai nạn", "cháy", "kẹt xe", "sạt lở", "nguy hiểm"]
-            is_danger = any(kw in content.lower() for kw in danger_keywords)
+            is_danger = any( kw in content.lower() for kw in danger_keywords)
             return {
                 "is_danger": is_danger,
                 "severity": "medium" if is_danger else "low",
                 "alert_text": content[:300] if is_danger else "",
-                "source": "web_rag",
+                "source": "agentic LLM + SearXNG + MapBox",
             }
         except Exception as e:
             logger.error(f"LLM analysis failed: {e}")
@@ -248,7 +239,7 @@ Trả lời theo ĐÚNG format JSON sau (không thêm gì khác):
                 "is_danger": False,
                 "severity": "low",
                 "alert_text": "",
-                "source": "web_rag",
+                "source": "agentic LLM + SearXNG + MapBox",
                 "error": str(e),
             }
 
@@ -265,7 +256,6 @@ class DangerCheckService:
     """
 
     def __init__(self):
-        self.geocoder = ReverseGeocoder()
         self.cache = DangerCache()
         self.static_zones = StaticDangerZones()
         self.web_rag = WebRAGService()
@@ -300,11 +290,7 @@ class DangerCheckService:
                 "zone": static_result["zone_name"],
             })
 
-        # ── 2. Reverse geocode ──
-        place_name = self.geocoder.get_place_name(lat, lng)
-        results["place_name"] = place_name
-
-        # ── 3. Check cache for dynamic RAG ──
+        # ── 2. Check cache for dynamic RAG ──
         cached = self.cache.get(lat, lng)
         if cached is not None:
             results["dynamic_danger"] = cached
@@ -319,8 +305,8 @@ class DangerCheckService:
                 })
             return results
 
-        # ── 4. Dynamic WebRAG (search + LLM) ──
-        dynamic_result = await self.web_rag.analyze(place_name)
+        # ── 3. Dynamic WebRAG (search + LLM) ──
+        dynamic_result = await self.web_rag.analyze(lat, lng)
         self.cache.set(lat, lng, dynamic_result)
 
         results["dynamic_danger"] = dynamic_result

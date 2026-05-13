@@ -1,13 +1,19 @@
 import api from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { auth } from "@/firebase/firebaseConfig";
+import { API_URL } from "@/constants/api";
 
 export const getWeatherData = async (lat, lon) => {
-  const token = await AsyncStorage.getItem("token");
+  const currentUser = auth.currentUser
+  if (!currentUser) {
+    throw new Error("Người dùng chưa đăng nhập, không thể lấy dữ liệu thời tiết.");
+  }
+
+  const token = await currentUser.getIdToken()
 
   // KIỂM TRA XEM TOKEN CÓ TỒN TẠI KHÔNG
   console.log("=== TOKEN GỬI ĐI ===", token);
 
-  const res = await api.get("http://localhost:8000/weather/", {
+  const res = await api.get(`http://${API_URL}:8000/weather/`, {
     params: {
       lat,
       lon,
