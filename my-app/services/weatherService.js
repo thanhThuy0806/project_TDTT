@@ -9,10 +9,8 @@ export const getWeatherData = async (lat, lon) => {
   }
 
   const token = await currentUser.getIdToken()
-
-  // KIỂM TRA XEM TOKEN CÓ TỒN TẠI KHÔNG
-  console.log("=== TOKEN GỬI ĐI ===", token);
-
+  console.log("current token: ", token)
+  
   const res = await api.get(`http://${API_URL}:8000/weather/`, {
     params: {
       lat,

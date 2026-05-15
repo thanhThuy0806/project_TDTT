@@ -3,11 +3,9 @@ danger_service.py — Dynamic WebRAG Danger Warning Service
 
 Luồng hoạt động:
 1. Nhận tọa độ (lat, lng) từ API
-2. Reverse geocode → tên địa danh
-3. Kiểm tra cache (TTL 5 phút, grid ~500m)
-4. Nếu cache miss: SearXNG search → LLM phân tích → cache kết quả
-5. Đồng thời kiểm tra static danger zones (vách đá, khu vực cấm)
-6. Trả về kết quả kết hợp
+2. Kiểm tra cache (TTL 5 phút, grid ~500m)
+3. Nếu cache miss: SearXNG search + Reverse Geocoding → LLM phân tích → cache kết quả
+4. Trả về kết quả
 """
 
 import json
@@ -15,40 +13,33 @@ import time
 import os
 import logging
 from datetime import datetime
+from dotenv import load_dotenv
 
 from geopy.geocoders import Nominatim
-from shapely.geometry import Point, Polygon
 from langchain_community.utilities import SearxSearchWrapper
 from langchain_ollama.chat_models import ChatOllama
-from langchain.agents import create_agent
-from langchain_ollama.chat_models import ChatOllama
+from langchain.agents import create_agent # Tùy thuộc vào phiên bản Langchain bạn đang dùng
 from langchain_core.tools import tool
-from langchain.agents import create_agent
-# other lib
-import json
-import logging
-from dotenv import load_dotenv
-from app.prompt.system_prompt import WARNING_SERVICE_SYSTEM_PROMPT
-# load secret
+
 load_dotenv()
-SEARXNG_URL = os.getenv('SEARXNG_URL')
-OLLAMA_MODEL_NAME = os.getenv('OLLAMA_MODEL_NAME')
-OLLAMA_BASE_URL = os.getenv('OLLAMA_URL')
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 today = datetime.today()
+
 # ─────────────────────────────────────────────
 # CONFIG
 # ─────────────────────────────────────────────
 SEARXNG_HOST = os.getenv("SEARXNG_URL", "http://localhost:8888")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL_NAME", "Gemma4:E4B")
+OLLAMA_MODEL_NAME = os.getenv("OLLAMA_MODEL_NAME", "Gemma4:E4B")
 OLLAMA_BASE_URL = os.getenv('OLLAMA_BASE_URL', 'http://localhost:11434')
-CACHE_TTL_SECONDS = int(os.getenv("CACHE_TTL", "300"))  # 5 minutes
-GRID_PRECISION = 3  # Decimal places for grid rounding (~111m per 0.001°)
+CACHE_TTL_SECONDS = int(os.getenv("CACHE_TTL", "300")) 
+GRID_PRECISION = 3  
 
-DANGER_ZONES_FILE = os.path.join(os.path.dirname(__file__), "danger_zones.json")
 # INTEGRATED TOOLS
 searXNG = SearxSearchWrapper(searx_host=SEARXNG_HOST)
+geo = Nominatim(user_agent="project TDTT")
+
 @tool("search tool")
 def search_data(query: str):
     """
@@ -58,8 +49,8 @@ def search_data(query: str):
     Always use this to retrieve real time data on Internet before response
     this is an integrated meta search engine to help LLM retrieves real time data
     """
-    # integrate searxng
     return searXNG.run(query=query)
+
 @tool('map access tool')
 def search_map(lat: float, lng: float, limit: int = 2) -> str:
     """ 
@@ -76,6 +67,7 @@ def search_map(lat: float, lng: float, limit: int = 2) -> str:
         - etc...
     """
     return [lat, lng]
+
 @tool("reverse geocoding tool")
 def reverse_geocoding(lat: float, lng: float) -> str:
     """
@@ -86,25 +78,41 @@ def reverse_geocoding(lat: float, lng: float) -> str:
         Use this function when you need to find the name of the position but only have latitude and longitude of that location
     """
     try:
-        geo = Nominatim(user_agent="project TDTT")
+        
         location = geo.reverse(
             query=(lat, lng), language='vi', exactly_one=True, timeout=10
         )
         if location and location.address:
             return location.address
-        return f"{lat, lng}"
+        return f"{lat}, {lng}"
     except Exception as e:
         logger.warning(f"Reverse geocoding failed: {e}")
-        return f"{lat, lng}"
+        return f"{lat}, {lng}"
+    
+@tool("forward geocoding tool")
+def forward_geocoding(place: str):
+    """
+        Argvs:
+            place: a string contains specific place on earth( for example: E205, block E, Uniersity of Science - VietName national university HCM, Dong Hoa, Thu Duc City, Ho Chi Minh City, Viet Nam)
+        Output: the coordinate including latitude and longitude as float number of that spot
+        
+        if user's prompt has some place where you need to know the specific coord, use this
+    """
+    try:
+        location = geo.geocode(place, exactly_one=True, language='vi', timeout=10)
+        if location:
+            return { "lat": location.latitude, "lng": location.longitude}
+    except Exception as e:
+        logger.warning(f"Failed to find specific location: {e}")
+        return place
+    
+    
+    
 # ─────────────────────────────────────────────
 # CACHE LAYER
 # ─────────────────────────────────────────────
 class DangerCache:
-    """
-    In-memory cache with TTL, keyed by grid cell.
-    Tọa độ được làm tròn → cùng 1 ô ~100-500m sẽ dùng chung cache.
-    """
-
+    # (Phần này bạn code rất ổn, mình giữ nguyên)
     def __init__(self, ttl: int = CACHE_TTL_SECONDS, precision: int = GRID_PRECISION):
         self._cache: dict = {}
         self._ttl = ttl
@@ -132,196 +140,133 @@ class DangerCache:
         self._cache[key] = {"data": data, "timestamp": time.time()}
         logger.info(f"Cache SET for {key}")
 
-
-# ─────────────────────────────────────────────
-# STATIC DANGER ZONES
-# ─────────────────────────────────────────────
-class StaticDangerZones:
-    """Quản lý các vùng nguy hiểm vĩnh viễn (vách đá, khu vực cấm, vực sâu)."""
-
-    def __init__(self, filepath: str = DANGER_ZONES_FILE):
-        self.zones = []
-        self._load(filepath)
-
-    def _load(self, filepath: str):
-        try:
-            with open(filepath, "r", encoding="utf-8") as f:
-                raw = json.load(f)
-            for zone in raw:
-                self.zones.append({
-                    "name": zone["name"],
-                    "polygon": Polygon(zone["polygon"]),
-                    "alert_text": zone["alert_text"],
-                    "severity": zone.get("severity", "high"),
-                })
-            logger.info(f"Loaded {len(self.zones)} static danger zones")
-        except FileNotFoundError:
-            logger.warning(f"Danger zones file not found: {filepath}")
-        except Exception as e:
-            logger.error(f"Error loading danger zones: {e}")
-
-    def check(self, lat: float, lng: float) -> dict | None:
-        """Kiểm tra xem tọa độ có nằm trong vùng nguy hiểm cố định không."""
-        point = Point(lng, lat)  # Shapely: (x=lng, y=lat)
-        for zone in self.zones:
-            if zone["polygon"].contains(point):
-                return {
-                    "is_danger": True,
-                    "source": "static_zone",
-                    "zone_name": zone["name"],
-                    "severity": zone["severity"],
-                    "alert_text": zone["alert_text"],
-                }
-        return None
-
-
 # ─────────────────────────────────────────────
 # WEBRAG SERVICE (SearXNG + LLM)
 # ─────────────────────────────────────────────
 class WebRAGService:
-    """Agentic RAG combine with SearXNG and Mapbox"""
     def __init__(self):
-        # temparature = 0: ràng buộc không cho phép 'sáng tạo' thêm từ thông tin sẵn có
-        # reasoning = true: cho phép model suy luận
         self.llm = ChatOllama(model=OLLAMA_MODEL_NAME,
                               base_url=OLLAMA_BASE_URL,
                               temperature=0,
-                              reasoning=True,
-                              headers={"ngork-skip-browser-warning": "true"})
-        self.agent = create_agent(self.llm, tools=[reverse_geocoding, search_data])
-        self.geolocator = Nominatim(user_agent="project_tdtt_safety")
+                              reasoning=False,
+                              headers={"ngrok-skip-browser-warning": "true"})
+        self.agent = create_agent(self.llm, tools=[reverse_geocoding, forward_geocoding, search_data])
         
-    async def analyze(self, lat: float, lng: float):
-        query = WARNING_SERVICE_SYSTEM_PROMPT.format(
-            lat=lat,
-            lng=lng,
-            today=today
-        )
+    # placeOrCoord: address or coordinate
+    async def analyze(self, placeOrCoord: str, header: list[str], prompt: str):
+        query = prompt.format(today=today, place=placeOrCoord)
         input = {"messages": [("user", query)]}
+        
         try:
-            # Phân tích tình huống bằng agent
             response = await self.agent.ainvoke(input=input)
-            # Lọc lấy kết quả
+            
             if isinstance(response, dict) and "output" in response:
                 content = response["output"].strip()
             elif isinstance(response, dict) and "messages" in response:
                 content = response["messages"][-1].content.strip()
             else:
                 content = str(response).strip()
-            # Trích xuất file json
+
             if "```json" in content:
                     content = content.split("```json")[1].split('```')[0].strip()
             elif "```" in content:
                     content = content.split("```")[1].split("```")[0].strip()
 
-            result = json.loads(content)
+            data = json.loads(content)
+            result = {}
+            for argv in header:
+                result[argv] = data.get(argv, "")
+            result["source"] = "agentic LLM + SearXNG + MapBox"
+            
             print(f'LLM gen result: {result}')
-            # Trả kết quả
-            return {
-                "is_danger": result.get("is_danger", False),
-                "severity": result.get("severity", "low"),
-                "alert_text": result.get("alert_text", ""),
-                "source": "agentic LLM + SearXNG + MapBox",
-            }
+            return result
+            
         except json.JSONDecodeError:
             logger.warning(f'LLM return non-JSON response: {content[:200]}')
             danger_keywords = ["ngập", "tai nạn", "cháy", "kẹt xe", "sạt lở", "nguy hiểm"]
-            is_danger = any( kw in content.lower() for kw in danger_keywords)
+            is_danger = any(kw in content.lower() for kw in danger_keywords)
+            
+            fallback_alerts = [{"severity": "medium" if is_danger else "low", "text": content[:200]}] if is_danger else []
+            
             return {
                 "is_danger": is_danger,
-                "severity": "medium" if is_danger else "low",
-                "alert_text": content[:300] if is_danger else "",
+                "severity": "medium" if is_danger else "safe",
+                "place_name": placeOrCoord, # SỬA: Đồng bộ biến
+                "alerts": fallback_alerts,
                 "source": "agentic LLM + SearXNG + MapBox",
             }
         except Exception as e:
             logger.error(f"LLM analysis failed: {e}")
             return {
                 "is_danger": False,
-                "severity": "low",
-                "alert_text": "",
+                "severity": "safe",
+                "place_name": placeOrCoord, # SỬA: Đồng bộ biến
+                "alerts": [],
                 "source": "agentic LLM + SearXNG + MapBox",
                 "error": str(e),
             }
-
-
 # ─────────────────────────────────────────────
 # MAIN ORCHESTRATOR
 # ─────────────────────────────────────────────
 class DangerCheckService:
-    """
-    Orchestrator kết hợp:
-    - Static danger zones (vùng cấm vĩnh viễn)
-    - Dynamic WebRAG (sự kiện thời gian thực)
-    - Cache layer (tránh gọi LLM liên tục)
-    """
-
     def __init__(self):
         self.cache = DangerCache()
-        self.static_zones = StaticDangerZones()
         self.web_rag = WebRAGService()
         logger.info("DangerCheckService initialized")
 
-    async def check(self, lat: float, lng: float) -> dict:
-        """
-        Kiểm tra nguy hiểm tại tọa độ (lat, lng).
-        Trả về kết quả kết hợp static zones + dynamic RAG.
-        """
+    async def check(self, placeOrCoord: str, header: list[str], prompt: str) -> dict:
+        # 1. Trích xuất lat, lng từ chuỗi đầu vào để phục vụ Cache và Frontend
+        lat, lng = None, None
+        try:
+            # TH1: Đầu vào là chuỗi tọa độ (ví dụ: "10.762, 106.660" hoặc "10.762 106.660")
+            parts = placeOrCoord.replace(",", " ").split()
+            if len(parts) >= 2:
+                lat = float(parts[0])
+                lng = float(parts[1])
+        except (ValueError, IndexError):
+            # TH2: Đầu vào là tên địa danh (ví dụ: "Núi Phú Sĩ")
+            # Chủ động dùng geo module để quy đổi ra tọa độ trước
+            try:
+                location = geo.geocode(placeOrCoord, exactly_one=True, language='vi', timeout=10)
+                if location:
+                    lat, lng = location.latitude, location.longitude
+            except Exception as e:
+                logger.warning(f"Không thể lấy tọa độ tĩnh cho địa danh {placeOrCoord}: {e}")
+
         results = {
             "lat": lat,
             "lng": lng,
-            "place_name": None,
-            "static_danger": None,
-            "dynamic_danger": None,
+            "place_name": placeOrCoord,
             "is_danger": False,
             "status": "safe",
             "alerts": [],
         }
 
-        # ── 1. Check static danger zones (instant, no cost) ──
-        static_result = self.static_zones.check(lat, lng)
-        if static_result:
-            results["static_danger"] = static_result
-            results["is_danger"] = True
-            results["status"] = "danger"
-            results["alerts"].append({
-                "type": "static",
-                "severity": static_result["severity"],
-                "text": static_result["alert_text"],
-                "zone": static_result["zone_name"],
-            })
+        # 2. Kiểm tra Cache (chỉ khi xác định được lat, lng)
+        if lat is not None and lng is not None:
+            cached = self.cache.get(lat, lng)
+            if cached is not None:
+                results["is_danger"] = cached.get("is_danger", False)
+                results["status"] = cached.get("status", "safe")
+                results["alerts"] = cached.get("alerts", [])
+                results["place_name"] = cached.get("place_name", placeOrCoord)
+                return results
 
-        # ── 2. Check cache for dynamic RAG ──
-        cached = self.cache.get(lat, lng)
-        if cached is not None:
-            results["dynamic_danger"] = cached
-            if cached.get("is_danger"):
-                results["is_danger"] = True
-                results["status"] = "danger"
-                results["alerts"].append({
-                    "type": "dynamic",
-                    "severity": cached.get("severity", "medium"),
-                    "text": cached.get("alert_text", ""),
-                    "source": "cache",
-                })
-            return results
+        # 3. Gọi phân tích từ LLM (truyền nguyên chuỗi gốc cho LLM xử lý)
+        dynamic_result = await self.web_rag.analyze(placeOrCoord, header, prompt)
 
-        # ── 3. Dynamic WebRAG (search + LLM) ──
-        dynamic_result = await self.web_rag.analyze(lat, lng)
-        self.cache.set(lat, lng, dynamic_result)
+        results["is_danger"] = dynamic_result.get("is_danger", False)
+        results["status"] = dynamic_result.get("severity", "safe") 
+        results["alerts"] = dynamic_result.get("alerts", [])
+        
+        # Nếu LLM phân tích ra tên địa điểm chuẩn mực hơn, ưu tiên lấy tên đó
+        llm_place_name = dynamic_result.get("place_name", "")
+        results["place_name"] = llm_place_name if llm_place_name else placeOrCoord
 
-        results["dynamic_danger"] = dynamic_result
-        if dynamic_result.get("is_danger"):
-            results["is_danger"] = True
-            results["status"] = "danger"
-            results["alerts"].append({
-                "type": "dynamic",
-                "severity": dynamic_result.get("severity", "medium"),
-                "text": dynamic_result.get("alert_text", ""),
-                "source": "web_rag",
-            })
+        # 4. Lưu Cache để tối ưu các lượt request sau
+        if lat is not None and lng is not None:
+            self.cache.set(lat, lng, results)
 
         return results
 
-
-# ── Singleton instance (khởi tạo khi import) ──
 danger_service = DangerCheckService()

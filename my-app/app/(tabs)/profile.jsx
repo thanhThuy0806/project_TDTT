@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  Image,
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
@@ -19,7 +18,8 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { auth, db } from "../../firebase/firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "expo-router";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { signOut } from "firebase/auth";
 import { styles } from "../../assets/styles/profile/profile.style";
 
 // --- Dữ liệu tĩnh cho các tùy chọn ---
@@ -151,13 +151,17 @@ const UserInfoScreen = () => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     Alert.alert("Đăng xuất", "Bạn có chắc muốn đăng xuất?", [
       { text: "Hủy", style: "cancel" },
       {
         text: "Đăng xuất",
         style: "destructive",
-        onPress: () => console.log("Đăng xuất..."),
+        onPress: async () => {
+          router.push('/(auth)/sign-up')
+          await AsyncStorage.removeItem("token")
+          await signOut(auth)
+        },
       },
     ]);
   };

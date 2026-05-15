@@ -9,12 +9,8 @@ class CheckDangerRequest(BaseModel):
 
 
 class AlertItem(BaseModel):
-    type: str        # "static" | "dynamic"
     severity: str    # "low" | "medium" | "high"
     text: str
-    source: str | None = None
-    zone: str | None = None
-
 
 class CheckDangerResponse(BaseModel):
     lat: float
@@ -29,3 +25,6 @@ class LocationInfomation(BaseModel):
     lng: float
     traffic: str
     weather: dict[ str, str]
+    
+class CheckPlaceRequest(BaseModel):
+    place: str

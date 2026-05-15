@@ -1,9 +1,9 @@
 import json
 import logging
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from app.schemas.warning import CheckDangerRequest, CheckDangerResponse, AlertItem
+from app.schemas.warning import CheckDangerRequest, CheckDangerResponse, AlertItem, CheckPlaceRequest
 from app.services.warning.danger_service import danger_service
-
+from app.prompt.system_prompt import WARNING_HEADER, WARNING_SERVICE_SYSTEM_PROMPT, SHORT_WARNING_SERVICE_SYSTEM_PROMPT
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -12,56 +12,52 @@ router = APIRouter(prefix="/warning", tags=["Warning"])
 
 @router.post("/check-danger", response_model=CheckDangerResponse)
 async def check_danger(req: CheckDangerRequest):
-    """
-    Kiểm tra nguy hiểm tại tọa độ (lat, lng).
-
-    Luồng hoạt động:
-    1. Kiểm tra static danger zones (vùng cấm vĩnh viễn)
-    2. Reverse geocode tọa độ → tên địa danh
-    3. Kiểm tra cache (TTL 5 phút)
-    4. Nếu cache miss: SearXNG search → LLM phân tích
-    5. Trả về kết quả kết hợp
-    """
-    result = await danger_service.check(req.lat, req.lng)
+    result = await danger_service.check(f'{req.lat},{req.lng}', WARNING_HEADER, SHORT_WARNING_SERVICE_SYSTEM_PROMPT)
+    
     return CheckDangerResponse(
-        lat=result["lat"],
-        lng=result["lng"],
-        place_name=result.get("place_name"),
-        is_danger=result["is_danger"],
-        status=result["status"],
-        alerts=[AlertItem(**a) for a in result.get("alerts", [])],
+        lat=result.get("lat", req.lat),
+        lng=result.get("lng", req.lng),
+        place_name=result.get("place_name", ""),
+        is_danger=result.get("is_danger", False),
+        status=result.get("status", "safe"),
+        alerts=[AlertItem(**a) for a in result.get("alerts", []) if isinstance(a, dict)],
     )
-# ---------------------------------------------------------
-# WEBSOCKET ENDPOINT (giữ nguyên cho realtime tracking)
-# ---------------------------------------------------------
+    
+@router.post("/check-place", response_model=CheckDangerResponse)
+async def check_danger(req: CheckPlaceRequest):
+    result = await danger_service.check(req.place, WARNING_HEADER, SHORT_WARNING_SERVICE_SYSTEM_PROMPT)
+    
+    return CheckDangerResponse(
+        lat=result.get("lat", None),
+        lng=result.get("lng", None),
+        place_name=result.get("place_name", ""),
+        is_danger=result.get("is_danger", False),
+        status=result.get("status", "safe"),
+        alerts=[AlertItem(**a) for a in result.get("alerts", []) if isinstance(a, dict)],
+    )
+    
 @router.websocket("/ws/tracking")
 async def websocket_endpoint(websocket: WebSocket):
-    """
-    Quản lý luồng giao tiếp realtime qua WebSocket.
-    Sử dụng DangerCheckService (có cache) để tránh overload LLM.
-    """
     await websocket.accept()
     logger.info("WebBrowser đã kết nối!")
     try:
         while True:
-            # Nhận tọa độ từ WebBrowser
             data = await websocket.receive_text()
             coords = json.loads(data)
             lat = float(coords.get("lat"))
             lng = float(coords.get("lng"))
 
-            # Gọi DangerCheckService (kết hợp static + dynamic + cache)
-            result = await danger_service.check(lat, lng)
+            result = await danger_service.check(f'{lat},{lng}', WARNING_HEADER, WARNING_SERVICE_SYSTEM_PROMPT)
 
-            # Gửi kết quả về WebBrowser
             response = {
-                "status": result["status"],
-                "is_danger": result["is_danger"],
-                "place_name": result.get("place_name"),
+                "status": result.get("status", "safe"),
+                "is_danger": result.get("is_danger", False),
+                "place_name": result.get("place_name", ""),
                 "alerts": result.get("alerts", []),
             }
-            # Backward compatibility: include alertText for existing frontend
-            if result["is_danger"] and result.get("alerts"):
+            
+            # Đảm bảo chỉ trích xuất alertText khi 'alerts' đúng định dạng
+            if result.get("is_danger") and result.get("alerts") and isinstance(result["alerts"], list) and len(result["alerts"]) > 0:
                 response["alertText"] = result["alerts"][0].get("text", "")
             else:
                 response["alertText"] = ""

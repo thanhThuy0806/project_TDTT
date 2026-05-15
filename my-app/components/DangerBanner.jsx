@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Switch } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -14,6 +14,7 @@ import {
   ChevronUp,
   AlertTriangle,
 } from "lucide-react-native";
+import { useTrackingStore } from "@/store/useTrackingStore"; 
 import { styles } from "../assets/styles/components/danger-banner.style";
 import * as Location from "expo-location";
 import { API_URL } from "@/constants/api";
@@ -23,20 +24,25 @@ export default function DangerBanner({
   dangerDetails: initialDangerDetails = [],
 }) {
   const [expanded, setExpanded] = useState(false);
-
   const [isDanger, setIsDanger] = useState(initialIsDanger);
   const [dangerDetails, setDangerDetails] = useState(initialDangerDetails);
+  
+  // [MỚI] Sử dụng global state từ Zustand thay vì useState
+  const isTracking = useTrackingStore((state) => state.isTracking);
+  const toggleTracking = useTrackingStore((state) => state.toggleTracking);
 
   const ws = useRef(null);
-  const locationSubscription = useRef(null); // Sử dụng lại ref để lưu subscription
+  const locationSubscription = useRef(null);
 
   const shakeTranslation = useSharedValue(0);
   const dangerProgress = useSharedValue(isDanger ? 1 : 0);
 
   useEffect(() => {
-    dangerProgress.value = withTiming(isDanger ? 1 : 0, { duration: 500 });
+    const shouldShowDanger = isTracking && isDanger;
+    
+    dangerProgress.value = withTiming(shouldShowDanger ? 1 : 0, { duration: 500 });
 
-    if (isDanger) {
+    if (shouldShowDanger) {
       shakeTranslation.value = withRepeat(
         withSequence(
           withTiming(-2, { duration: 100 }),
@@ -55,9 +61,15 @@ export default function DangerBanner({
       shakeTranslation.value = 0;
       setExpanded(false);
     }
-  }, [isDanger]);
+  }, [isDanger, isTracking]);
 
   useEffect(() => {
+    if (!isTracking) {
+      setIsDanger(false);
+      setDangerDetails([]);
+      return;
+    }
+
     const BACKEND_WS_URL = `ws://${API_URL}:8000/warning/ws/tracking`;
 
     ws.current = new WebSocket(BACKEND_WS_URL);
@@ -85,7 +97,7 @@ export default function DangerBanner({
     };
 
     ws.current.onerror = (error) => {
-      console.log("WebSocket Lỗi:", error.message);
+      console.log("WebSocket lỗi:", error.message);
     };
 
     let isMounted = true;
@@ -97,12 +109,11 @@ export default function DangerBanner({
         return;
       }
 
-      // Khôi phục sử dụng watchPositionAsync
       locationSubscription.current = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.Balanced,
-          timeInterval: 30000, // Cập nhật sau mỗi 30 giây
-          distanceInterval: 15, // Hoặc cập nhật khi di chuyển đủ 15 mét
+          timeInterval: 600000, 
+          distanceInterval: 3000, 
         },
         (location) => {
           if (!isMounted) return;
@@ -132,7 +143,6 @@ export default function DangerBanner({
         ws.current.close();
       }
 
-      // Xử lý an toàn lỗi removeSubscription của Expo SDK 50
       if (locationSubscription.current) {
         try {
           locationSubscription.current.remove();
@@ -141,7 +151,7 @@ export default function DangerBanner({
         }
       }
     };
-  }, []);
+  }, [isTracking]);
 
   const animatedContainerStyle = useAnimatedStyle(() => {
     const backgroundColor = interpolateColor(
@@ -158,19 +168,29 @@ export default function DangerBanner({
 
   return (
     <View style={styles.wrapper}>
-      <Animated.View style={[styles.container, animatedContainerStyle]}>
+      <Animated.View 
+        style={[
+          styles.container, 
+          animatedContainerStyle,
+          !isTracking && { opacity: 0.6, backgroundColor: '#F5F5F5' } 
+        ]}
+      >
         <View style={styles.mainRow}>
           <View style={styles.textSection}>
             <Text style={styles.title}>
-              {isDanger ? "Cảnh báo nguy hiểm!" : "Khu vực an toàn"}
+              {!isTracking 
+                ? "Đã tắt cảnh báo" 
+                : (isDanger ? "Cảnh báo nguy hiểm!" : "Khu vực an toàn")}
             </Text>
             <Text style={styles.subtitle}>
-              {isDanger
-                ? "Bạn đang ở vùng có nguy cơ cao. Hãy cẩn trọng!"
-                : "Mọi thứ đều ổn, bạn có thể thoải mái khám phá!"}
+              {!isTracking
+                ? "Hệ thống đang tạm ngừng theo dõi vị trí của bạn."
+                : (isDanger
+                  ? "Bạn đang ở vùng có nguy cơ cao. Hãy cẩn trọng!"
+                  : "Mọi thứ đều ổn, bạn có thể thoải mái khám phá!")}
             </Text>
 
-            {isDanger ? (
+            {isDanger && isTracking ? (
               <TouchableOpacity
                 style={styles.toggleBtn}
                 onPress={() => setExpanded(!expanded)}
@@ -183,20 +203,22 @@ export default function DangerBanner({
                 )}
               </TouchableOpacity>
             ) : (
-              <Text style={styles.setNowText}>Không phát hiện nguy hiểm</Text>
+              <Text style={styles.setNowText}>
+                {isTracking ? "Không phát hiện nguy hiểm" : "Hiện không hoạt dộng"}
+              </Text>
             )}
           </View>
 
           <View style={styles.imageSection}>
             <Bell
               size={60}
-              color={isDanger ? "#B71C1C" : "#E65100"}
+              color={!isTracking ? "#9E9E9E" : (isDanger ? "#B71C1C" : "#E65100")}
               strokeWidth={1.5}
             />
           </View>
         </View>
 
-        {isDanger && expanded && (
+        {isDanger && expanded && isTracking && (
           <View style={styles.dangerList}>
             {dangerDetails.map((item, index) => (
               <View key={index} style={styles.dangerItem}>
@@ -206,6 +228,23 @@ export default function DangerBanner({
             ))}
           </View>
         )}
+
+        <View style={{ width: '100%', alignItems: 'flex-end', marginTop: 10 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ fontSize: 13, color: '#757575', marginRight: 8, fontWeight: '500' }}>
+              {isTracking ? "Đang quét an toàn" : "Tắt theo dõi"}
+            </Text>
+            <Switch
+              trackColor={{ false: "#E0E0E0", true: "#91aaef" }}
+              thumbColor="#FFFFFF"
+              ios_backgroundColor="#E0E0E0"
+              onValueChange={toggleTracking} // [MỚI] Sử dụng hàm toggle từ Zustand
+              value={isTracking}
+              style={{ transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }] }}
+            />
+          </View>
+        </View>
+
       </Animated.View>
     </View>
   );

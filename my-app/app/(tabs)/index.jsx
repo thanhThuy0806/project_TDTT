@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   Image,
-  TextInput,
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -24,14 +23,6 @@ export default function HomeScreen() {
     "Khu vực vắng người qua lại về đêm",
     "Sóng điện thoại yếu",
   ]);
-
-  // Quản lý trạng thái các tính năng (để demo nút gạt)
-  const [activeFeatures, setActiveFeatures] = useState({
-    sos: true,
-    weather: false,
-    map: false,
-    tips: false,
-  });
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -99,37 +90,37 @@ export default function HomeScreen() {
             title="Cảnh báo SOS"
             subtitle="Đang sẵn sàng"
             icon="shield-checkmark"
-            bgColor={activeFeatures.sos ? "#818CFF" : "#F0F0F0"}
-            isEnabled={activeFeatures.sos}
             onToggle={() => toggleFeature("sos")}
+            isEnabled={true}
+            bgColor="#818CFF"
             navigateTo="/sos"
           />
 
           <FeatureCard
             title="Thời tiết"
-            subtitle="Cập nhật 5 phút trước"
+            subtitle="Đang cập nhật"
             icon="cloudy-night"
-            bgColor={activeFeatures.weather ? "#FFCC80" : "#FFF3E0"}
-            isEnabled={activeFeatures.weather}
             onToggle={() => toggleFeature("weather")}
+            isEnabled={true}
+            bgColor="#f1c27a"
             navigateTo="/weather"
           />
 
           <FeatureCard
-            title="Bản đồ ngoại tuyến"
-            subtitle="Đã tải 2 vùng"
-            icon="map"
-            bgColor={activeFeatures.map ? "#80DEEA" : "#E0F7FA"}
-            isEnabled={activeFeatures.map}
+            title="Dò tìm nguy hiểm"
+            subtitle="đang được cập nhật"
+            icon="location"
             onToggle={() => toggleFeature("map")}
+            isEnabled={true}
+            bgColor="#80DEEA"
+            navigateTo={'/safety-detail'}
           />
 
           <FeatureCard
             title="Sổ tay an toàn"
             subtitle="7 quy tắc cơ bản"
             icon="book"
-            bgColor={activeFeatures.tips ? "#C5E1A5" : "#F1F8E9"}
-            isEnabled={activeFeatures.tips}
+            bgColor="#C5E1A5"
             onToggle={() => toggleFeature("tips")}
           />
         </View>
