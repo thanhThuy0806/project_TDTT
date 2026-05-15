@@ -4,18 +4,23 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const getWeatherData = async (lat, lon) => {
   const token = await AsyncStorage.getItem("token");
 
-  // KIỂM TRA XEM TOKEN CÓ TỒN TẠI KHÔNG
+  if (!token || token === "null") {
+    console.error("Lỗi: Không tìm thấy Token trong AsyncStorage!");
+    return null;
+  }
+
   console.log("=== TOKEN GỬI ĐI ===", token);
 
-  const res = await api.get("http://localhost:8000/weather/", {
-    params: {
-      lat,
-      lon,
-    },
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return res.data;
+  try {
+    const res = await api.get("http://10.0.76.164:8000/weather/", {
+      params: { lat, lon },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Lỗi API:", error.response?.status);
+    throw error;
+  }
 };

@@ -3,37 +3,34 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   card: {
     width: "48%",
-    borderRadius: 24,
-    padding: 16,
+    borderRadius: 28,
+    padding: 20,
+    paddingBottom: 30,
     marginBottom: 16,
-    borderWidth: 1,
-    // Đổ bóng giúp thẻ nổi khối rõ rệt so với nền
-    boxShadow: "0px 4px 10px rgba(0,0,0,0.08)",
-    elevation: 4,
+    // Hiệu ứng shadow hiện đại
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
   },
   iconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
+    width: 60,
+    height: 60,
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.25)", // Nền mờ đục trắng
     justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 14,
+    alignItems: "flex-start", // Căn trái icon bên trong
+    paddingLeft: 12,
+    marginBottom: 20,
   },
   textContainer: {
-    marginBottom: 12,
+    alignItems: "flex-start", // Căn trái chữ
   },
   title: {
-    fontSize: 16,
-    fontWeight: "700",
-    letterSpacing: -0.3,
-  },
-  subtitle: {
-    fontSize: 12,
-    fontWeight: "500",
-    marginTop: 4,
-  },
-  switchContainer: {
-    alignItems: "flex-start",
-    marginLeft: -8,
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#FFFFFF", // Chữ trắng nổi bật trên nền màu mạnh
+    letterSpacing: -0.5,
   },
 });

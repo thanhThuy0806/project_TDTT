@@ -1,3 +1,15 @@
+Cài thêm:
+
+```
+npx expo install expo-linear-gradient
+```
+
+backend:
+
+```
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
 ### 1. Flow của tính năng weather
 
 Firebase Auth

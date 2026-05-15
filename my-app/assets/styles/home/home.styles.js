@@ -5,18 +5,35 @@ const { width } = Dimensions.get("window");
 const cardWidth = (width - 48) / 2;
 
 export const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#ffffff" },
+  ontainer: { flex: 1, backgroundColor: "#ffffff" },
   scrollContent: { paddingHorizontal: 20, paddingBottom: 90 },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
     alignItems: "center",
+    marginTop: 20,
+    marginBottom: 10,
   },
-  avatar: { width: 40, height: 40, borderRadius: 20 },
-  greeting: { marginTop: 30 },
-  hiText: { fontSize: 28, fontWeight: "bold", color: "#1A1A1A" },
-  welcomeText: { fontSize: 16, color: "#888", marginTop: 4 },
+  avatar: {
+    width: 55,
+    height: 55,
+    borderRadius: 18,
+    marginRight: 15,
+  },
+  greeting: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  hiText: {
+    fontSize: 22,
+    fontWeight: "800",
+    color: "#1A1A1A",
+    lineHeight: 28,
+  },
+  welcomeText: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 2,
+  },
   searchSection: { marginTop: 25 },
   searchBar: {
     flexDirection: "row",
