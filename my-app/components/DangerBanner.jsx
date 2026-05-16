@@ -15,12 +15,15 @@ import {
   AlertTriangle,
 } from "lucide-react-native";
 import { styles } from "../assets/styles/components/danger-banner.style";
-import * as Location from 'expo-location'; // Import thư viện lấy vị trí của Expo
+import * as Location from "expo-location"; // Import thư viện lấy vị trí của Expo
 
 // Đổi tên props thành initial để sử dụng state nội bộ cho realtime
-export default function DangerBanner({ isDanger: initialIsDanger = false, dangerDetails: initialDangerDetails = [] }) {
+export default function DangerBanner({
+  isDanger: initialIsDanger = false,
+  dangerDetails: initialDangerDetails = [],
+}) {
   const [expanded, setExpanded] = useState(false);
-  
+
   // State quản lý dữ liệu realtime
   const [isDanger, setIsDanger] = useState(initialIsDanger);
   const [dangerDetails, setDangerDetails] = useState(initialDangerDetails);
@@ -60,9 +63,10 @@ export default function DangerBanner({ isDanger: initialIsDanger = false, danger
 
   // 2. EFFECT MỚI: XỬ LÝ WEBSOCKET VÀ LOCATION TRACKING
   useEffect(() => {
+    return;
     // THAY ĐỔI ĐỊA CHỈ IP NÀY BẰNG IP IPv4 CỦA MÁY TÍNH TRÊN MẠNG WIFI
     // Ví dụ: "ws://192.168.1.10:8000/ws/tracking"
-    const BACKEND_WS_URL = "ws://192.168.88.221:8000/warning/ws/tracking"; 
+    const BACKEND_WS_URL = "ws://localhost:8000/warning/ws/tracking";
 
     // Khởi tạo kết nối WebSocket
     ws.current = new WebSocket(BACKEND_WS_URL);
@@ -74,13 +78,13 @@ export default function DangerBanner({ isDanger: initialIsDanger = false, danger
     ws.current.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        
+
         // Khớp với response trả về từ app.py: data.is_danger, data.alerts
         setIsDanger(data.is_danger);
 
         if (data.is_danger && data.alerts && data.alerts.length > 0) {
           // Map mảng alerts (đối tượng) thành mảng chuỗi (text) để in ra UI
-          const alertsList = data.alerts.map(a => a.text);
+          const alertsList = data.alerts.map((a) => a.text);
           setDangerDetails(alertsList);
         } else if (data.alertText) {
           // Fallback backward compatibility từ backend
@@ -101,8 +105,8 @@ export default function DangerBanner({ isDanger: initialIsDanger = false, danger
     const startTracking = async () => {
       // Xin quyền sử dụng GPS (Bắt buộc trên Native App)
       let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.warn('Quyền truy cập vị trí bị từ chối');
+      if (status !== "granted") {
+        console.warn("Quyền truy cập vị trí bị từ chối");
         return;
       }
 
@@ -123,7 +127,9 @@ export default function DangerBanner({ isDanger: initialIsDanger = false, danger
           if (ws.current && ws.current.readyState === WebSocket.OPEN) {
             ws.current.send(JSON.stringify(coords));
           }
-          console.log(`lattitude: ${location.coords.latitude}\nlongitude: ${location.coords.longitude}`)
+          console.log(
+            `lattitude: ${location.coords.latitude}\nlongitude: ${location.coords.longitude}`
+          );
         }
       );
     };
@@ -146,7 +152,7 @@ export default function DangerBanner({ isDanger: initialIsDanger = false, danger
     const backgroundColor = interpolateColor(
       dangerProgress.value,
       [0, 1],
-      ["#E8F5E9", "#FFCDD2"] 
+      ["#E8F5E9", "#FFCDD2"]
     );
 
     return {

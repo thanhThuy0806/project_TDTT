@@ -3,11 +3,19 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF5F2", // Màu nền hơi hồng cam nhạt theo ảnh
+    backgroundColor: "#FFF5F2",
   },
   header: {
     paddingHorizontal: 20,
     paddingTop: 10,
+  },
+  iconBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.3)", // Hiệu ứng gương mờ cho nút back
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     flex: 1,
@@ -57,33 +65,6 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#FFF",
   },
-  successContainer: {
-    alignItems: "center",
-    marginTop: 80,
-  },
-  successText: {
-    fontSize: 16,
-    color: "#444",
-    textAlign: "center",
-    lineHeight: 24,
-    marginBottom: 30,
-  },
-  doneBtn: {
-    width: 120,
-    height: 45,
-    borderRadius: 10,
-    overflow: "hidden",
-  },
-  doneGradient: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  doneText: {
-    color: "#FFF",
-    fontWeight: "600",
-    fontSize: 16,
-  },
   emergencySection: {
     width: "100%",
     paddingHorizontal: 20,
@@ -109,7 +90,6 @@ export const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 1,
     borderColor: "#F0F0F0",
-    // Đổ bóng nhẹ cho chip
     boxShadow: "0px 2px 5px rgba(0,0,0,0.05)",
     elevation: 2,
   },
@@ -142,5 +122,48 @@ export const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#2D3436",
     marginBottom: 15,
+  },
+  successOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  successContainer: {
+    width: "100%",
+    backgroundColor: "#FFF",
+    borderRadius: 24,
+    padding: 22,
+    maxHeight: "80%",
+  },
+  successTitle: {
+    fontSize: 22,
+    fontWeight: "700",
+    marginBottom: 18,
+    color: "#E91E63",
+    textAlign: "center",
+  },
+  item: {
+    marginTop: 12,
+    fontSize: 15,
+    color: "#333",
+    lineHeight: 22,
+  },
+  label: {
+    fontWeight: "700",
+    color: "#111",
+  },
+  closeBtn: {
+    marginTop: 24,
+    backgroundColor: "#E91E63",
+    paddingVertical: 13,
+    borderRadius: 14,
+    alignItems: "center",
+  },
+  closeText: {
+    color: "#FFF",
+    fontWeight: "700",
+    fontSize: 15,
   },
 });
