@@ -18,7 +18,6 @@ import { useRouter } from "expo-router";
 import { auth, db } from "../../firebase/firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
 
-// --- Dữ liệu tĩnh cho các tùy chọn ---
 const MOBILITY_OPTIONS = [
   { id: "normal", label: "Bình thường", icon: "accessibility-outline" },
   { id: "wheelchair", label: "Sử dụng xe lăn", icon: "car-outline" },
@@ -56,8 +55,6 @@ const UserInfoForm = () => {
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  // State quản lý hiển thị Modal
   const [modalVisible, setModalVisible] = useState({
     mobility: false,
     conditions: false,
@@ -74,11 +71,10 @@ const UserInfoForm = () => {
     }
   };
 
-  // Hàm xử lý chọn Bệnh trạng (Đa lựa chọn)
   const toggleCondition = (id) => {
     const newConditions = formData.conditions.includes(id)
-      ? formData.conditions.filter((item) => item !== id) // Bỏ chọn nếu đã có
-      : [...formData.conditions, id]; // Thêm vào nếu chưa có
+      ? formData.conditions.filter((item) => item !== id)
+      : [...formData.conditions, id];
     handleInputChange("conditions", newConditions);
   };
 
@@ -94,7 +90,6 @@ const UserInfoForm = () => {
     setLoading(true);
     try {
       const userDocRef = doc(db, "user-info", currentUser.uid);
-      // 2. Ghi dữ liệu lên Firebase bao gồm 2 trường mới
       await setDoc(userDocRef, {
         name: formData.name,
         gender: formData.gender,
@@ -117,13 +112,11 @@ const UserInfoForm = () => {
     }
   };
 
-  // Render Label cho Mobility
   const getMobilityLabel = () => {
     const option = MOBILITY_OPTIONS.find((o) => o.id === formData.mobility);
     return option ? option.label : "Chọn hỗ trợ di chuyển";
   };
 
-  // Render Label cho Conditions
   const getConditionsLabel = () => {
     if (formData.conditions.length === 0) return "Không có bệnh trạng nào";
     if (formData.conditions.length === 1) {
@@ -146,7 +139,6 @@ const UserInfoForm = () => {
         <Text style={authStyles.title}>Thông tin cá nhân</Text>
 
         <View style={authStyles.formContainer}>
-          {/* ... (Tên, SĐT, Giới tính) ... */}
           <View style={authStyles.inputContainer}>
             <Text style={authStyles.label}>Họ và Tên</Text>
             <View style={authStyles.inputWithIcon}>
@@ -292,7 +284,6 @@ const UserInfoForm = () => {
             </View>
           </View>
 
-          {/* ... Liên hệ người thân ... */}
           <Text
             style={[
               authStyles.label,
@@ -452,7 +443,6 @@ const UserInfoForm = () => {
   );
 };
 
-// --- CSS Nạp thêm cho các Modal để đảm bảo tính tối giản ---
 const customStyles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
@@ -469,7 +459,7 @@ const customStyles = StyleSheet.create({
     maxHeight: "80%",
   },
   modalHeader: {
-    backgroundColor: "#efe9e3", // Tông màu be sáng từ thiết kế chung
+    backgroundColor: "#efe9e3",
     paddingVertical: 15,
     alignItems: "center",
     borderBottomWidth: 1,
@@ -478,7 +468,7 @@ const customStyles = StyleSheet.create({
   modalTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#000085", // Tông màu xanh navy chủ đạo
+    color: "#000085",
   },
   listItem: {
     flexDirection: "row",

@@ -40,7 +40,7 @@ export default function VoiceInteractionButton({ isRecording }) {
           pulse2.value = withRepeat(
             withTiming(1, { duration: 1500 }),
             -1,
-            false
+            false,
           );
         }
       }, 750);
@@ -63,7 +63,7 @@ export default function VoiceInteractionButton({ isRecording }) {
               stiffness: 140,
               mass: 0.8,
               overshootClamping: true,
-            }
+            },
           ),
         },
       ],
@@ -76,11 +76,11 @@ export default function VoiceInteractionButton({ isRecording }) {
       transform: [{ scale: withSpring(safeRecordingState.value ? 1.5 : 1) }],
       backgroundColor: withTiming(
         safeRecordingState.value ? "#EF4444" : "#673AB7",
-        { duration: 300 }
+        { duration: 300 },
       ),
       shadowColor: withTiming(
         safeRecordingState.value ? "#EF4444" : "#673AB7",
-        { duration: 300 }
+        { duration: 300 },
       ),
     };
   });
@@ -113,7 +113,6 @@ export default function VoiceInteractionButton({ isRecording }) {
 
   return (
     <>
-      {/* Lớp nền mờ */}
       <Animated.View
         style={[styles.backdrop, backdropStyle]}
         pointerEvents={active ? "auto" : "none"}
@@ -122,12 +121,10 @@ export default function VoiceInteractionButton({ isRecording }) {
         <Text style={styles.subText}>Chạm vào nút mic để kết thúc</Text>
       </Animated.View>
 
-      {/* Cụm Nút và Sóng âm */}
       <Animated.View
         style={[styles.container, containerStyle]}
         pointerEvents="box-none"
       >
-        {/* Render 2 vòng sóng */}
         <Animated.View
           style={[styles.pulseRing, pulse1Style]}
           pointerEvents="none"
@@ -136,8 +133,6 @@ export default function VoiceInteractionButton({ isRecording }) {
           style={[styles.pulseRing, pulse2Style]}
           pointerEvents="none"
         />
-
-        {/* Nút Mic chính */}
         <TouchableOpacity activeOpacity={0.9} onPress={toggleRecording}>
           <Animated.View style={[styles.button, buttonStyle]}>
             <Ionicons name="mic" size={30} color="#FFF" />
@@ -154,7 +149,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.95)",
     justifyContent: "center",
     alignItems: "center",
-    paddingBottom: 120, // Căn chữ nằm trên nút
+    paddingBottom: 120,
     zIndex: 5,
   },
   listeningText: {

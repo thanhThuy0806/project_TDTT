@@ -1,11 +1,10 @@
 import { StyleSheet, Dimensions } from "react-native";
-import { COLORS } from "../../../constants/colors";
 
 const { width } = Dimensions.get("window");
 const cardWidth = (width - 48) / 2;
 
 export const styles = StyleSheet.create({
-  ontainer: { flex: 1, backgroundColor: "#ffffff" },
+  container: { flex: 1, backgroundColor: "#ffffff" },
   scrollContent: { paddingHorizontal: 20, paddingBottom: 90 },
   header: {
     flexDirection: "row",

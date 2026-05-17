@@ -1,5 +1,4 @@
 import { StyleSheet } from "react-native";
-import { COLORS } from "../../../constants/colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -13,17 +12,17 @@ export const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   headerTitleContainer: {
-    alignItems: "center", // Căn giữa nội dung văn bản
+    alignItems: "center",
     flex: 1,
   },
   locationText: {
     fontSize: 22,
-    fontWeight: "800", // Đậm hơn để nổi bật
+    fontWeight: "800",
     color: "#2D3436",
     letterSpacing: 0.5,
   },
   dateText: {
-    color: "rgba(45, 52, 54, 0.7)", // Dùng màu tối mờ để dễ đọc trên nền sáng
+    color: "rgba(45, 52, 54, 0.7)",
     fontSize: 14,
     fontWeight: "500",
     marginTop: 4,
@@ -32,14 +31,12 @@ export const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.3)", // Hiệu ứng gương mờ cho nút back
+    backgroundColor: "rgba(255,255,255,0.3)",
     justifyContent: "center",
     alignItems: "center",
   },
   scrollContent: {
     paddingHorizontal: 20,
-    // alignItems: "center",
-    // paddingBottom: 40,
   },
   mainWeather: {
     alignItems: "center",

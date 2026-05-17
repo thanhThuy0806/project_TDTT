@@ -44,11 +44,11 @@ export default function WeatherIndex() {
   };
 
   const getGradientColors = (temp) => {
-    if (temp >= 35) return ["#FF5F6D", "#FFC371"]; // Đỏ cam rực rỡ
-    if (temp >= 30) return ["#F2994A", "#F2C94C"]; // Cam vàng ấm áp
-    if (temp >= 25) return ["#56CCF2", "#2F80ED"]; // Xanh dương hiện đại
-    if (temp >= 18) return ["#89f7fe", "#66a6ff"]; // Xanh dịu mát
-    return ["#ece9e6", "#ffffff"]; // Xám trắng tinh tế
+    if (temp >= 35) return ["#FF5F6D", "#FFC371"];
+    if (temp >= 30) return ["#F2994A", "#F2C94C"];
+    if (temp >= 25) return ["#56CCF2", "#2F80ED"];
+    if (temp >= 18) return ["#89f7fe", "#66a6ff"];
+    return ["#ece9e6", "#ffffff"];
   };
 
   const loadData = async () => {
@@ -126,10 +126,10 @@ export default function WeatherIndex() {
             <Text style={styles.mainTemp}>{Math.round(current?.temp_c)}°C</Text>
             <View style={styles.minMaxContainer}>
               <Text style={styles.minMaxText}>
-                ↑ {Math.round(todayForecast?.maxtemp_c)}°
+                ↑ Cao nhất: {Math.round(todayForecast?.maxtemp_c)}°
               </Text>
               <Text style={[styles.minMaxText, { marginLeft: 15 }]}>
-                ↓ {Math.round(todayForecast?.mintemp_c)}°
+                ↓ Thấp nhất: {Math.round(todayForecast?.mintemp_c)}°
               </Text>
             </View>
           </View>

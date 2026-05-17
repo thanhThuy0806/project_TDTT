@@ -8,10 +8,8 @@ const SafeScreen = ({ children }) => {
   return (
     <View
       style={{
-        // paddingTop: insets.top, // Tránh notch/thanh trạng thái
-        // paddingBottom: insets.bottom, // Tránh nút home ảo
-        paddingLeft: insets.left, // Tránh viền cong (iPhone)
-        paddingRight: insets.right, // Tránh viền cong (iPhone)
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
         flex: 1,
         backgroundColor: COLORS.background,
       }}

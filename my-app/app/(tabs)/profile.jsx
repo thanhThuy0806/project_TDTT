@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  Image,
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
@@ -15,20 +14,21 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
-
 import { auth, db } from "../../firebase/firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "expo-router";
-
 import { styles } from "../../assets/styles/profile/profile.style";
 
-// --- Dữ liệu tĩnh cho các tùy chọn ---
 const MOBILITY_OPTIONS = [
   { id: "normal", label: "Bình thường", icon: "accessibility-outline" },
   { id: "wheelchair", label: "Sử dụng xe lăn", icon: "car-outline" },
   { id: "walking_difficulty", label: "Khó khăn đi lại", icon: "walk-outline" },
   { id: "blind", label: "Khiếm thị", icon: "eye-off-outline" },
-  { id: "elderly_assisted", label: "Cần người trợ giúp", icon: "people-outline" },
+  {
+    id: "elderly_assisted",
+    label: "Cần người trợ giúp",
+    icon: "people-outline",
+  },
 ];
 
 const CONDITION_OPTIONS = [
@@ -48,7 +48,6 @@ const UserInfoScreen = () => {
   const [saving, setSaving] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  // Thêm state cho Modal
   const [modalVisible, setModalVisible] = useState({
     mobility: false,
     conditions: false,
@@ -59,8 +58,8 @@ const UserInfoScreen = () => {
     phone: "",
     gender: "male",
     dob: new Date(),
-    mobility: "normal", // Thêm trường mobility
-    conditions: [],     // Thêm trường conditions
+    mobility: "normal",
+    conditions: [],
     emergencyName: "",
     emergencyPhone: "",
   });
@@ -81,7 +80,6 @@ const UserInfoScreen = () => {
     handleInputChange("conditions", newConditions);
   };
 
-  // Lấy dữ liệu từ Firestore
   const fetchUserInfo = async () => {
     const currentUser = auth.currentUser;
     if (!currentUser) return;
@@ -97,8 +95,8 @@ const UserInfoScreen = () => {
           phone: data.phone || "",
           gender: data.gender || "male",
           dob: data.dob ? new Date(data.dob) : new Date(),
-          mobility: data.mobility || "normal", // Nạp dữ liệu mobility
-          conditions: data.conditions || [],   // Nạp dữ liệu conditions
+          mobility: data.mobility || "normal",
+          conditions: data.conditions || [],
           emergencyName: data.emergencyName || "",
           emergencyPhone: data.emergencyPhone || "",
         });
@@ -132,13 +130,13 @@ const UserInfoScreen = () => {
           phone: formData.phone,
           gender: formData.gender,
           dob: formData.dob.toISOString(),
-          mobility: formData.mobility,       // Lưu dữ liệu mobility
-          conditions: formData.conditions,   // Lưu dữ liệu conditions
+          mobility: formData.mobility,
+          conditions: formData.conditions,
           emergencyName: formData.emergencyName,
           emergencyPhone: formData.emergencyPhone,
           updatedAt: new Date().toISOString(),
         },
-        { merge: true }
+        { merge: true },
       );
 
       Alert.alert("Thành công", "Thông tin đã được cập nhật!");
@@ -162,16 +160,17 @@ const UserInfoScreen = () => {
     ]);
   };
 
-  // Hàm render hiển thị nhãn
   const getMobilityLabel = () => {
     const option = MOBILITY_OPTIONS.find((o) => o.id === formData.mobility);
     return option ? option.label : "Bình thường";
   };
 
   const getConditionsLabel = () => {
-    if (!formData.conditions || formData.conditions.length === 0) return "Không có";
+    if (!formData.conditions || formData.conditions.length === 0)
+      return "Không có";
     if (formData.conditions.length === 1) {
-      return CONDITION_OPTIONS.find((o) => o.id === formData.conditions[0])?.label;
+      return CONDITION_OPTIONS.find((o) => o.id === formData.conditions[0])
+        ?.label;
     }
     return `Đã chọn ${formData.conditions.length} bệnh trạng`;
   };
@@ -179,7 +178,9 @@ const UserInfoScreen = () => {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
           <Text>Đang tải...</Text>
         </View>
       </SafeAreaView>
@@ -258,7 +259,13 @@ const UserInfoScreen = () => {
             <View style={[styles.formGroup, { borderBottomWidth: 0 }]}>
               <Text style={styles.label}>Giới tính</Text>
               {isEditing ? (
-                <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 8 }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginTop: 8,
+                  }}
+                >
                   {[
                     { label: "Nam", value: "male" },
                     { label: "Nữ", value: "female" },
@@ -267,18 +274,30 @@ const UserInfoScreen = () => {
                     <TouchableOpacity
                       key={item.value}
                       onPress={() => handleInputChange("gender", item.value)}
-                      style={{ flexDirection: "row", alignItems: "center", marginRight: 20 }}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginRight: 20,
+                      }}
                     >
                       <View style={styles.checkBox}>
-                        {formData.gender === item.value && <View style={styles.tick} />}
+                        {formData.gender === item.value && (
+                          <View style={styles.tick} />
+                        )}
                       </View>
-                      <Text style={{ fontSize: 16, color: "#333" }}>{item.label}</Text>
+                      <Text style={{ fontSize: 16, color: "#333" }}>
+                        {item.label}
+                      </Text>
                     </TouchableOpacity>
                   ))}
                 </View>
               ) : (
                 <Text style={styles.valueText}>
-                  {formData.gender === "male" ? "Nam" : formData.gender === "female" ? "Nữ" : "Khác"}
+                  {formData.gender === "male"
+                    ? "Nam"
+                    : formData.gender === "female"
+                      ? "Nữ"
+                      : "Khác"}
                 </Text>
               )}
             </View>
@@ -287,12 +306,25 @@ const UserInfoScreen = () => {
               <Text style={styles.label}>Ngày sinh</Text>
               {isEditing ? (
                 <View style={styles.inputWithIcon}>
-                  <Ionicons name="calendar-outline" size={20} color="#888" style={styles.inputIcon} />
-                  <TouchableOpacity style={styles.textInput} onPress={() => setShowDatePicker(true)}>
+                  <Ionicons
+                    name="calendar-outline"
+                    size={20}
+                    color="#888"
+                    style={styles.inputIcon}
+                  />
+                  <TouchableOpacity
+                    style={styles.textInput}
+                    onPress={() => setShowDatePicker(true)}
+                  >
                     <Text>{formData.dob.toLocaleDateString("vi-VN")}</Text>
                   </TouchableOpacity>
                   {showDatePicker && (
-                    <DateTimePicker value={formData.dob} mode="date" display="default" onChange={onDateChange} />
+                    <DateTimePicker
+                      value={formData.dob}
+                      mode="date"
+                      display="default"
+                      onChange={onDateChange}
+                    />
                   )}
                 </View>
               ) : (
@@ -307,10 +339,17 @@ const UserInfoScreen = () => {
               <Text style={styles.label}>Hỗ trợ di chuyển</Text>
               {isEditing ? (
                 <View style={styles.inputWithIcon}>
-                  <Ionicons name="body-outline" size={20} color="#888" style={styles.inputIcon} />
-                  <TouchableOpacity 
-                    style={styles.textInput} 
-                    onPress={() => setModalVisible({ ...modalVisible, mobility: true })}
+                  <Ionicons
+                    name="body-outline"
+                    size={20}
+                    color="#888"
+                    style={styles.inputIcon}
+                  />
+                  <TouchableOpacity
+                    style={styles.textInput}
+                    onPress={() =>
+                      setModalVisible({ ...modalVisible, mobility: true })
+                    }
                   >
                     <Text>{getMobilityLabel()}</Text>
                   </TouchableOpacity>
@@ -325,10 +364,17 @@ const UserInfoScreen = () => {
               <Text style={styles.label}>Bệnh trạng</Text>
               {isEditing ? (
                 <View style={styles.inputWithIcon}>
-                  <Ionicons name="medical-outline" size={20} color="#888" style={styles.inputIcon} />
-                  <TouchableOpacity 
-                    style={styles.textInput} 
-                    onPress={() => setModalVisible({ ...modalVisible, conditions: true })}
+                  <Ionicons
+                    name="medical-outline"
+                    size={20}
+                    color="#888"
+                    style={styles.inputIcon}
+                  />
+                  <TouchableOpacity
+                    style={styles.textInput}
+                    onPress={() =>
+                      setModalVisible({ ...modalVisible, conditions: true })
+                    }
                   >
                     <Text>{getConditionsLabel()}</Text>
                   </TouchableOpacity>
@@ -344,7 +390,9 @@ const UserInfoScreen = () => {
                 <TextInput
                   style={styles.input}
                   value={formData.emergencyName}
-                  onChangeText={(text) => handleInputChange("emergencyName", text)}
+                  onChangeText={(text) =>
+                    handleInputChange("emergencyName", text)
+                  }
                   placeholder="Tên người thân"
                 />
               ) : (
@@ -361,7 +409,9 @@ const UserInfoScreen = () => {
                   style={styles.input}
                   value={formData.emergencyPhone}
                   keyboardType="phone-pad"
-                  onChangeText={(text) => handleInputChange("emergencyPhone", text)}
+                  onChangeText={(text) =>
+                    handleInputChange("emergencyPhone", text)
+                  }
                 />
               ) : (
                 <Text style={styles.valueText}>
@@ -371,14 +421,13 @@ const UserInfoScreen = () => {
             </View>
           </View>
 
-          {/* Nút Lưu & Hủy khi đang chỉnh sửa */}
           {isEditing && (
             <View style={styles.footerActions}>
               <TouchableOpacity
                 style={styles.cancelButton}
                 onPress={() => {
                   setIsEditing(false);
-                  fetchUserInfo(); // Reset lại data cũ nếu hủy
+                  fetchUserInfo();
                 }}
               >
                 <Text style={styles.cancelButtonText}>Hủy</Text>
@@ -395,9 +444,13 @@ const UserInfoScreen = () => {
             </View>
           )}
 
-          {/* Nút Đăng xuất - Luôn hiển thị */}
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Ionicons name="log-out-outline" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+            <Ionicons
+              name="log-out-outline"
+              size={20}
+              color="#FFFFFF"
+              style={{ marginRight: 8 }}
+            />
             <Text style={styles.logoutButtonText}>Đăng xuất</Text>
           </TouchableOpacity>
         </ScrollView>
@@ -405,9 +458,9 @@ const UserInfoScreen = () => {
 
       {/* ================= MODAL: HỖ TRỢ DI CHUYỂN ================= */}
       <Modal visible={modalVisible.mobility} transparent animationType="fade">
-        <TouchableOpacity 
-          style={customStyles.modalOverlay} 
-          activeOpacity={1} 
+        <TouchableOpacity
+          style={customStyles.modalOverlay}
+          activeOpacity={1}
           onPress={() => setModalVisible({ ...modalVisible, mobility: false })}
         >
           <View style={customStyles.modalContent}>
@@ -429,7 +482,11 @@ const UserInfoScreen = () => {
                     <Text style={customStyles.listText}>{item.label}</Text>
                   </View>
                   <Ionicons
-                    name={formData.mobility === item.id ? "radio-button-on" : "radio-button-off"}
+                    name={
+                      formData.mobility === item.id
+                        ? "radio-button-on"
+                        : "radio-button-off"
+                    }
                     size={22}
                     color={formData.mobility === item.id ? "#000085" : "#CCC"}
                   />
@@ -442,14 +499,18 @@ const UserInfoScreen = () => {
 
       {/* ================= MODAL: BỆNH TRẠNG ================= */}
       <Modal visible={modalVisible.conditions} transparent animationType="fade">
-        <TouchableOpacity 
-          style={customStyles.modalOverlay} 
-          activeOpacity={1} 
-          onPress={() => setModalVisible({ ...modalVisible, conditions: false })}
+        <TouchableOpacity
+          style={customStyles.modalOverlay}
+          activeOpacity={1}
+          onPress={() =>
+            setModalVisible({ ...modalVisible, conditions: false })
+          }
         >
           <View style={customStyles.modalContent}>
             <View style={customStyles.modalHeader}>
-              <Text style={customStyles.modalTitle}>Các bệnh trạng cần lưu ý</Text>
+              <Text style={customStyles.modalTitle}>
+                Các bệnh trạng cần lưu ý
+              </Text>
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
               {CONDITION_OPTIONS.map((item) => {
@@ -473,21 +534,21 @@ const UserInfoScreen = () => {
                 );
               })}
             </ScrollView>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={customStyles.doneButton}
-              onPress={() => setModalVisible({ ...modalVisible, conditions: false })}
+              onPress={() =>
+                setModalVisible({ ...modalVisible, conditions: false })
+              }
             >
               <Text style={customStyles.doneButtonText}>Xong</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
       </Modal>
-
     </SafeAreaView>
   );
 };
 
-// CSS bổ sung cho Modal (được đính kèm nội tuyến để không phá vỡ cấu trúc file style riêng của bạn)
 const customStyles = StyleSheet.create({
   modalOverlay: {
     flex: 1,

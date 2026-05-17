@@ -1,26 +1,18 @@
-import api from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "./apiClient";
 
 export const getWeatherData = async (lat, lon) => {
-  const token = await AsyncStorage.getItem("token");
-
-  if (!token || token === "null") {
-    console.error("Lỗi: Không tìm thấy Token trong AsyncStorage!");
-    return null;
-  }
-
-  console.log("=== TOKEN GỬI ĐI ===", token);
-
   try {
-    const res = await api.get("http://10.0.237.53:8000/weather/", {
+    const response = await api.get("/weather/", {
       params: { lat, lon },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
-    return res.data;
+
+    return response.data;
   } catch (error) {
-    console.error("Lỗi API:", error.response?.status);
+    console.error(
+      "Lỗi API Thời Tiết:",
+      error.response?.status,
+      error.response?.data,
+    );
     throw error;
   }
 };

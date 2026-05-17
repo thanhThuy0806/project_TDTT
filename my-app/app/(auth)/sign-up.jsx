@@ -42,7 +42,7 @@ const SignUpScreen = () => {
       const user = userCredential.user;
 
       Alert.alert("User created successfully");
-      // User' Id token
+
       const token = await userCredential.user.getIdToken();
       await AsyncStorage.setItem("token", token);
 

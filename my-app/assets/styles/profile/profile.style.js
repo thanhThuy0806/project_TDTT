@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
     paddingBottom: 150,
   },
   card: {
-    backgroundColor: "#FFFFFF", // Card màu trắng tinh
+    backgroundColor: "#FFFFFF",
     borderRadius: 24,
     overflow: "hidden",
     borderWidth: 1,
@@ -123,8 +123,6 @@ export const styles = StyleSheet.create({
     color: "#6B7280",
     marginTop: 4,
   },
-
-  // Stats
   statsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -144,15 +142,12 @@ export const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#111827",
   },
-
   divider: {
     height: 1,
     backgroundColor: "#F3F4F6",
     marginVertical: 25,
     marginHorizontal: 20,
   },
-
-  // Form
   formSection: {
     paddingHorizontal: 20,
   },
@@ -207,8 +202,6 @@ export const styles = StyleSheet.create({
     color: "#3B82F6",
     marginLeft: 6,
   },
-
-  // Dropdown
   inputDropdown: {
     flexDirection: "row",
     alignItems: "center",
@@ -224,8 +217,6 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     color: "#111827",
   },
-
-  // Input with Prefix (Emergency Phone)
   inputWithPrefix: {
     flexDirection: "row",
     alignItems: "center",
@@ -256,8 +247,6 @@ export const styles = StyleSheet.create({
     color: "#111827",
     paddingHorizontal: 15,
   },
-
-  // Footer Actions
   footerActions: {
     flexDirection: "row",
     justifyContent: "flex-end",
@@ -283,14 +272,13 @@ export const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
-    backgroundColor: "#818CFF", // Màu chủ đạo từ Tab bar
+    backgroundColor: "#818CFF",
   },
   saveButtonText: {
     fontSize: 14,
     fontWeight: "600",
     color: "#FFFFFF",
   },
-  // STYLES MỚI CHO NÚT ĐĂNG XUẤT
   logoutButton: {
     backgroundColor: COLORS.primary,
     flexDirection: "row",
@@ -300,16 +288,14 @@ export const styles = StyleSheet.create({
     marginHorizontal: 5,
     paddingVertical: 16,
     borderRadius: 16,
-    // Đổ bóng cho nút đen
     boxShadow: "0px 4px 8px rgba(0,0,0,0.25)",
     elevation: 5,
   },
   logoutButtonText: {
-    color: "#FFFFFF", // Màu chữ trắng
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "700",
   },
-  // Nút Chỉnh sửa
   editButton: {
     flexDirection: "row",
     alignItems: "center",

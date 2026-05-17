@@ -7,30 +7,26 @@ export const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 30,
     marginBottom: 16,
-    // Hiệu ứng shadow hiện đại
     elevation: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
+    boxShadow: "0px 4px 5px 0px rgba(0, 0, 0, 0.2)",
   },
   iconCircle: {
     width: 60,
     height: 60,
     borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.25)", // Nền mờ đục trắng
+    backgroundColor: "rgba(255, 255, 255, 0.25)",
     justifyContent: "center",
-    alignItems: "flex-start", // Căn trái icon bên trong
+    alignItems: "flex-start",
     paddingLeft: 12,
     marginBottom: 20,
   },
   textContainer: {
-    alignItems: "flex-start", // Căn trái chữ
+    alignItems: "flex-start",
   },
   title: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#FFFFFF", // Chữ trắng nổi bật trên nền màu mạnh
+    color: "#FFFFFF",
     letterSpacing: -0.5,
   },
 });

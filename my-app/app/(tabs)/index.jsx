@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import FeatureCard from "../../components/FeatureCard";
@@ -39,15 +32,11 @@ export default function HomeScreen() {
       },
       (error) => {
         console.error("Lỗi onSnapshot:", error);
-      }
+      },
     );
 
     return () => unsubscribe();
   }, []);
-
-  const toggleFeature = (key) => {
-    setActiveFeatures((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -91,25 +80,17 @@ export default function HomeScreen() {
           <FeatureCard
             title="Cảnh báo SOS"
             icon="alert-circle"
-            bgColor={"#EF4444"} // Đỏ đậm (Strong Visual)
+            bgColor={"#EF4444"}
             navigateTo="/sos"
           />
           <FeatureCard
             title="Thời tiết"
             icon="cloudy-night"
-            bgColor={"#3B82F6"} // Xanh dương đậm
+            bgColor={"#3B82F6"}
             navigateTo="/weather"
           />
-          <FeatureCard
-            title="Bản đồ"
-            icon="map"
-            bgColor={"#10B981"} // Xanh lá đậm
-          />
-          <FeatureCard
-            title="Sổ tay"
-            icon="book"
-            bgColor={"#F59E0B"} // Vàng cam
-          />
+          <FeatureCard title="Bản đồ" icon="map" bgColor={"#10B981"} />
+          <FeatureCard title="Sổ tay" icon="book" bgColor={"#F59E0B"} />
         </View>
       </ScrollView>
     </SafeAreaView>

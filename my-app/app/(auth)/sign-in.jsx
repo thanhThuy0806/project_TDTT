@@ -15,7 +15,6 @@ import { Image } from "expo-image";
 import { COLORS } from "../../constants/colors";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/firebaseConfig";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignInScreen = () => {
   const router = useRouter();
@@ -36,11 +35,11 @@ const SignInScreen = () => {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
-      // User' Id token
-      const token = await userCredential.user.getIdToken()
-      await AsyncStorage.setItem("token", token)
+
+      const token = await userCredential.user.getIdToken();
+      await AsyncStorage.setItem("token", token);
 
       if (userCredential.user) {
         router.push("/");
