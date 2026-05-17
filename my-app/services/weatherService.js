@@ -12,7 +12,7 @@ export const getWeatherData = async (lat, lon) => {
   console.log("=== TOKEN GỬI ĐI ===", token);
 
   try {
-    const res = await api.get("http://10.0.76.164:8000/weather/", {
+    const res = await api.get("http://10.0.237.53:8000/weather/", {
       params: { lat, lon },
       headers: {
         Authorization: `Bearer ${token}`,

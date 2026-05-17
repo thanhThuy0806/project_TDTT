@@ -9,7 +9,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://10.0.76.164:8081"], # Cho phép Frontend
+    allow_origins=["http://10.0.237.53:8081"], # Cho phép Frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
