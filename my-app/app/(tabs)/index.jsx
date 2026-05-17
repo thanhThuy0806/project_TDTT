@@ -25,14 +25,6 @@ export default function HomeScreen() {
     "Sóng điện thoại yếu",
   ]);
 
-  // Quản lý trạng thái các tính năng (để demo nút gạt)
-  const [activeFeatures, setActiveFeatures] = useState({
-    sos: true,
-    weather: false,
-    map: false,
-    tips: false,
-  });
-
   useEffect(() => {
     const user = auth.currentUser;
     if (!user) return;
@@ -63,28 +55,21 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Header: Menu & Avatar */}
         <View style={styles.header}>
-          <TouchableOpacity>
-            <Ionicons name="grid" size={24} color="#333" />
-          </TouchableOpacity>
           <Image
             source={require("../../assets/images/avatar.jpg")}
             style={styles.avatar}
           />
-        </View>
-
-        {/* Lời chào */}
-        <View style={styles.greeting}>
-          <Text style={styles.hiText}>Xin chào, {userName} 👋</Text>
-          <Text style={styles.welcomeText}>
-            Chào mừng bạn đến với chuyến đi an toàn.
-          </Text>
+          <View style={styles.greeting}>
+            <Text style={styles.hiText}>Xin chào, {userName} 👋</Text>
+            <Text style={styles.welcomeText}>
+              Chuyến đi của bạn luôn an toàn.
+            </Text>
+          </View>
         </View>
 
         <DangerBanner isDanger={isDangerZone} dangerDetails={dangerInfo} />
 
-        {/* Nút giả lập để bạn TEST (Xóa khi xong) */}
         <TouchableOpacity
           onPress={() => setIsDangerZone(!isDangerZone)}
           style={{ alignSelf: "center", marginBottom: 10 }}
@@ -94,7 +79,6 @@ export default function HomeScreen() {
           </Text>
         </TouchableOpacity>
 
-        {/* Tiêu đề danh mục */}
         <View style={styles.sectionTitleRow}>
           <Text style={styles.sectionTitle}>Công cụ hỗ trợ</Text>
           <TouchableOpacity style={styles.addBtn}>
@@ -103,44 +87,28 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Lưới các thẻ (Grid) */}
         <View style={styles.grid}>
           <FeatureCard
             title="Cảnh báo SOS"
-            subtitle="Đang sẵn sàng"
-            icon="shield-checkmark"
-            bgColor={activeFeatures.sos ? "#818CFF" : "#F0F0F0"}
-            isEnabled={activeFeatures.sos}
-            onToggle={() => toggleFeature("sos")}
+            icon="alert-circle"
+            bgColor={"#EF4444"} // Đỏ đậm (Strong Visual)
             navigateTo="/sos"
           />
-
           <FeatureCard
             title="Thời tiết"
-            subtitle="Cập nhật 5 phút trước"
             icon="cloudy-night"
-            bgColor={activeFeatures.weather ? "#FFCC80" : "#FFF3E0"}
-            isEnabled={activeFeatures.weather}
-            onToggle={() => toggleFeature("weather")}
+            bgColor={"#3B82F6"} // Xanh dương đậm
             navigateTo="/weather"
           />
-
           <FeatureCard
-            title="Bản đồ ngoại tuyến"
-            subtitle="Đã tải 2 vùng"
+            title="Bản đồ"
             icon="map"
-            bgColor={activeFeatures.map ? "#80DEEA" : "#E0F7FA"}
-            isEnabled={activeFeatures.map}
-            onToggle={() => toggleFeature("map")}
+            bgColor={"#10B981"} // Xanh lá đậm
           />
-
           <FeatureCard
-            title="Sổ tay an toàn"
-            subtitle="7 quy tắc cơ bản"
+            title="Sổ tay"
             icon="book"
-            bgColor={activeFeatures.tips ? "#C5E1A5" : "#F1F8E9"}
-            isEnabled={activeFeatures.tips}
-            onToggle={() => toggleFeature("tips")}
+            bgColor={"#F59E0B"} // Vàng cam
           />
         </View>
       </ScrollView>
