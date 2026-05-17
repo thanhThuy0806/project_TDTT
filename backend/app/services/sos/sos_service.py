@@ -42,17 +42,19 @@ async def search_best_unit(lat: float, lng: float, emergency_type: str):
     seen_places = set() 
 
     for data in api_responses:
-        if isinstance(data, Exception) or not data:
+        if not isinstance(data, dict): 
             continue
             
         local_results = data.get("local_results", [])
         for place in local_results:
             place_id = place.get("place_id") or place.get("title")
-            if place_id in seen_places:
+            if not place_id or place_id in seen_places:
                 continue
+            
+            seen_places.add(place_id)
 
             gps = place.get("gps_coordinates")
-            if not gps:
+            if not gps or "latitude" not in gps or "longitude" not in gps:
                 continue
 
             distance = haversine(lat, lng, gps["latitude"], gps["longitude"])
@@ -70,7 +72,6 @@ async def search_best_unit(lat: float, lng: float, emergency_type: str):
                 "rating": rating,
                 "score": score,
             })
-            seen_places.add(place_id)
 
     if not results:
         return None

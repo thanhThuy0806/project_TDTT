@@ -1,7 +1,25 @@
-.env
-firebase-key.json
-virtualEnv/ 
+# --- Python & FastAPI ---
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# --- Environment & Secrets (CỰC KỲ QUAN trọng) ---
+.env
+.flaskenv
+serviceAccountKey.json
+firebase-key.json
+
+# --- Virtual Environments ---
+venv/
+.venv/
+env/
+
+# --- IDE & Editors ---
 .vscode/
+.idea/
+*.swp
+
+# --- OS Files ---
 .DS_Store
+Thumbs.db

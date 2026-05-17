@@ -89,7 +89,7 @@ export default function SOSScreen() {
       withTiming(10, { duration: 50 }),
       withTiming(-10, { duration: 50 }),
       withTiming(10, { duration: 50 }),
-      withTiming(0, { duration: 50 })
+      withTiming(0, { duration: 50 }),
     );
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
   };
@@ -102,7 +102,7 @@ export default function SOSScreen() {
       if (!emergencyPhone) {
         Alert.alert(
           "Lỗi",
-          "Bạn chưa thiết lập số điện thoại người thân trong phần cài đặt!"
+          "Bạn chưa thiết lập số điện thoại người thân trong phần cài đặt!",
         );
         setStatus("idle");
         return;
@@ -300,22 +300,6 @@ export default function SOSScreen() {
             })}
           </View>
         </Animated.View>
-
-        {/* {status === "sent" && (
-          <View style={styles.successContainer}>
-            <Text style={styles.successText}>
-              Tín hiệu đã được gửi thành công!
-            </Text>
-            <Pressable style={styles.doneBtn} onPress={handleDone}>
-              <LinearGradient
-                colors={["#FF8A65", "#E91E63"]}
-                style={styles.doneGradient}
-              >
-                <Text style={styles.doneText}>Xong</Text>
-              </LinearGradient>
-            </Pressable>
-          </View>
-        )} */}
 
         {status === "send" && sosResult && (
           <Modal visible={showResult} transparent animationType="fade">

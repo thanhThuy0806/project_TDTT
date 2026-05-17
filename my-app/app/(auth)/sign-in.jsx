@@ -35,8 +35,11 @@ const SignInScreen = () => {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
+
+      const token = await userCredential.user.getIdToken();
+      await AsyncStorage.setItem("token", token);
 
       if (userCredential.user) {
         router.push("/");
@@ -126,7 +129,7 @@ const SignInScreen = () => {
 
             <TouchableOpacity
               style={authStyles.linkContainer}
-              onPress={() => router.push("/(auth)/sign-up")}
+              onPress={() => router.push("/sign-up")}
             >
               <Text style={authStyles.linkText}>
                 Don&apos;t have an account?{" "}

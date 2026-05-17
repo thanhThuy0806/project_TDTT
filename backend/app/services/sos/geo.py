@@ -1,10 +1,8 @@
 from math import radians, cos, sin, asin, sqrt
 
 def haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    """
-    Tính khoảng cách đường chim bay giữa 2 điểm (Km).
-    Giữ nguyên độ chính xác thập phân để phục vụ thuật toán tìm vị trí gần nhất.
-    """
+    # Tính khoảng cách đường chim bay giữa 2 điểm (Km) để tìm khoảng cách gần nhất
+
     R = 6371.0088
 
     dlat = radians(lat2 - lat1)

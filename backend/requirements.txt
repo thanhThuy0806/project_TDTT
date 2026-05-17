@@ -1,8 +1,12 @@
 fastapi 
 uvicorn 
 firebase-admin 
+pydantic 
+python-multipart
 sqlalchemy 
 psycopg2-binary 
 python-dotenv
 apscheduler
 httpx
+numpy
+requests

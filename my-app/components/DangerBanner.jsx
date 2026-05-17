@@ -36,7 +36,6 @@ export default function DangerBanner({
   const shakeTranslation = useSharedValue(0);
   const dangerProgress = useSharedValue(isDanger ? 1 : 0);
 
-  // 1. EFFECT XỬ LÝ ANIMATION
   useEffect(() => {
     dangerProgress.value = withTiming(isDanger ? 1 : 0, { duration: 500 });
 
@@ -44,10 +43,10 @@ export default function DangerBanner({
       shakeTranslation.value = withRepeat(
         withSequence(
           withTiming(-2, { duration: 100 }),
-          withTiming(2, { duration: 100 })
+          withTiming(2, { duration: 100 }),
         ),
         -1,
-        true
+        true,
       );
 
       const timer = setTimeout(() => {
@@ -128,9 +127,9 @@ export default function DangerBanner({
             ws.current.send(JSON.stringify(coords));
           }
           console.log(
-            `lattitude: ${location.coords.latitude}\nlongitude: ${location.coords.longitude}`
+            `lattitude: ${location.coords.latitude}\nlongitude: ${location.coords.longitude}`,
           );
-        }
+        },
       );
     };
 
@@ -152,7 +151,7 @@ export default function DangerBanner({
     const backgroundColor = interpolateColor(
       dangerProgress.value,
       [0, 1],
-      ["#E8F5E9", "#FFCDD2"]
+      ["#E8F5E9", "#FFCDD2"],
     );
 
     return {

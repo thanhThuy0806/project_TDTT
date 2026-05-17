@@ -3,22 +3,42 @@ import {
   View,
   Text,
   ScrollView,
-  Image,
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Modal,
+  StyleSheet,
 } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
-
 import { auth, db } from "../../firebase/firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "expo-router";
-
 import { styles } from "../../assets/styles/profile/profile.style";
+
+const MOBILITY_OPTIONS = [
+  { id: "normal", label: "Bình thường", icon: "accessibility-outline" },
+  { id: "wheelchair", label: "Sử dụng xe lăn", icon: "car-outline" },
+  { id: "walking_difficulty", label: "Khó khăn đi lại", icon: "walk-outline" },
+  { id: "blind", label: "Khiếm thị", icon: "eye-off-outline" },
+  {
+    id: "elderly_assisted",
+    label: "Cần người trợ giúp",
+    icon: "people-outline",
+  },
+];
+
+const CONDITION_OPTIONS = [
+  { id: "respiratory", label: "Bệnh hô hấp", icon: "leaf-outline" },
+  { id: "heart_disease", label: "Bệnh tim mạch", icon: "heart-outline" },
+  { id: "arthritis", label: "Viêm khớp", icon: "fitness-outline" },
+  { id: "migraine", label: "Đau nửa đầu", icon: "pulse-outline" },
+  { id: "asthma", label: "Hen suyễn", icon: "medkit-outline" },
+  { id: "diabetes", label: "Tiểu đường", icon: "water-outline" },
+];
 
 const UserInfoScreen = () => {
   const router = useRouter();
@@ -28,11 +48,18 @@ const UserInfoScreen = () => {
   const [saving, setSaving] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  const [modalVisible, setModalVisible] = useState({
+    mobility: false,
+    conditions: false,
+  });
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     gender: "male",
     dob: new Date(),
+    mobility: "normal",
+    conditions: [],
     emergencyName: "",
     emergencyPhone: "",
   });
@@ -46,7 +73,13 @@ const UserInfoScreen = () => {
     selectedDate && handleInputChange("dob", selectedDate);
   };
 
-  // Lấy dữ liệu từ Firestore
+  const toggleCondition = (id) => {
+    const newConditions = formData.conditions.includes(id)
+      ? formData.conditions.filter((item) => item !== id)
+      : [...formData.conditions, id];
+    handleInputChange("conditions", newConditions);
+  };
+
   const fetchUserInfo = async () => {
     const currentUser = auth.currentUser;
     if (!currentUser) return;
@@ -62,6 +95,8 @@ const UserInfoScreen = () => {
           phone: data.phone || "",
           gender: data.gender || "male",
           dob: data.dob ? new Date(data.dob) : new Date(),
+          mobility: data.mobility || "normal",
+          conditions: data.conditions || [],
           emergencyName: data.emergencyName || "",
           emergencyPhone: data.emergencyPhone || "",
         });
@@ -95,11 +130,13 @@ const UserInfoScreen = () => {
           phone: formData.phone,
           gender: formData.gender,
           dob: formData.dob.toISOString(),
+          mobility: formData.mobility,
+          conditions: formData.conditions,
           emergencyName: formData.emergencyName,
           emergencyPhone: formData.emergencyPhone,
           updatedAt: new Date().toISOString(),
         },
-        { merge: true }
+        { merge: true },
       );
 
       Alert.alert("Thành công", "Thông tin đã được cập nhật!");
@@ -121,6 +158,21 @@ const UserInfoScreen = () => {
         onPress: () => console.log("Đăng xuất..."),
       },
     ]);
+  };
+
+  const getMobilityLabel = () => {
+    const option = MOBILITY_OPTIONS.find((o) => o.id === formData.mobility);
+    return option ? option.label : "Bình thường";
+  };
+
+  const getConditionsLabel = () => {
+    if (!formData.conditions || formData.conditions.length === 0)
+      return "Không có";
+    if (formData.conditions.length === 1) {
+      return CONDITION_OPTIONS.find((o) => o.id === formData.conditions[0])
+        ?.label;
+    }
+    return `Đã chọn ${formData.conditions.length} bệnh trạng`;
   };
 
   if (loading) {
@@ -244,8 +296,8 @@ const UserInfoScreen = () => {
                   {formData.gender === "male"
                     ? "Nam"
                     : formData.gender === "female"
-                    ? "Nữ"
-                    : "Khác"}
+                      ? "Nữ"
+                      : "Khác"}
                 </Text>
               )}
             </View>
@@ -279,6 +331,56 @@ const UserInfoScreen = () => {
                 <Text style={styles.valueText}>
                   {formData.dob.toLocaleDateString("vi-VN")}
                 </Text>
+              )}
+            </View>
+
+            {/* --- TRƯỜNG MỚI: HỖ TRỢ DI CHUYỂN --- */}
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Hỗ trợ di chuyển</Text>
+              {isEditing ? (
+                <View style={styles.inputWithIcon}>
+                  <Ionicons
+                    name="body-outline"
+                    size={20}
+                    color="#888"
+                    style={styles.inputIcon}
+                  />
+                  <TouchableOpacity
+                    style={styles.textInput}
+                    onPress={() =>
+                      setModalVisible({ ...modalVisible, mobility: true })
+                    }
+                  >
+                    <Text>{getMobilityLabel()}</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <Text style={styles.valueText}>{getMobilityLabel()}</Text>
+              )}
+            </View>
+
+            {/* --- TRƯỜNG MỚI: BỆNH TRẠNG --- */}
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Bệnh trạng</Text>
+              {isEditing ? (
+                <View style={styles.inputWithIcon}>
+                  <Ionicons
+                    name="medical-outline"
+                    size={20}
+                    color="#888"
+                    style={styles.inputIcon}
+                  />
+                  <TouchableOpacity
+                    style={styles.textInput}
+                    onPress={() =>
+                      setModalVisible({ ...modalVisible, conditions: true })
+                    }
+                  >
+                    <Text>{getConditionsLabel()}</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <Text style={styles.valueText}>{getConditionsLabel()}</Text>
               )}
             </View>
 
@@ -319,12 +421,14 @@ const UserInfoScreen = () => {
             </View>
           </View>
 
-          {/* Nút Lưu & Hủy khi đang chỉnh sửa */}
           {isEditing && (
             <View style={styles.footerActions}>
               <TouchableOpacity
                 style={styles.cancelButton}
-                onPress={() => setIsEditing(false)}
+                onPress={() => {
+                  setIsEditing(false);
+                  fetchUserInfo();
+                }}
               >
                 <Text style={styles.cancelButtonText}>Hủy</Text>
               </TouchableOpacity>
@@ -340,7 +444,6 @@ const UserInfoScreen = () => {
             </View>
           )}
 
-          {/* Nút Đăng xuất - Luôn hiển thị */}
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Ionicons
               name="log-out-outline"
@@ -352,8 +455,158 @@ const UserInfoScreen = () => {
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* ================= MODAL: HỖ TRỢ DI CHUYỂN ================= */}
+      <Modal visible={modalVisible.mobility} transparent animationType="fade">
+        <TouchableOpacity
+          style={customStyles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setModalVisible({ ...modalVisible, mobility: false })}
+        >
+          <View style={customStyles.modalContent}>
+            <View style={customStyles.modalHeader}>
+              <Text style={customStyles.modalTitle}>Hỗ trợ di chuyển</Text>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {MOBILITY_OPTIONS.map((item) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={customStyles.listItem}
+                  onPress={() => {
+                    handleInputChange("mobility", item.id);
+                    setModalVisible({ ...modalVisible, mobility: false });
+                  }}
+                >
+                  <View style={customStyles.listLeft}>
+                    <Ionicons name={item.icon} size={22} color="#000085" />
+                    <Text style={customStyles.listText}>{item.label}</Text>
+                  </View>
+                  <Ionicons
+                    name={
+                      formData.mobility === item.id
+                        ? "radio-button-on"
+                        : "radio-button-off"
+                    }
+                    size={22}
+                    color={formData.mobility === item.id ? "#000085" : "#CCC"}
+                  />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* ================= MODAL: BỆNH TRẠNG ================= */}
+      <Modal visible={modalVisible.conditions} transparent animationType="fade">
+        <TouchableOpacity
+          style={customStyles.modalOverlay}
+          activeOpacity={1}
+          onPress={() =>
+            setModalVisible({ ...modalVisible, conditions: false })
+          }
+        >
+          <View style={customStyles.modalContent}>
+            <View style={customStyles.modalHeader}>
+              <Text style={customStyles.modalTitle}>
+                Các bệnh trạng cần lưu ý
+              </Text>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {CONDITION_OPTIONS.map((item) => {
+                const isSelected = formData.conditions.includes(item.id);
+                return (
+                  <TouchableOpacity
+                    key={item.id}
+                    style={customStyles.listItem}
+                    onPress={() => toggleCondition(item.id)}
+                  >
+                    <View style={customStyles.listLeft}>
+                      <Ionicons name={item.icon} size={22} color="#000085" />
+                      <Text style={customStyles.listText}>{item.label}</Text>
+                    </View>
+                    <Ionicons
+                      name={isSelected ? "checkbox" : "square-outline"}
+                      size={22}
+                      color={isSelected ? "#000085" : "#CCC"}
+                    />
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+            <TouchableOpacity
+              style={customStyles.doneButton}
+              onPress={() =>
+                setModalVisible({ ...modalVisible, conditions: false })
+              }
+            >
+              <Text style={customStyles.doneButtonText}>Xong</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 };
+
+const customStyles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  modalContent: {
+    width: "100%",
+    backgroundColor: "#FFF",
+    borderRadius: 16,
+    overflow: "hidden",
+    maxHeight: "80%",
+  },
+  modalHeader: {
+    backgroundColor: "#efe9e3",
+    paddingVertical: 15,
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#000085",
+  },
+  listItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0",
+  },
+  listLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  listText: {
+    fontSize: 15,
+    color: "#333",
+    fontWeight: "500",
+  },
+  doneButton: {
+    backgroundColor: "#000085",
+    paddingVertical: 12,
+    margin: 15,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  doneButtonText: {
+    color: "#FFF",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+});
 
 export default UserInfoScreen;

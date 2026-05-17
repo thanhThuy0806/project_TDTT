@@ -29,7 +29,7 @@ export default function RootLayout() {
 
       if (!user) {
         if (!inAuthGroup) {
-          router.replace("/(auth)/sign-up");
+          router.replace("/sign-up");
         }
         return;
       }
@@ -46,7 +46,7 @@ export default function RootLayout() {
           }
         } else {
           if (segments[1] !== "user-info") {
-            router.replace("/(auth)/user-info");
+            router.replace("/user-info");
           }
         }
       } catch (error) {
