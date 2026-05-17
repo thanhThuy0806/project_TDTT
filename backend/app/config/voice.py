@@ -5,19 +5,19 @@ load_dotenv()
 
 class Settings:
     GOONG_API_KEY = os.getenv("GOONG_API_KEY")
-
-    # HF_TOKEN = os.getenv("HF_TOKEN")
-
-    WHISPER_MODEL = "openai/whisper-small"
-
-    LLM_MODEL = "google/gemma-2b-it"
-
-    WIKI_BASE_URL = "https://vi.wikipedia.org/api/rest_v1/page/summary/"
     
-    GOONG_GEOCODE_URL = "https://rsapi.goong.io/geocode"
+    LLM_MODEL = os.getenv("LLM_MODEL", "Gemma4:E4B")
+    
+    LLM_URL = os.getenv("LLM_URL", "http://localhost:11434/")
+    
+    WIKI_BASE_URL = os.getenv("WIKI_BASE_URL", "https://vi.wikipedia.org/api/rest_v1/page/summary/")
+    
+    GOONG_GEOCODE_URL = os.getenv("GOONG_GEOCODE_URL", "https://rsapi.goong.io/geocode")
 
-    TTS_VOICE = "vi-VN-HoaiMyNeural"
+    TTS_VOICE = os.getenv("TTS_VOICE", "vi-VN-HoaiMyNeural")
 
+    API_URL = os.getenv("API_URL", "localhost")
+    
     PORT = os.getenv("PORT", 8000)
 
 settings = Settings()

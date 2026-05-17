@@ -15,6 +15,7 @@ import { Image } from "expo-image";
 import { COLORS } from "../../constants/colors";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/firebaseConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignInScreen = () => {
   const router = useRouter();
@@ -37,6 +38,9 @@ const SignInScreen = () => {
         email,
         password
       );
+      // User' Id token
+      const token = await userCredential.user.getIdToken()
+      await AsyncStorage.setItem("token", token)
 
       if (userCredential.user) {
         router.push("/");
@@ -126,7 +130,7 @@ const SignInScreen = () => {
 
             <TouchableOpacity
               style={authStyles.linkContainer}
-              onPress={() => router.push("/(auth)/sign-up")}
+              onPress={() => router.push("/sign-up")}
             >
               <Text style={authStyles.linkText}>
                 Don&apos;t have an account?{" "}

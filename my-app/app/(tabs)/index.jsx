@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   Image,
-  TextInput,
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,6 +13,13 @@ import { styles } from "../../assets/styles/home/home.styles";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db, auth } from "../../firebase/firebaseConfig";
 import DangerBanner from "../../components/DangerBanner";
+
+// ==========================================
+// THÊM IMPORTS CHO TÍNH NĂNG VOICE ASSISTANT
+// ==========================================
+import { useRouter } from 'expo-router';
+import { useAudioPlayer } from 'expo-audio';
+import { useVoiceStore } from "../../store/useVoiceStore"; // Đảm bảo đường dẫn này đúng với thư mục store của bạn
 
 export default function HomeScreen() {
   const [userName, setUserName] = useState("Bạn");
@@ -25,14 +31,48 @@ export default function HomeScreen() {
     "Sóng điện thoại yếu",
   ]);
 
-  // Quản lý trạng thái các tính năng (để demo nút gạt)
-  const [activeFeatures, setActiveFeatures] = useState({
-    sos: true,
-    weather: false,
-    map: false,
-    tips: false,
-  });
+  // ==========================================
+  // LOGIC LẮNG NGHE & XỬ LÝ VOICE TỪ ZUSTAND
+  // ==========================================
+  const router = useRouter();
+  const { navigationRoute, agentAudioUrl, resetVoiceState } = useVoiceStore();
 
+  // Khởi tạo trình phát âm thanh (expo-audio) dựa trên URL từ Backend trả về
+  const player = useAudioPlayer(agentAudioUrl);
+
+  // 1. Tác vụ Chuyển Trang (Routing)
+  useEffect(() => {
+    if (navigationRoute) {
+      console.log("LLM Yêu cầu chuyển trang đến:", navigationRoute);
+      router.push(navigationRoute); // Thực hiện chuyển trang
+      resetVoiceState(); // Dọn dẹp trạng thái sau khi chuyển
+    }
+  }, [navigationRoute]);
+
+  // 2. Tác vụ Phát Âm Thanh (Text-to-Speech)
+  useEffect(() => {
+    if (agentAudioUrl && player) {
+      console.log("Đang phát âm thanh từ Backend:", agentAudioUrl);
+      player.play(); // Kích hoạt loa
+    }
+  }, [agentAudioUrl, player]);
+
+  // 3. Tác vụ Bảo vệ Giao Diện (Nhả nút Mic khi nghe xong hoặc lỗi mạng)
+  useEffect(() => {
+    if (player?.status?.didJustFinish) {
+      console.log("Đã phát xong âm thanh phản hồi.");
+      resetVoiceState(); // Tắt chế độ "Đang trả lời...", nút về màu tím
+    }
+    
+    if (player?.status?.error) {
+      console.error("Lỗi tải/phát âm thanh:", player.status.error);
+      resetVoiceState(); // Chống đơ màn hình nếu URL hỏng hoặc mất mạng
+    }
+  }, [player?.status?.didJustFinish, player?.status?.error]);
+  // ==========================================
+
+
+  // LOGIC LẤY THÔNG TIN FIREBASE (GIỮ NGUYÊN)
   useEffect(() => {
     const user = auth.currentUser;
     if (!user) return;
@@ -54,7 +94,10 @@ export default function HomeScreen() {
   }, []);
 
   const toggleFeature = (key) => {
-    setActiveFeatures((prev) => ({ ...prev, [key]: !prev[key] }));
+    // Lưu ý nhỏ: Trong mã bạn gửi chưa khai báo biến state setActiveFeatures,
+    // Nên nếu bạn gọi hàm này có thể bị lỗi "setActiveFeatures is not defined".
+    // Bạn nhớ bổ sung state này nếu có dùng đến nhé!
+    // setActiveFeatures((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   return (
@@ -84,16 +127,6 @@ export default function HomeScreen() {
 
         <DangerBanner isDanger={isDangerZone} dangerDetails={dangerInfo} />
 
-        {/* Nút giả lập để bạn TEST (Xóa khi xong) */}
-        <TouchableOpacity
-          onPress={() => setIsDangerZone(!isDangerZone)}
-          style={{ alignSelf: "center", marginBottom: 10 }}
-        >
-          <Text style={{ color: "#666" }}>
-            🚩 [Test] Chuyển đổi vùng nguy hiểm
-          </Text>
-        </TouchableOpacity>
-
         {/* Tiêu đề danh mục */}
         <View style={styles.sectionTitleRow}>
           <Text style={styles.sectionTitle}>Công cụ hỗ trợ</Text>
@@ -109,37 +142,37 @@ export default function HomeScreen() {
             title="Cảnh báo SOS"
             subtitle="Đang sẵn sàng"
             icon="shield-checkmark"
-            bgColor={activeFeatures.sos ? "#818CFF" : "#F0F0F0"}
-            isEnabled={activeFeatures.sos}
             onToggle={() => toggleFeature("sos")}
-            navigateTo="/(home)/sos"
+            isEnabled={true}
+            bgColor="#818CFF"
+            navigateTo="/sos"
           />
 
           <FeatureCard
             title="Thời tiết"
-            subtitle="Cập nhật 5 phút trước"
+            subtitle="Đang cập nhật"
             icon="cloudy-night"
-            bgColor={activeFeatures.weather ? "#FFCC80" : "#FFF3E0"}
-            isEnabled={activeFeatures.weather}
             onToggle={() => toggleFeature("weather")}
-            navigateTo="/(home)/weather"
+            isEnabled={true}
+            bgColor="#f1c27a"
+            navigateTo="/weather"
           />
 
           <FeatureCard
-            title="Bản đồ ngoại tuyến"
-            subtitle="Đã tải 2 vùng"
-            icon="map"
-            bgColor={activeFeatures.map ? "#80DEEA" : "#E0F7FA"}
-            isEnabled={activeFeatures.map}
+            title="Dò tìm nguy hiểm"
+            subtitle="đang được cập nhật"
+            icon="location"
             onToggle={() => toggleFeature("map")}
+            isEnabled={true}
+            bgColor="#80DEEA"
+            navigateTo={'/safety-detail'}
           />
 
           <FeatureCard
             title="Sổ tay an toàn"
             subtitle="7 quy tắc cơ bản"
             icon="book"
-            bgColor={activeFeatures.tips ? "#C5E1A5" : "#F1F8E9"}
-            isEnabled={activeFeatures.tips}
+            bgColor="#C5E1A5"
             onToggle={() => toggleFeature("tips")}
           />
         </View>

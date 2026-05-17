@@ -1,188 +1,214 @@
-import React, { useState } from "react";
-import { TouchableOpacity, StyleSheet, Text, Dimensions } from "react-native";
+import React, { useEffect, useRef } from "react";
+import {
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  Dimensions,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, {
   useAnimatedStyle,
   withTiming,
   withSpring,
-  withRepeat,
   useSharedValue,
   interpolate,
 } from "react-native-reanimated";
-import { Audio } from "expo-av";
-import api from "@/constants/api";
-import { sendVoiceToBackend } from "@/services/voiceService";
+import { 
+  useAudioRecorder, 
+  useAudioRecorderState, 
+  RecordingPresets, 
+  AudioModule
+} from "expo-audio";
+import { sendVoiceToBackend } from "../services/voiceService"
+import { useVoiceStore } from "../store/useVoiceStore"; 
 
 const { height } = Dimensions.get("window");
+const SILENCE_THRESHOLD = -45; 
+const SILENCE_TIMEOUT = 3000; 
 
-export default function VoiceInteractionButton({ isRecording }) {
-  // Biến bảo vệ phòng trường hợp quên truyền prop
-  const fallbackRecording = useSharedValue(false);
-  const safeRecordingState = isRecording || fallbackRecording;
+export default function VoiceInteractionButton() {
+  const { 
+    isRecording, 
+    setIsRecording, 
+    isAgentSpeaking, 
+    setRecordedUri 
+  } = useVoiceStore();
 
-  const [active, setActive] = useState(false);
-  const pulse1 = useSharedValue(0);
-  const pulse2 = useSharedValue(0);
+  const silenceTimer = useRef(null);
+  const pulseVolume = useSharedValue(1); 
+  const isActive = isRecording || isAgentSpeaking;
+  const activeStateValue = useSharedValue(false);
 
-  const [recording, setRecording] = useState(null);
-  const [processing, setProcessing] = useState(false);
+  // Khởi tạo Audio Recorder
+  const audioRecorder = useAudioRecorder({
+    ...RecordingPresets.HIGH_QUALITY,
+    isMeteringEnabled: true,
+  });
+  
+  // Lấy state động (cập nhật mỗi 100ms) để theo dõi âm lượng (metering)
+  const recordingState = useAudioRecorderState(audioRecorder, 100);
 
-  async function startRecording() {
-    try {
-      await Audio.requestPermissionsAsync();
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      });
+  useEffect(() => {
+    activeStateValue.value = isActive;
+  }, [isActive]);
 
-      const { recording } = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY
+  // Đưa logic bắt âm lượng và tự động ngắt im lặng vào một useEffect độc lập theo dõi recordingState
+  useEffect(() => {
+    if (isRecording && recordingState?.metering !== undefined) {
+      const metering = recordingState.metering;
+
+      // Đồng bộ sóng âm với độ lớn âm thanh
+      pulseVolume.value = withTiming(
+        interpolate(metering, [-60, 0], [1, 2.5], "clamp"), 
+        { duration: 100 }
       );
-      setRecording(recording);
-    } catch (err) {
-      console.error("Failed to start recording", err);
-    }
-  }
 
-  async function stopRecording() {
-    if (!recording) return;
-    const currentRecording = recording;
-    setRecording(undefined);
-    await currentRecording.stopAndUnloadAsync();
-    const uri = currentRecording.getURI();
-    const result = await sendVoiceToBackend(uri);
-    await handleBackendResponse(result);
-  }
-
-  const toggleRecording = () => {
-    const nextState = !active;
-    setActive(nextState);
-    safeRecordingState.value = nextState;
-
-    if (nextState) {
-      startRecording();
-      pulse1.value = withRepeat(withTiming(1, { duration: 1500 }), -1, false);
-      setTimeout(() => {
-        if (safeRecordingState.value) {
-          pulse2.value = withRepeat(
-            withTiming(1, { duration: 1500 }),
-            -1,
-            false
-          );
+      // Kích hoạt bộ đếm thời gian nếu dưới ngưỡng im lặng
+      if (metering < SILENCE_THRESHOLD) {
+        if (!silenceTimer.current) {
+          silenceTimer.current = Date.now(); 
+        } else if (Date.now() - silenceTimer.current > SILENCE_TIMEOUT) {
+          stopRecording(); 
         }
-      }, 750);
-    } else {
+      } else {
+        silenceTimer.current = null; // Cập nhật lại nếu người dùng nói tiếp
+      }
+    }
+  }, [recordingState?.metering, isRecording]);
+
+  const startRecording = async () => {
+    try {
+      // Dùng AudioModule của expo-audio để xin quyền
+      const permission = await AudioModule.requestRecordingPermissionsAsync();
+      if (!permission.granted) {
+        alert(`Cần cấp quyền Microphone để sử dụng tính năng này. lỗi là: ${permission.granted}`);
+        return;
+      }
+
+      setIsRecording(true);
+      silenceTimer.current = null; 
+
+      // Bắt đầu ghi âm
+      await audioRecorder.prepareToRecordAsync();
+      audioRecorder.record();
+      
+    } catch (err) {
+      console.error("Lỗi khi bắt đầu thu âm:", err);
+      setIsRecording(false);
+    }
+  };
+
+  const stopRecording = async () => {
+    try {
+      setIsRecording(false);
+      pulseVolume.value = withTiming(1); 
+      silenceTimer.current = null;
+
+      await audioRecorder.stop();
+      const uri = audioRecorder.uri;
+      
+      if (uri) {
+        // Cập nhật UI tạm thời
+        setRecordedUri(uri);
+        
+        // Gửi ngay xuống Backend
+        try {
+          const responseData = await sendVoiceToBackend(uri);
+          
+          // Backend trả về JSON thành công -> Báo cho Zustand cập nhật toàn app
+          // Zustand sẽ tự set isAgentSpeaking = true nếu có audio_url
+          useVoiceStore.getState().setBackendResponse(responseData); 
+          
+        } catch (apiError) {
+          console.log("Xử lý giọng nói thất bại.");
+          useVoiceStore.getState().resetVoiceState();
+        }
+      }
+    } catch (err) {
+      console.error("Lỗi khi dừng thu âm:", err);
+      useVoiceStore.getState().resetVoiceState();
+    }
+  };
+
+  const toggleAction = () => {
+    if (isRecording) {
       stopRecording();
-      pulse1.value = 0;
-      pulse2.value = 0;
+    } else if (!isAgentSpeaking) {
+      startRecording();
     }
   };
 
-  const handleBackendResponse = async (result) => {
-    const { sound } = await Audio.Sound.createAsync({
-      uri: `http://192.168.1.5:8000/${result.audio}`,
-    });
-    await sound.playAsync();
+  // ================= ANIMATIONS =================
 
-    if (result.type === "map") {
-      console.log(result.location);
-    } else if (result.type === "place") {
-      console.log(result.text);
-    } else {
-      alert(result.text);
-    }
-  };
-
-  // 1. Hoạt ảnh kéo nút lên cao (dùng lò xo withSpring cho tự nhiên)
   const containerStyle = useAnimatedStyle(() => {
     return {
       transform: [
         {
-          translateY: withSpring(
-            safeRecordingState.value ? -height * 0.35 : 0,
-            {
-              damping: 22,
-              stiffness: 140,
-              mass: 0.8,
-              overshootClamping: true,
-            }
-          ),
+          translateY: withSpring(activeStateValue.value ? -height * 0.35 : 0, {
+            damping: 22,
+            stiffness: 140,
+            mass: 0.8,
+            overshootClamping: true,
+          }),
         },
       ],
     };
   });
 
-  // 2. Hoạt ảnh phóng to nút và đổi sang màu đỏ
   const buttonStyle = useAnimatedStyle(() => {
+    let bgColor = "#673AB7"; 
+    if (isRecording) bgColor = "#EF4444"; 
+    else if (isAgentSpeaking) bgColor = "#0EA5E9"; 
+
     return {
-      transform: [{ scale: withSpring(safeRecordingState.value ? 1.5 : 1) }],
-      backgroundColor: withTiming(
-        safeRecordingState.value ? "#EF4444" : "#673AB7",
-        { duration: 300 }
-      ),
-      shadowColor: withTiming(
-        safeRecordingState.value ? "#EF4444" : "#673AB7",
-        { duration: 300 }
-      ),
+      transform: [{ scale: withSpring(activeStateValue.value ? 1.5 : 1) }],
+      backgroundColor: withTiming(bgColor, { duration: 300 }),
+      shadowColor: withTiming(bgColor, { duration: 300 }),
     };
   });
 
-  // 3. Hoạt ảnh xung sóng lan tỏa (Pulse)
-  const pulse1Style = useAnimatedStyle(() => {
+  const pulseStyle = useAnimatedStyle(() => {
+    let pulseColor = isAgentSpeaking ? "rgba(14, 165, 233, 0.4)" : "rgba(239, 68, 68, 0.4)";
     return {
-      transform: [
-        { scale: interpolate(pulse1.value, [0, 1], [1, 3], "clamp") },
-      ],
-      opacity: interpolate(pulse1.value, [0, 1], [0.4, 0], "clamp"),
+      transform: [{ scale: pulseVolume.value }],
+      backgroundColor: pulseColor,
+      opacity: isRecording || isAgentSpeaking ? 1 : 0,
     };
   });
 
-  const pulse2Style = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { scale: interpolate(pulse2.value, [0, 1], [1, 3], "clamp") },
-      ],
-      opacity: interpolate(pulse2.value, [0, 1], [0.4, 0], "clamp"),
-    };
-  });
-
-  // 4. Màn mờ che phần nội dung phía sau khi đang thu âm
   const backdropStyle = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(safeRecordingState.value ? 1 : 0, { duration: 300 }),
+      opacity: withTiming(activeStateValue.value ? 1 : 0, { duration: 300 }),
     };
   });
 
   return (
     <>
-      {/* Lớp nền mờ */}
       <Animated.View
         style={[styles.backdrop, backdropStyle]}
-        pointerEvents={active ? "auto" : "none"}
+        pointerEvents={isActive ? "auto" : "none"}
       >
-        <Text style={styles.listeningText}>Đang nghe...</Text>
-        <Text style={styles.subText}>Chạm vào nút mic để kết thúc</Text>
+        <Text style={[styles.listeningText, isAgentSpeaking && { color: "#0EA5E9" }]}>
+          {isRecording ? "Đang nghe..." : "Đang trả lời..."}
+        </Text>
+        <Text style={styles.subText}>
+          {isRecording ? "Chạm vào nút mic để kết thúc sớm" : "Vui lòng đợi trong giây lát"}
+        </Text>
       </Animated.View>
 
-      {/* Cụm Nút và Sóng âm */}
       <Animated.View
         style={[styles.container, containerStyle]}
         pointerEvents="box-none"
       >
-        {/* Render 2 vòng sóng */}
-        <Animated.View
-          style={[styles.pulseRing, pulse1Style]}
-          pointerEvents="none"
-        />
-        <Animated.View
-          style={[styles.pulseRing, pulse2Style]}
-          pointerEvents="none"
-        />
+        <Animated.View style={[styles.pulseRing, pulseStyle]} pointerEvents="none" />
 
-        {/* Nút Mic chính */}
-        <TouchableOpacity activeOpacity={0.9} onPress={toggleRecording}>
+        <TouchableOpacity activeOpacity={0.9} onPress={toggleAction}>
           <Animated.View style={[styles.button, buttonStyle]}>
-            <Ionicons name="mic" size={30} color="#FFF" />
+            <Ionicons 
+              name={isAgentSpeaking ? "volume-high" : "mic"} 
+              size={30} 
+              color="#FFF" 
+            />
           </Animated.View>
         </TouchableOpacity>
       </Animated.View>
@@ -196,13 +222,13 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.95)",
     justifyContent: "center",
     alignItems: "center",
-    paddingBottom: 120, // Căn chữ nằm trên nút
+    paddingBottom: 120,
     zIndex: 5,
   },
   listeningText: {
     fontSize: 32,
     fontWeight: "800",
-    color: "#EF4444",
+    color: "#EF4444", 
   },
   subText: {
     fontSize: 16,
@@ -234,6 +260,5 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: "#EF4444",
   },
 });

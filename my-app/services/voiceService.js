@@ -1,19 +1,28 @@
-import api from "../constants/api";
+import api from 'axios';
+import { API_URL } from "../constants/api"; 
 
 export const sendVoiceToBackend = async (uri) => {
   const formData = new FormData();
+  
+  // Tự động lấy đuôi file thực tế từ URI (thường là m4a)
+  const fileExtension = uri.split('.').pop() || 'm4a';
 
   formData.append("file", {
-    uri,
-    type: "audio/m4a",
-    name: "voice.m4a",
+    uri: uri,
+    type: `audio/${fileExtension}`, // Để MIME type động cho an toàn
+    name: `voice.${fileExtension}`,
   });
 
-  const response = await api.post("/voice", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-
-  return response.data;
+  try {
+    const response = await api.post(`http://${API_URL}:8000/voice`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi gửi file âm thanh:", error.response?.data || error.message);
+    throw error;
+  }
 };

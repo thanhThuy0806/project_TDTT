@@ -14,3 +14,9 @@ torch
 edge-tts 
 requests 
 sentencepiece
+
+langchain
+langchain-core
+langchain-classic
+langchain-community
+langchain-ollama
