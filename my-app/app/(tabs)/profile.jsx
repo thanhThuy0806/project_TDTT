@@ -17,6 +17,11 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { auth, db } from "../../firebase/firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "expo-router";
+<<<<<<< HEAD
+=======
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { signOut } from "firebase/auth";
+>>>>>>> BE_Warning
 import { styles } from "../../assets/styles/profile/profile.style";
 
 const MOBILITY_OPTIONS = [
@@ -58,7 +63,11 @@ const UserInfoScreen = () => {
     phone: "",
     gender: "male",
     dob: new Date(),
+<<<<<<< HEAD
     mobility: "normal",
+=======
+    mobility: "normal", 
+>>>>>>> BE_Warning
     conditions: [],
     emergencyName: "",
     emergencyPhone: "",
@@ -96,7 +105,11 @@ const UserInfoScreen = () => {
           gender: data.gender || "male",
           dob: data.dob ? new Date(data.dob) : new Date(),
           mobility: data.mobility || "normal",
+<<<<<<< HEAD
           conditions: data.conditions || [],
+=======
+          conditions: data.conditions || [], 
+>>>>>>> BE_Warning
           emergencyName: data.emergencyName || "",
           emergencyPhone: data.emergencyPhone || "",
         });
@@ -149,13 +162,17 @@ const UserInfoScreen = () => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     Alert.alert("Đăng xuất", "Bạn có chắc muốn đăng xuất?", [
       { text: "Hủy", style: "cancel" },
       {
         text: "Đăng xuất",
         style: "destructive",
-        onPress: () => console.log("Đăng xuất..."),
+        onPress: async () => {
+          router.push('/(auth)/sign-up')
+          await AsyncStorage.removeItem("token")
+          await signOut(auth)
+        },
       },
     ]);
   };
@@ -334,7 +351,7 @@ const UserInfoScreen = () => {
               )}
             </View>
 
-            {/* --- TRƯỜNG MỚI: HỖ TRỢ DI CHUYỂN --- */}
+            {/* --- HỖ TRỢ DI CHUYỂN --- */}
             <View style={styles.formGroup}>
               <Text style={styles.label}>Hỗ trợ di chuyển</Text>
               {isEditing ? (
@@ -359,7 +376,7 @@ const UserInfoScreen = () => {
               )}
             </View>
 
-            {/* --- TRƯỜNG MỚI: BỆNH TRẠNG --- */}
+            {/* --- BỆNH TRẠNG --- */}
             <View style={styles.formGroup}>
               <Text style={styles.label}>Bệnh trạng</Text>
               {isEditing ? (

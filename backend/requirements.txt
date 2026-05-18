@@ -1,8 +1,21 @@
-fastapi 
-uvicorn 
+fastapi
+uvicorn[standard]
+shapely
+geopy
+langchain
+langchain-community
+langchain-ollama
+langchain-core
+langgraph
+requests
+Flask==3.0.3
+requests==2.32.3
+python-dotenv==1.0.1
+numpy==1.26.4
 firebase-admin 
 pydantic 
 python-multipart
+<<<<<<< HEAD
 sqlalchemy 
 psycopg2-binary 
 python-dotenv
@@ -10,3 +23,9 @@ apscheduler
 httpx
 numpy
 requests
+=======
+# Dev tools( optional)
+pytest==8.2.0
+black==24.4.2
+flake8==7.0.0
+>>>>>>> BE_Warning

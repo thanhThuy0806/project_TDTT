@@ -42,6 +42,12 @@ const SignUpScreen = () => {
       const user = userCredential.user;
 
       Alert.alert("User created successfully");
+<<<<<<< HEAD
+=======
+      // User' Id token
+      const token = await userCredential.user.getIdToken();
+      await AsyncStorage.setItem("token", token);
+>>>>>>> BE_Warning
 
       router.replace({
         pathname: "/user-info",

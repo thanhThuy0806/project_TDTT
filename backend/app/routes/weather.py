@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from fastapi import APIRouter, HTTPException, Depends
+=======
+from fastapi import APIRouter, Depends
+>>>>>>> BE_Warning
 from app.schemas.weather_schema import WeatherResponse
 from app.services.weather.weather_service import get_weather
 from app.services.user.firebase_service import get_user_profile

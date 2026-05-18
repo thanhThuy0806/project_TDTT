@@ -1,6 +1,10 @@
 from app.core.api_client import call_weather_api
 from app.services.weather.feature_engine import extract_features
+<<<<<<< HEAD
 from app.services.weather.risk_engine import compute_weather_score
+=======
+from app.services.weather.risk_engine import compute_risk
+>>>>>>> BE_Warning
 from app.services.weather.trend_engine import detect_trend, multi_day_reasoning
 from app.services.weather.health_engine import compute_health_risk
 from app.services.weather.advice_engine import generate_advice
@@ -26,7 +30,11 @@ def get_weather(lat, lon, user_profile=None):
 
     features = extract_features(current, forecast_days[0])
 
+<<<<<<< HEAD
     risk = compute_weather_score(features)
+=======
+    risk = compute_risk(features)
+>>>>>>> BE_Warning
 
     health_risk = compute_health_risk(features, user_profile)
 

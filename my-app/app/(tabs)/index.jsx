@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
+<<<<<<< HEAD
 import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
+=======
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+} from "react-native";
+>>>>>>> BE_Warning
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import FeatureCard from "../../components/FeatureCard";
@@ -59,6 +69,7 @@ export default function HomeScreen() {
 
         <DangerBanner isDanger={isDangerZone} dangerDetails={dangerInfo} />
 
+<<<<<<< HEAD
         <TouchableOpacity
           onPress={() => setIsDangerZone(!isDangerZone)}
           style={{ alignSelf: "center", marginBottom: 10 }}
@@ -68,6 +79,9 @@ export default function HomeScreen() {
           </Text>
         </TouchableOpacity>
 
+=======
+        {/* Tiêu đề danh mục */}
+>>>>>>> BE_Warning
         <View style={styles.sectionTitleRow}>
           <Text style={styles.sectionTitle}>Công cụ hỗ trợ</Text>
           <TouchableOpacity style={styles.addBtn}>
@@ -79,18 +93,54 @@ export default function HomeScreen() {
         <View style={styles.grid}>
           <FeatureCard
             title="Cảnh báo SOS"
+<<<<<<< HEAD
             icon="alert-circle"
             bgColor={"#EF4444"}
+=======
+            subtitle="Đang sẵn sàng"
+            icon="shield-checkmark"
+            onToggle={() => toggleFeature("sos")}
+            isEnabled={true}
+            bgColor="#818CFF"
+>>>>>>> BE_Warning
             navigateTo="/sos"
           />
           <FeatureCard
             title="Thời tiết"
+<<<<<<< HEAD
             icon="cloudy-night"
             bgColor={"#3B82F6"}
             navigateTo="/weather"
           />
           <FeatureCard title="Bản đồ" icon="map" bgColor={"#10B981"} />
           <FeatureCard title="Sổ tay" icon="book" bgColor={"#F59E0B"} />
+=======
+            subtitle="Đang cập nhật"
+            icon="cloudy-night"
+            onToggle={() => toggleFeature("weather")}
+            isEnabled={true}
+            bgColor="#f1c27a"
+            navigateTo="/weather"
+          />
+
+          <FeatureCard
+            title="Dò tìm nguy hiểm"
+            subtitle="đang được cập nhật"
+            icon="location"
+            onToggle={() => toggleFeature("map")}
+            isEnabled={true}
+            bgColor="#80DEEA"
+            navigateTo={'/safety-detail'}
+          />
+
+          <FeatureCard
+            title="Sổ tay an toàn"
+            subtitle="7 quy tắc cơ bản"
+            icon="book"
+            bgColor="#C5E1A5"
+            onToggle={() => toggleFeature("tips")}
+          />
+>>>>>>> BE_Warning
         </View>
       </ScrollView>
     </SafeAreaView>

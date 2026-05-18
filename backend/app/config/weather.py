@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+# config.py: File cấu hình trung tâm của hệ thống: API KEY, PORT, Các tham số tuning (window size, threshold...)
+
+>>>>>>> BE_Warning
 import os
 from dotenv import load_dotenv
 
