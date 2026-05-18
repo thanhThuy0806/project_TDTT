@@ -245,17 +245,16 @@ const styles = StyleSheet.create({
     marginBottom: 20 
   },
   
-  // [MỚI] Styles cho Search Bar
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F1F5F9", // Màu xám nhạt (nhạt hơn trắng nhưng vẫn rõ vùng tìm kiếm)
-    borderRadius: 25, // Bo tròn mạnh giống thanh tìm kiếm Chrome
+    backgroundColor: "#F1F5F9",
+    borderRadius: 25,
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 2,
     height: 50,
     width: "100%",
-    marginBottom: 20, // Đẩy khu vực báo cáo mức độ an toàn xuống
+    marginBottom: 20,
     borderWidth: 1,
     borderColor: "#E2E8F0",
   },

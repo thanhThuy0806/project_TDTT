@@ -182,9 +182,7 @@ const UserInfoScreen = () => {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <Text>Đang tải...</Text>
         </View>
       </SafeAreaView>
@@ -263,13 +261,7 @@ const UserInfoScreen = () => {
             <View style={[styles.formGroup, { borderBottomWidth: 0 }]}>
               <Text style={styles.label}>Giới tính</Text>
               {isEditing ? (
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginTop: 8,
-                  }}
-                >
+                <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 8 }}>
                   {[
                     { label: "Nam", value: "male" },
                     { label: "Nữ", value: "female" },
@@ -394,9 +386,7 @@ const UserInfoScreen = () => {
                 <TextInput
                   style={styles.input}
                   value={formData.emergencyName}
-                  onChangeText={(text) =>
-                    handleInputChange("emergencyName", text)
-                  }
+                  onChangeText={(text) => handleInputChange("emergencyName", text)}
                   placeholder="Tên người thân"
                 />
               ) : (
@@ -413,9 +403,7 @@ const UserInfoScreen = () => {
                   style={styles.input}
                   value={formData.emergencyPhone}
                   keyboardType="phone-pad"
-                  onChangeText={(text) =>
-                    handleInputChange("emergencyPhone", text)
-                  }
+                  onChangeText={(text) => handleInputChange("emergencyPhone", text)}
                 />
               ) : (
                 <Text style={styles.valueText}>
@@ -449,12 +437,7 @@ const UserInfoScreen = () => {
           )}
 
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Ionicons
-              name="log-out-outline"
-              size={20}
-              color="#FFFFFF"
-              style={{ marginRight: 8 }}
-            />
+            <Ionicons name="log-out-outline" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
             <Text style={styles.logoutButtonText}>Đăng xuất</Text>
           </TouchableOpacity>
         </ScrollView>

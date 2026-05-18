@@ -90,6 +90,7 @@ const UserInfoForm = () => {
     setLoading(true);
     try {
       const userDocRef = doc(db, "user-info", currentUser.uid);
+      // 2. Ghi dữ liệu lên Firebase bao gồm 2 trường mới
       await setDoc(userDocRef, {
         name: formData.name,
         gender: formData.gender,
@@ -139,6 +140,7 @@ const UserInfoForm = () => {
         <Text style={authStyles.title}>Thông tin cá nhân</Text>
 
         <View style={authStyles.formContainer}>
+          {/* ... (Tên, SĐT, Giới tính) ... */}
           <View style={authStyles.inputContainer}>
             <Text style={authStyles.label}>Họ và Tên</Text>
             <View style={authStyles.inputWithIcon}>

@@ -47,7 +47,8 @@
         {
           "locationWhenInUsePermission": "Cho phép ứng dụng truy cập vị trí của bạn."
         }
-      ]
+      ],
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true,
