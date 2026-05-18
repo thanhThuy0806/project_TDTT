@@ -15,7 +15,6 @@ numpy==1.26.4
 firebase-admin 
 pydantic 
 python-multipart
-<<<<<<< HEAD
 sqlalchemy 
 psycopg2-binary 
 python-dotenv
@@ -23,9 +22,7 @@ apscheduler
 httpx
 numpy
 requests
-=======
 # Dev tools( optional)
 pytest==8.2.0
 black==24.4.2
 flake8==7.0.0
->>>>>>> BE_Warning

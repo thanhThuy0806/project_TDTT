@@ -1,10 +1,10 @@
 import axios from "axios";
 import { getAuth } from "firebase/auth";
 
-export const API_URL = "http://192.168.88.221:8000";
+export const API_URL = "localhost:8000";
 
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: `http://${API_URL}`,
   timeout: 10000,
 });
 

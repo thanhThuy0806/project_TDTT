@@ -55,11 +55,6 @@ const UserInfoForm = () => {
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
-<<<<<<< HEAD
-=======
-
-  // State quản lý hiển thị Modal
->>>>>>> BE_Warning
   const [modalVisible, setModalVisible] = useState({
     mobility: false,
     conditions: false,
@@ -289,10 +284,6 @@ const UserInfoForm = () => {
             </View>
           </View>
 
-<<<<<<< HEAD
-=======
-          {/* ... Liên hệ người thân ... */}
->>>>>>> BE_Warning
           <Text
             style={[
               authStyles.label,

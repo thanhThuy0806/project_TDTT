@@ -1,5 +1,5 @@
 import { auth } from '@/firebase/firebaseConfig'
-import { API_URL } from '@/constants/api'
+import { API_URL } from './apiClient'
 import api from 'axios'
 
 export const getSafetyDetail = async (lat, lng) => {
@@ -8,9 +8,10 @@ export const getSafetyDetail = async (lat, lng) => {
         throw new Error("Inaccessible due to user did not log in")
     }
 
-    const token = await currentUser.getIdToken()
+    console.log(`check safety detail: ${API_URL}`)
+    const token = await currentUser.getIdToken(true)
     const res = await api.post(
-        `http://${API_URL}:8000/warning/check-danger`, 
+        `http://${API_URL}/warning/check-danger`, 
         {
             lat: lat,
             lng: lng,
@@ -29,10 +30,10 @@ export const checkSaftetyDetail = async(place) => {
     if (!currentUser) {
         throw new Error("Inaccessible due to user did not log in")
     }
-
-    const token = await currentUser.getIdToken()
+    console.log(`check safety detail: ${API_URL}`)
+    const token = await currentUser.getIdToken(true)
     const res = await api.post(
-        `http://${API_URL}:8000/warning/check-place`, 
+        `http://${API_URL}/warning/check-place`, 
         {
             place: place
         },

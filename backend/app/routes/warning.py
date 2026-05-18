@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/warning", tags=["Warning"])
 
 @router.post("/check-danger", response_model=CheckDangerResponse)
-async def check_danger(req: CheckDangerRequest):
+async def check_danger_by_coordinate(req: CheckDangerRequest):
     result = await danger_service.check(f'{req.lat},{req.lng}', WARNING_HEADER, SHORT_WARNING_SERVICE_SYSTEM_PROMPT)
     
     return CheckDangerResponse(
@@ -24,7 +24,7 @@ async def check_danger(req: CheckDangerRequest):
     )
     
 @router.post("/check-place", response_model=CheckDangerResponse)
-async def check_danger(req: CheckPlaceRequest):
+async def check_danger_by_place(req: CheckPlaceRequest):
     result = await danger_service.check(req.place, WARNING_HEADER, SHORT_WARNING_SERVICE_SYSTEM_PROMPT)
     
     return CheckDangerResponse(

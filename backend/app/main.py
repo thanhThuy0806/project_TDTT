@@ -6,8 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routes.sos import router as sos_router
 from app.routes.weather import router as weather_route
 from app.routes.auth import router as user_route
+from app.routes.warning import router as warning_route
 import dotenv
-import os
 
 dotenv.load_dotenv()
 
@@ -25,6 +25,7 @@ app.add_middleware(
 app.include_router(user_route)
 app.include_router(weather_route)
 app.include_router(sos_router)
+app.include_router(warning_route)
 
 @app.get("/")
 def read_root():

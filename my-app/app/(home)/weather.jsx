@@ -85,17 +85,9 @@ export default function WeatherIndex() {
 
   const { current, forecast, advice, location } = weatherData;
   const todayForecast = forecast?.forecastday?.[0]?.day || {};
-  const aqiInfo = getAQIText(weatherData?.current?.air_quality);
-  const weatherAdvice = weatherData?.advice || [];
+  const aqiInfo = getAQIText(current?.air_quality);
   const currentTemp = current?.temp_c || 0;
   const colors = getGradientColors(currentTemp);
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  if (loading || !weatherData)
-    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
 
   return (
     <LinearGradient colors={colors} style={styles.container}>

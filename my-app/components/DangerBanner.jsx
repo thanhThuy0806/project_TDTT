@@ -17,7 +17,7 @@ import {
 import { useTrackingStore } from "@/store/useTrackingStore"; 
 import { styles } from "../assets/styles/components/danger-banner.style";
 import * as Location from "expo-location";
-import { API_URL } from "@/constants/api";
+import { API_URL } from "../services/apiClient";
 
 export default function DangerBanner({
   isDanger: initialIsDanger = false,
@@ -70,7 +70,8 @@ export default function DangerBanner({
       return;
     }
 
-    const BACKEND_WS_URL = `ws://${API_URL}:8000/warning/ws/tracking`;
+    const BACKEND_WS_URL = `ws://${API_URL}/warning/ws/tracking`;
+    console.log(`backend: ${BACKEND_WS_URL}`)
 
     ws.current = new WebSocket(BACKEND_WS_URL);
 
@@ -157,7 +158,7 @@ export default function DangerBanner({
   useEffect(() => {
     // THAY ĐỔI ĐỊA CHỈ IP NÀY BẰNG IP IPv4 CỦA MÁY TÍNH TRÊN MẠNG WIFI
     // Ví dụ: "ws://192.168.1.10:8000/ws/tracking"
-    const BACKEND_WS_URL = `ws://${API_URL}:8000/warning/ws/tracking`;
+    const BACKEND_WS_URL = `ws://${API_URL}/warning/ws/tracking`;
 
     // Khởi tạo kết nối WebSocket
     ws.current = new WebSocket(BACKEND_WS_URL);
