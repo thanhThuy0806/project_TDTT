@@ -6,12 +6,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routes.sos import router as sos_router
 from app.routes.weather import router as weather_route
 from app.routes.auth import router as user_route
+import dotenv
+import os
+
+dotenv.load_dotenv()
+
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://10.0.237.53:8081"], 
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

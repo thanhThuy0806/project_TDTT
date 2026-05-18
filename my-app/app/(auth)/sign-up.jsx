@@ -43,9 +43,6 @@ const SignUpScreen = () => {
 
       Alert.alert("User created successfully");
 
-      const token = await userCredential.user.getIdToken();
-      await AsyncStorage.setItem("token", token);
-
       router.replace({
         pathname: "/user-info",
         params: { userId: user.uid },

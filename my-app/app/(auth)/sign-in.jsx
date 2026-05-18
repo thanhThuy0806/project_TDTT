@@ -38,11 +38,8 @@ const SignInScreen = () => {
         password,
       );
 
-      const token = await userCredential.user.getIdToken();
-      await AsyncStorage.setItem("token", token);
-
       if (userCredential.user) {
-        router.push("/");
+        router.push("/(tabs)/");
       } else {
         Alert.alert("Sign in failed");
       }
