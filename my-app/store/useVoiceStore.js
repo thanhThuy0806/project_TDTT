@@ -1,40 +1,51 @@
-// store/useVoiceStore.js
 import { create } from 'zustand';
 
 export const useVoiceStore = create((set) => ({
   isRecording: false,
-  isAgentSpeaking: false,
-  recordedUri: null,        // Đường dẫn file âm thanh vừa thu xong
-  agentAudioUrl: null,      // Đường dẫn file âm thanh LLM trả về
-  navigationRoute: null,    // Lệnh điều hướng (VD: '/weather')
+  recordedUri: null,
+  
+  isPopupVisible: false,
+  agentAudioUrl: null,
+  agentContent: "", 
+  lat: null,
+  lng: null,
+  footnote: "", 
+  
+  isVoiceEnabled: true, 
 
-  // Các hàm cập nhật trạng thái
   setIsRecording: (status) => set({ isRecording: status }),
-  setIsAgentSpeaking: (status) => set({ isAgentSpeaking: status }),
-  
-  // Hàm lưu kết quả thu âm
   setRecordedUri: (uri) => set({ recordedUri: uri }),
-  
-  // Hàm xử lý kết quả từ Backend trả về
+  setIsVoiceEnabled: (status) => set({ isVoiceEnabled: status }),
+
   setBackendResponse: (data) => {
     if (data.type === 'router' && data.content) {
-      // Nếu là điều hướng -> Cập nhật route để index.jsx bắt sự kiện
-      set({ navigationRoute: data.content, isAgentSpeaking: false });
+      set({ navigationRoute: data.content });
     } else {
-      // Nếu là text/audio -> Cập nhật URL và bật chế độ Agent Speaking
-      set({ 
-        agentAudioUrl: data.audio_url || null, 
-        isAgentSpeaking: !!data.audio_url 
+      set({
+        agentAudioUrl: data.audio_url || null,
+        agentContent: data.content || "",
+        lat: data.lat || null,
+        lng: data.lng || null,
+        footnote: data.footnote || "",
+        
+        isPopupVisible: true,
+        isVoiceEnabled: true,
       });
     }
   },
 
-  // Hàm reset trạng thái khi hoàn thành
-  resetVoiceState: () => set({ 
-    isRecording: false, 
-    isAgentSpeaking: false, 
-    recordedUri: null, 
-    agentAudioUrl: null, 
-    navigationRoute: null 
+  closePopup: () => set({
+    isPopupVisible: false,
+    agentAudioUrl: null,
+    agentContent: "",
+    lat: null,
+    lng: null,
+    footnote: ""
+  }),
+
+  resetVoiceState: () => set({
+    isRecording: false,
+    recordedUri: null,
+    navigationRoute: null,
   }),
 }));

@@ -27,15 +27,18 @@ async def check_danger_by_coordinate(req: CheckDangerRequest):
 async def check_danger_by_place(req: CheckPlaceRequest):
     result = await danger_service.check(req.place, WARNING_HEADER, SHORT_WARNING_SERVICE_SYSTEM_PROMPT)
     
+    # Ép kiểu an toàn, nếu là None thì chuyển thành 0.0
+    lat_val = result.get("lat")
+    lng_val = result.get("lng")
+    
     return CheckDangerResponse(
-        lat=result.get("lat", None),
-        lng=result.get("lng", None),
+        lat=lat_val if lat_val is not None else 0.0,
+        lng=lng_val if lng_val is not None else 0.0,
         place_name=result.get("place_name", ""),
         is_danger=result.get("is_danger", False),
         status=result.get("status", "safe"),
         alerts=[AlertItem(**a) for a in result.get("alerts", []) if isinstance(a, dict)],
     )
-    
 @router.websocket("/ws/tracking")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
