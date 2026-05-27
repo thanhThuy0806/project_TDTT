@@ -67,6 +67,8 @@ Trả lời theo ĐÚNG format JSON sau (không thêm gì khác):
     "is_danger": true hoặc false,
     "severity": "low" hoặc "medium" hoặc "high",
     "place_name": tên địa điểm được yêu cầu kiểm tra ví dụ như Tp Hồ Chí Minh, núi Phú Sĩ
+    "lat": tọa độ vĩ tuyến của vị trí được ghi nhận lưu dưới dạng số thực 'float', hãy sử dụng công cụ forward geocoding để chuyển tên địa danh khu vực thành tọa độ,
+    "lng": tọa độ kinh tuyến của vị trí được ghi nhận lưu dưới dạng số thực 'float', hãy sử dụng công cụ forward geocoding để chuyển tên địa danh khu vực thành tọa độ,
     "alerts": một danh sách( list) các mối nguy hiểm hoặc tiêu chuẩn an toàn cần được quan tâm. Một phần tử trong danh sách gồm các trường 
         + "severity": chỉ mức độ nguy cơ xảy ra đối với hiểm họa gồm 'low' hoặc 'medium' hoặc 'high'
         + 'text': đoạn mô tả ngắn gọn, xúc tích từ 2-5 từ đối với mối nguy hiểm ví dụ 'mưa nhiều', 'giao thông ổn định', 'an toàn trật tự')

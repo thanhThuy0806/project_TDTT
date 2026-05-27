@@ -26,6 +26,9 @@ import {
   sendEmergencySMS,
 } from "@/services/sosService";
 
+// [MỚI]: Import Store Voice
+import { useVoiceStore } from "../../store/useVoiceStore";
+
 const EMERGENCY_TYPES = [
   { id: "medical", label: "Y tế", icon: "medkit", color: "#D4E157" },
   { id: "fire", label: "Hỏa hoạn", icon: "flame", color: "#FFAB91" },
@@ -47,18 +50,44 @@ export default function SOSScreen() {
   const [sosResult, setSosResult] = useState(null);
   const [showResult, setShowResult] = useState(false);
 
+  // Lấy emergencyType từ Voice Store
+  const { emergencyType, clearEmergencyType } = useVoiceStore();
+
   const timerRef = useRef(null);
   const progress = useSharedValue(0);
   const CIRCLE_LENGTH = 300;
   const R = CIRCLE_LENGTH / (2 * Math.PI);
   const shakeOffset = useSharedValue(0);
 
+  // Lấy danh bạ khẩn cấp
   useEffect(() => {
     fetchEmergencyContact();
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, []);
+
+  // Xử lý Tự động chọn trạng thái nguy hiểm từ LLM
+  useEffect(() => {
+    if (emergencyType) {
+      // Vá lỗi sai chính tả từ Prompt Backend nếu LLM lỡ sinh ra
+      let mappedType = emergencyType.toLowerCase();
+      if (mappedType === "disater") mappedType = "disaster";
+      if (mappedType === "rescure") mappedType = "rescue";
+
+      // Kiểm tra xem type BE gửi lên có khớp với danh sách FE không
+      const isValid = EMERGENCY_TYPES.some(t => t.id === mappedType);
+      
+      if (isValid) {
+        setSelectedType(mappedType);
+        // Rung nhẹ báo hiệu đã nhận diện tình huống
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+      
+      // Xoá type trong store để không bị chọn lại nếu lần sau người dùng tự mở bằng tay
+      clearEmergencyType();
+    }
+  }, [emergencyType]);
 
   const fetchEmergencyContact = async () => {
     try {

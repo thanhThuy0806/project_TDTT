@@ -40,12 +40,12 @@ export default function HomeScreen() {
   }, [navigationRoute]);
  
   useEffect(() => {
-    if (isPopupVisible && agentAudioUrl && player) {
-      player.replace({ uri: agentAudioUrl });
-      if (isVoiceEnabled) player.play();
-    }
-  }, [agentAudioUrl, isPopupVisible]);
- 
+  if (isPopupVisible && agentAudioUrl && player && isVoiceEnabled) {
+    player.replace({ uri: agentAudioUrl }); // load source thực vào player
+    player.play();
+  }
+}, [agentAudioUrl, isPopupVisible]);
+
   const handleClosePopup = () => {
     if (player) player.pause();
     closePopup();
@@ -57,11 +57,6 @@ export default function HomeScreen() {
     else player?.pause();
   };
 
-  const formatTime = (ms) => {
-    if (!ms) return "0s";
-    return `${Math.floor(ms / 1000)}s`;
-  };
- 
   useEffect(() => {
     const user = auth.currentUser;
     if (!user) return;
@@ -70,7 +65,7 @@ export default function HomeScreen() {
     });
     return () => unsubscribe();
   }, []);
- 
+
   return (
     <SafeAreaView style={homeStyles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={homeStyles.scrollContent}>
@@ -113,7 +108,6 @@ export default function HomeScreen() {
             
             {/* 1/3 Trên: Bản đồ & Nút Tắt */}
             <View style={modalStyles.mapSection}>
-               {/* [MỚI]: Sử dụng lat, lng từ Store truyền vào Bản đồ */}
                <SafeMap 
                   latitude={lat || 10.762622} 
                   longitude={lng || 106.660172} 
@@ -126,7 +120,6 @@ export default function HomeScreen() {
             {/* 2/3 Dưới: Nội dung & Điều khiển Âm thanh */}
             <View style={modalStyles.contentSection}>
                <ScrollView showsVerticalScrollIndicator={false} style={modalStyles.textArea}>
-                 {/* [MỚI]: Ưu tiên hiển thị footnote, nếu LLM lỗi không sinh ra footnote thì dùng tạm agentContent */}
                  <Text style={modalStyles.agentText}>{footnote || agentContent}</Text>
                </ScrollView>
 

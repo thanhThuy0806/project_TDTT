@@ -30,7 +30,7 @@ async def check_danger_by_place(req: CheckPlaceRequest):
     # Ép kiểu an toàn, nếu là None thì chuyển thành 0.0
     lat_val = result.get("lat")
     lng_val = result.get("lng")
-    
+        
     return CheckDangerResponse(
         lat=lat_val if lat_val is not None else 0.0,
         lng=lng_val if lng_val is not None else 0.0,

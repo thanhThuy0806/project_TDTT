@@ -12,7 +12,7 @@ api.interceptors.request.use(async (config) => {
   const auth = getAuth();
   const current_user = auth.currentUser;
   const token = await current_user.getIdToken(true)
-
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

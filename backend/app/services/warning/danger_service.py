@@ -252,7 +252,6 @@ class DangerCheckService:
                 results["place_name"] = cached.get("place_name", placeOrCoord)
                 return results
 
-        # 3. Gọi phân tích từ LLM (truyền nguyên chuỗi gốc cho LLM xử lý)
         dynamic_result = await self.web_rag.analyze(placeOrCoord, header, prompt)
 
         results["is_danger"] = dynamic_result.get("is_danger", False)

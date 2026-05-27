@@ -6,7 +6,7 @@ export default function SafeMap({ latitude, longitude }) {
   return (
     <MapView
       style={StyleSheet.absoluteFillObject}
-      initialRegion={{
+      region={{
         latitude,
         longitude,
         latitudeDelta: 0.01,

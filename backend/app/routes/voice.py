@@ -36,7 +36,7 @@ async def voice(file: UploadFile = File(...)):
     
     response_type = llm_result.get("type", "detail")
     response_content = llm_result.get("content", "")
-    
+    emergency_type = llm_result.get("emergency_type", "")
     lat = llm_result.get("lat")
     lng = llm_result.get("lng")
     footnote = llm_result.get("footnote", "")
@@ -60,7 +60,7 @@ async def voice(file: UploadFile = File(...)):
         "content": response_content,
         "audio_url": audio_url,
         "user_text": user_text,
-        # [MỚI BỔ SUNG]: Trả về các trường thông tin mới cho FE
+        "emergency_type": emergency_type,
         "lat": lat,
         "lng": lng,
         "footnote": footnote
